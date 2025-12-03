@@ -8,6 +8,7 @@ const PublicRoutes = () => {
             <Routes>
                 <Route path="/">
                     <Route index element={<HomePage />} />
+                    <Route path="/category" element={<CategoryPage />} />
                     {/* <Route path="/sample" element={<Sample />} /> */}
                 </Route>
             </Routes>

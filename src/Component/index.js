@@ -1,2 +1,14 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
+export { default as HowBMGWorks } from './HowItWorks';
+export { default as CategoriesSection } from './Categories';
+export { default as ServiceSlider } from './Services';
+export { default as AIServicesSection } from './AiServices';
+export { default as HeroMarketingSection } from './MarketingSection';
+export { default as TrendingService } from './TrendingService';
+export { default as ConsultantForm } from './ConsultantForm';
+export { default as PortfolioMarquee } from './Portfolio';
+export { default as BlogSection } from './BlogPost';
+export { default as AIServicesShowcase } from './AiShowcase';
+export { default as TestimonialsSection } from './Testimonial';
+export { default as FAQSection } from './FAQ';

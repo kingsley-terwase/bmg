@@ -1,6 +1,7 @@
 export const FONT_FAMILY = {
-    primary: 'Jost',
-    secondary: 'Comfortaa'
+    primary: 'Syne',
+    secondary: 'Work Sans',
+    tertiary: 'Jost',
 }
 
 export const typographySettings = {

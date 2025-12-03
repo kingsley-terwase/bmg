@@ -65,7 +65,7 @@ export const darkModeColors = {
     primary: {
         main: '#90caf9',
         light: '#e3f2fd',
-        dark: '#42a5f5',
+        dark: '#2F317C',
         contrastText: 'rgba(0, 0, 0, 0.87)',
         lightBg: '#1e293b',
         bg: 'rgba(15, 20, 25, 0.95)'

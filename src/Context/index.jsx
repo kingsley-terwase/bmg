@@ -14,23 +14,25 @@ export const useThemeContext = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [mode, setMode] = useState(() => {
-    const savedMode = localStorage.getItem('themeMode');
-    return savedMode || 'light';
-  });
+  // Always default to light mode
+  const [mode, setMode] = useState('light');
 
+  // Save mode (even though it will always be light)
   useEffect(() => {
-    localStorage.setItem('themeMode', mode);
-  }, [mode]);
+    localStorage.setItem('themeMode', 'light');
+  }, []);
 
+  // Toggle does nothing except ensure light mode remains
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    setMode('light');
+    localStorage.setItem('themeMode', 'light');
   };
 
-  const theme = useMemo(() => getTheme(mode), [mode]);
+  // Generate MUI theme
+  const theme = useMemo(() => getTheme('light'), []);
 
   const value = {
-    mode,
+    mode: 'light',
     toggleTheme,
     theme,
   };

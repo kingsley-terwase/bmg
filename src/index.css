@@ -1,9 +1,12 @@
+
 :root {
-  
+  --typography-primary: 'Syne';
 }
 
-
+*,
+html,
 body {
-  margin: 0;
+  font-family: var(--typography-primary);
+  margin:0;
   padding:0;
 }
