@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import PublicRoutes from "./public";
-import DashboardRoutes from "./dashboard";
+import DashboardRoutes from "./Dashboard";
 
 export default function Router() {
   const { pathname } = useLocation();

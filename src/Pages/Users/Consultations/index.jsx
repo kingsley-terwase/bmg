@@ -1,0 +1,136 @@
+import React, { useState } from "react";
+import {
+  Box,
+  TableRow,
+  TableCell,
+  Checkbox,
+  IconButton,
+  Stack,
+  Grid
+} from "@mui/material";
+import {
+  CustomTable,
+  StatusChip,
+  PagesHeader,
+  InfoCard
+} from "../../../Component";
+import { consultations, headers } from "./data";
+import {
+  ShoppingBagOutlined,
+  HourglassBottomOutlined,
+  CancelOutlined,
+  CheckCircleOutline,
+  AddOutlined, 
+  Visibility 
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+
+const ConsultationsPage = () => {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  return (
+    <div>
+      <PagesHeader
+        label="My Consultations"
+        desc={
+          "Manage all your booked consultations and track progress, see payment status."
+        }
+        enableSearch
+        searchValue={search}
+        onSearchChange={setSearch}
+        actions={[
+          {
+            label: "Book Consultation",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/user/book-consultation")
+          }
+        ]}
+      />
+
+      <Grid
+        container
+        rowSpacing={2}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        alignItems={"flex-start"}
+        mb={4}
+      >
+        <Grid size={{ xs: 12, md: 3 }}>
+          <InfoCard
+            icon={ShoppingBagOutlined}
+            title="Total"
+            value="37"
+            color="#61B5FF"
+            actionLabel="Total Orders"
+            onAction={() => console.log("View Users")}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <InfoCard
+            icon={CheckCircleOutline}
+            title="Completed"
+            value="8"
+            actionLabel="Completed Orders"
+            color="#61B5FF"
+            onAction={() => console.log("View Users")}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <InfoCard
+            icon={HourglassBottomOutlined}
+            title="Pending"
+            value="20"
+            actionLabel="Pending Orders"
+            color="#61B5FF"
+            onAction={() => console.log("View Users")}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <InfoCard
+            icon={CancelOutlined}
+            title="Cancelled"
+            value="18"
+            actionLabel="Cancelled Orders"
+            color="#61B5FF"
+            onAction={() => console.log("View Users")}
+          />
+        </Grid>
+      </Grid>
+      <Box mt={3} mb={3}>
+        <CustomTable title="Total Orders" headers={headers}>
+          {consultations.map((row) => (
+            <TableRow hover key={row.id}>
+              <TableCell>
+                <Checkbox />
+              </TableCell>
+
+              <TableCell>{row.id}</TableCell>
+              <TableCell>{row.subject}</TableCell>
+              <TableCell>{row.image}</TableCell>
+              <TableCell>{row.description}</TableCell>
+              <TableCell>{row.dueDate}</TableCell>
+              <TableCell>{row.amount}</TableCell>
+
+              <TableCell>
+                <StatusChip status={row.status} label={row.status} />
+              </TableCell>
+
+              <TableCell>
+                <Stack direction={"row"} gap={1}>
+                  <IconButton size="small">
+                    <Visibility
+                      fontSize="small"
+                      onClick={() => navigate("/dashboard/user/orders/single")}
+                    />
+                  </IconButton>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          ))}
+        </CustomTable>
+      </Box>
+    </div>
+  );
+};
+
+export default ConsultationsPage;
