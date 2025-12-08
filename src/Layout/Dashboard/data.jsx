@@ -39,8 +39,7 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
       children: [
         { label: "Add Admin", path: "/dashboard/add/admin" },
         { label: "View Admins", path: "/dashboard/view/admins" },
-        { label: "Admin Roles", path: "/dashboard/admin/roles" },
-        { label: "Admin Permissions", path: "/dashboard/admin/permissions" }
+        { label: "Manage Roles", path: "/dashboard/view/admin-roles" },
       ]
     },
     {

@@ -2,23 +2,33 @@ import React, { useState } from "react";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
 import { admins, headers } from "./data";
-import { VisibilityOutlined } from "@mui/icons-material";
+import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
-const Administrators = () => {
+const AdminRoles = () => {
   const [search, setSearch] = useState();
+  const navigate = useNavigate();
 
   return (
     <div>
       <PagesHeader
-        label="Manage Admininstrators"
-        desc="Manage admministrators, update admin roles and permissions, add administrators, terminate or disable and admin, send mails. "
+        label="Manage Roles"
+        desc="Manage admministrators roles, add, edit and disable admin roles. "
         enableSearch
+        placeholder="Seach admin role.."
         searchValue={search}
         onSearchChange={setSearch}
+        actions={[
+          {
+            label: "Add Role",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/add/admin-roles")
+          }
+        ]}
       />
 
       <Box mt={3} mb={3}>
-        <CustomTable title="Total Admins" headers={headers}>
+        <CustomTable title="Admin Roles" headers={headers}>
           {admins.map((row) => (
             <TableRow hover key={row.id}>
               <TableCell>
@@ -48,4 +58,4 @@ const Administrators = () => {
   );
 };
 
-export default Administrators;
+export default AdminRoles;

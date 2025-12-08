@@ -16,3 +16,4 @@ export { default as HeaderBreadCrumb } from "./Dashboard/HeaderBreadCumb";
 export { default as ProfileStatusCard } from "./Dashboard/Charts/ProfileStatusCard";
 export { default as PagesHeader } from "./Dashboard/PagesHeader";
 export { default as InputLabel } from "./Dashboard/InputLabel";
+export { default as CustomButton } from "./Dashboard/CustomButton";

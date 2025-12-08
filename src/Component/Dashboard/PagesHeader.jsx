@@ -9,7 +9,8 @@ const PagesHeader = ({
   enableSearch = false,
   searchValue = "",
   onSearchChange = () => {},
-  actions = []
+  actions = [],
+  placeholder = "Search..."
 }) => {
   return (
     <Box sx={{ mt: 2, mb: 5 }}>
@@ -22,49 +23,21 @@ const PagesHeader = ({
           gap: 2
         }}
       >
-        <Box>
+        {/* Left side - Title and description */}
+        <Box sx={{ flex: "1 1 auto", minWidth: 0 }}>
+          <Typography sx={{ fontWeight: 600, fontSize: 33 }}>
+            {label}
+          </Typography>
+
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "baseline"
+              mb: 1.5,
+              width: 50,
+              borderRadius: 6,
+              borderBottom: "4px solid",
+              borderColor: color
             }}
-          >
-            <Box>
-              <Typography sx={{ fontWeight: 600, fontSize: 33 }}>
-                {label}
-              </Typography>
-
-              <Box
-                sx={{
-                  mb: 1.5,
-                  width: 50,
-                  borderRadius: 6,
-                  borderBottom: "4px solid",
-                  borderColor: color
-                }}
-              />
-            </Box>
-
-            <Stack direction={"row"} gap={2}>
-              {actions.slice(0, 3).map((btn, i) => (
-                <CustomButton
-                  title={btn.label}
-                  key={i}
-                  variant="filled"
-                  color="primary"
-                  startIcon={btn.icon}
-                  onClick={btn.onClick}
-                  href={btn.href}
-                  sx={{
-                    textTransform: "none",
-                    px: 2
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
+          />
 
           {desc && (
             <Typography
@@ -80,18 +53,38 @@ const PagesHeader = ({
           )}
         </Box>
 
+        {/* Right side - Action buttons and search */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             gap: 1.5,
-            flexWrap: "wrap"
+            flexWrap: "wrap",
+            flexShrink: 0
           }}
         >
+          <Stack direction={"row"} gap={2}>
+            {actions.slice(0, 3).map((btn, i) => (
+              <CustomButton
+                title={btn.label}
+                key={i}
+                variant="filled"
+                color="primary"
+                startIcon={btn.icon}
+                onClick={btn.onClick}
+                href={btn.href}
+                sx={{
+                  textTransform: "none",
+                  px: 2
+                }}
+              />
+            ))}
+          </Stack>
+
           {enableSearch && (
             <TextField
               size="small"
-              placeholder="Search..."
+              placeholder={placeholder}
               value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
               sx={{ width: 300 }}

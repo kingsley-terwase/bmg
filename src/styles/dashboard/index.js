@@ -13,6 +13,21 @@ const styles = {
     objectFit: "contain",
     marginTop: "5px"
   },
+  card: {
+    padding: "20px 50px",
+    background: "#fff",
+    borderRadius: "18px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+  },
+
+  input: {
+    border: "1px solid #D9D9D9",
+    borderRadius: "10px",
+    px: 1,
+    width: "100%",
+    mb: 2,
+    height: 40
+  },
 
   //----INFOCARD STYLES-----//
   iconCon: {

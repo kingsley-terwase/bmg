@@ -5,10 +5,10 @@ const InputLabel = ({ text = "" }) => {
   return (
     <Typography
       fontSize="14px"
-      fontFamily="Raleway"
+      fontFamily="Comfortaa"
       fontWeight={600}
       color="#363853"
-      mb={2}
+      mb={1}
     >
       {text}
     </Typography>

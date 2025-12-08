@@ -4,7 +4,10 @@ const StatusChip = ({ label, status }) => {
   const colors = {
     pending: { bg: "#FFC107", color: "#000" },
     completed: { bg: "#4CAF50", color: "#fff" },
-    cancelled: { bg: "#F44336", color: "#fff" }
+    cancelled: { bg: "#F44336", color: "#fff" },
+        inactive: { bg: "#FFC107", color: "#000" },
+    active: { bg: "#4CAF50", color: "#fff" },
+
   };
 
   return (

@@ -10,7 +10,9 @@ import {
   AddCategoriesPage,
   AddExpertPage,
   OrdersPage,
-  AddAdminPage
+  AddAdminPage,
+  AdminRoles,
+  AddAdminRole
 } from "../../Pages/Dashboard";
 import { ExpertOverview, ExpertOrders } from "../../Pages/Experts";
 import {
@@ -32,7 +34,9 @@ const DashboardRoutes = () => {
         <Routes>
           <Route index element={<DashboardHome />} />
           <Route path="/view/admins" element={<Administrators />} />
-                    <Route path="/add/admin" element={<AddAdminPage />} />
+          <Route path="/add/admin" element={<AddAdminPage />} />
+          <Route path="/view/admin-roles" element={<AdminRoles />} />
+          <Route path="/add/admin-roles" element={<AddAdminRole />} />
 
           <Route path="/users" element={<UsersPage />} />
           <Route path="/admin/experts" element={<ExpertsPage />} />
@@ -62,10 +66,7 @@ const DashboardRoutes = () => {
             path="/user/artificial-intelligence"
             element={<UserAIPage />}
           />
-                    <Route
-            path="/user/consultations"
-            element={<ConsultationsPage />}
-          />
+          <Route path="/user/consultations" element={<ConsultationsPage />} />
         </Routes>
       </DashboardLayout>
     </>
