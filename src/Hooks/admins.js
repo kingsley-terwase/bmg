@@ -5,11 +5,12 @@ import {useUserContext} from "../Contexts"
 
 function useAddAdmin() {
   const { config } = useUserContext()
-  return async (data, password) => {
+  return async (data) => {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/admins/create`,
         data,
+        config
       )
       const result = response.data
       console.log(result)

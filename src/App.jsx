@@ -8,17 +8,20 @@ import "react-toastify/dist/ReactToastify.css";
 import UserContextProvider from "./Contexts/UserContext";
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider } from "./Contexts/ThemeContext";
+import { AuthProvider } from "./Contexts/AuthContext";
 
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <UserContextProvider>
-          <CssBaseline />
+        <AuthProvider>
+          <UserContextProvider>
+            <CssBaseline />
 
-          <ToastContainer />
-          <Router />
-        </UserContextProvider>
+            <ToastContainer />
+            <Router />
+          </UserContextProvider>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

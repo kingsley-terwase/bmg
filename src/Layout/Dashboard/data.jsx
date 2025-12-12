@@ -22,7 +22,9 @@ import {
   MailRounded,
   FactoryRounded,
   LayersRounded,
-  ColorLensRounded
+  ColorLensRounded,
+  AccountTreeRounded,
+  LocalActivityRounded
 } from "@mui/icons-material";
 export const getNav = (role = "user", userRole = null, subRole = null) => {
   const baseNav = [
@@ -39,7 +41,7 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
       children: [
         { label: "Add Admin", path: "/dashboard/add/admin" },
         { label: "View Admins", path: "/dashboard/view/admins" },
-        { label: "Manage Roles", path: "/dashboard/view/admin-roles" },
+        { label: "Manage Roles", path: "/dashboard/view/admin-roles" }
       ]
     },
     {
@@ -62,8 +64,27 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
       path: "#",
       icon: <CategoryRounded />,
       children: [
+        {
+          label: "Requirements",
+          path: "/dashboard/admin/categories-requirements"
+        },
         { label: "Add Category", path: "/dashboard/admin/add/categories" },
         { label: "View Categories", path: "/dashboard/admin/categories" }
+      ]
+    },
+    {
+      label: "Sub Categories",
+      path: "#",
+      icon: <AccountTreeRounded />,
+      children: [
+        {
+          label: "Add Sub Category",
+          path: "/dashboard/admin/add/sub-categories"
+        },
+        {
+          label: "View Sub Categories",
+          path: "/dashboard/admin/sub-categories"
+        }
       ]
     },
     {
@@ -83,97 +104,103 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     },
     {
       label: "Payments",
-      path: "/dashboard/payments",
+      path: "/dashboard/admin/payments",
       icon: <CreditCardRounded />,
       children: []
     },
     {
       label: "AI",
-      path: "/dashboard/artificial-intelligence",
+      path: "/dashboard/admin/artificial-intelligence",
       icon: <TipsAndUpdatesRounded />,
       children: []
     },
     {
       label: "Portfolio",
-      path: "/dashboard/portfolios",
+      path: "/dashboard/admin/portfolios",
       icon: <WorkRounded />,
       children: []
     },
     {
       label: "Blog",
-      path: "/dashboard/blogs",
+      path: "/dashboard/admin/blogs",
       icon: <RssFeedRounded />,
       children: []
     },
     {
       label: "Gifts",
-      path: "/dashboard/gifts",
+      path: "/dashboard/admin/gifts",
       icon: <CardGiftcardRounded />,
       children: []
     },
     {
+      label: "Coupons",
+      path: "/dashboard/admin/coupons",
+      icon: <LocalActivityRounded />,
+      children: []
+    },
+    {
       label: "Consultations",
-      path: "/dashboard/consultations",
+      path: "/dashboard/admin/consultations",
       icon: <HelpCenterRounded />,
       children: []
     },
     {
       label: "Campaigns",
-      path: "/dashboard/campaigns",
+      path: "/dashboard/admin/campaigns",
       icon: <CampaignRounded />,
       children: []
     },
     {
       label: "Testimonials",
-      path: "/dashboard/testimonials",
+      path: "/dashboard/admin/testimonials",
       icon: <ContactPageRounded />,
       children: []
     },
     {
       label: "Notifications",
-      path: "/dashboard/notifications",
+      path: "/dashboard/admin/notifications",
       icon: <NotificationsRounded />,
       children: []
     },
     {
       label: "Mails",
-      path: "/dashboard/mails",
+      path: "/dashboard/admin/mails",
       icon: <MailRounded />,
       children: []
     },
     {
       label: "Support",
-      path: "/dashboard/campaigns",
+      path: "/dashboard/admin/support",
       icon: <CampaignRounded />,
       children: []
     },
     {
       label: "Industry",
-      path: "/dashboard/campaigns",
+      path: "/dashboard/admin/industries",
       icon: <FactoryRounded />,
       children: []
     },
     {
       label: "Resources",
-      path: "/dashboard/resources",
+      path: "/dashboard/admin/resources",
       icon: <LayersRounded />,
       children: []
     },
     {
       label: "Subscription",
-      path: "/dashboard/subscriptions",
+      path: "/dashboard/admin/subscriptions",
       icon: <SubscriptionsRounded />,
       children: []
     },
     {
       label: "Colors",
-      path: "/dashboard/colors",
+      path: "/dashboard/admin/colors",
       icon: <ColorLensRounded />,
       children: []
     },
     {
       label: "Settings",
-      path: "/dashboard/settings",
+      path: "/dashboard/admin/settings",
       icon: <SettingsRounded />,
       children: []
     }
@@ -276,9 +303,9 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
   ];
 
   // Return navigation based on role
-  if (role === "admin") {
-    return [...baseNav, ...expertNav, ...userNav];
-  }
+  if (role === "admin") return baseNav;
+  if (role === "expert") return expertNav;
+  if (role === "user") return userNav;
 
   return [...baseNav];
 };
@@ -297,7 +324,7 @@ export const sideNavPaperStyles = (width) => ({
     },
     "&::-webkit-scrollbar-track": {
       background: "#f1f1f1",
-      borderRadius: "10px",
+      borderRadius: "10px"
     },
     "&::-webkit-scrollbar-thumb": {
       background: "#D2D7D7",

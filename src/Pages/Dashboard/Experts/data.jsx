@@ -99,3 +99,17 @@ export const experts = [
     status: "completed"
   }
 ];
+
+export const skills = [
+  { id: 1, skill: "Graphic Designer" },
+  { id: 2, skill: "Software Developer" },
+  { id: 3, skill: "Data Analyst" },
+  { id: 4, skill: "Product Manager" },
+];
+
+export const experience = [
+  { experience: "0-1 year" },
+  { experience: "2-5 years" },
+  { experience: "5-10 years" },
+  { experience: "10 years above" },
+];

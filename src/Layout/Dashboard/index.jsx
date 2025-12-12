@@ -4,14 +4,18 @@ import Sidenav from "./components/SideNav";
 import MobileSidenav from "./components/MobileSidenav";
 import { lightModeColors } from "../../Config/color";
 import NavBar from "./components/Navbar";
+import { useAuth } from "../../Contexts/AuthContext";
 
 const SIDE_NAV_WIDTH = 200;
 const LAYOUT_PADDING = 20;
 const NAV_HEIGHT = 80;
 
-function DashboardLayout({ children, role = "" }) {
+function DashboardLayout({ children}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+
+    const { user } = useAuth();
+  const role = user?.role;
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -82,3 +86,5 @@ function DashboardLayout({ children, role = "" }) {
 }
 
 export default DashboardLayout;
+
+

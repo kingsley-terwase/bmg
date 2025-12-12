@@ -4,15 +4,11 @@ import {
   MoreVertOutlined,
   HelpCenterOutlined,
   TipsAndUpdatesOutlined,
-  CreditCardOutlined
+  CreditCardOutlined,
+  VisibilityOutlined,
+  AddOutlined
 } from "@mui/icons-material";
-import {
-  Box,
-  TableRow,
-  TableCell,
-  Checkbox,
-  IconButton,
-} from "@mui/material";
+import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
   RevenueCard,
@@ -21,10 +17,11 @@ import {
   InfoCard,
   CustomTable,
   StatusChip,
-  HeaderBreadCrumb,
+  PagesHeader,
   ProfileStatusCard
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
+import { useNavigate } from "react-router-dom";
 
 const UserOverview = () => {
   const transactionsData = {
@@ -51,14 +48,35 @@ const UserOverview = () => {
     console.log("Update profile clicked");
   };
 
+  const navigate = useNavigate()
+
   return (
     <div>
       <Box>
-        <HeaderBreadCrumb
-          desc={
-            "View your recent orders, manage your billing addresses, and edit your password and account details"
+      <PagesHeader
+        title="Overview"
+        desc={
+          "Welcome to your dashboard, your central hub for managing orders, consultations, AI services, notifications and mails, and profile."
+        }
+        searchEnabled={false}
+        actions={[
+          {
+            label: "View Orders",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/user/orders")
+          },
+          {
+            label: "Book Consultation",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/user/consultations")
+          },
+          {
+            label: "AI Services",
+            icon: <TipsAndUpdatesOutlined />,
+            onClick: () => navigate("/dashboard/users/artificial-intelligence")
           }
-        />
+        ]}
+      />
 
         <Box>
           <Grid
@@ -123,14 +141,14 @@ const UserOverview = () => {
 
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid size={{ xs: 12, md: 4 }}>
-<InsightPieCard
-  title="Orders Insight"
-  chartData={[
-    { name: "Completed", value: 65000, color: "#4CAF50" },
-    { name: "Pending", value: 5500, color: "#FF9800" },
-    { name: "Cancelled", value: 3500, color: "#F44336" },
-  ]}
-/>
+            <InsightPieCard
+              title="Orders Insight"
+              chartData={[
+                { name: "Completed", value: 65000, color: "#4CAF50" },
+                { name: "Pending", value: 5500, color: "#FF9800" },
+                { name: "Cancelled", value: 3500, color: "#F44336" }
+              ]}
+            />
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <TransactionsCard data={transactionsData} title={"Payments"} />

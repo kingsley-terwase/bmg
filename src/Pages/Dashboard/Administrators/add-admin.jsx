@@ -21,7 +21,7 @@ import { styles } from "../../../styles/dashboard";
 import { useAddAdmin } from "../../../Hooks/admins";
 import { useNavigate } from "react-router-dom";
 
-const AddAdminPage = ({ updateTabType }) => {
+const AddAdminPage = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -77,7 +77,6 @@ const AddAdminPage = ({ updateTabType }) => {
         setGender("");
         setCountryId("");
         setSubRole("");
-        updateTabType("index");
       }
     } catch (error) {
       toast.error("Admin registration failed.");
@@ -237,7 +236,7 @@ const AddAdminPage = ({ updateTabType }) => {
                   color="warning"
                   variant="filled"
                   startIcon={<DeleteOutlined />}
-                  onClick={() => updateTabType("index")}
+                  onClick={() => {}}
                   sx={{ textTransform: "none", paddingInline: 20 }}
                 />
 

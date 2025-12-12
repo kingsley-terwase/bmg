@@ -23,8 +23,7 @@ const PagesHeader = ({
           gap: 2
         }}
       >
-        {/* Left side - Title and description */}
-        <Box sx={{ flex: "1 1 auto", minWidth: 0 }}>
+        <Box sx={{ flex: "auto", width: 100 }}>
           <Typography sx={{ fontWeight: 600, fontSize: 33 }}>
             {label}
           </Typography>
@@ -53,7 +52,6 @@ const PagesHeader = ({
           )}
         </Box>
 
-        {/* Right side - Action buttons and search */}
         <Box
           sx={{
             display: "flex",

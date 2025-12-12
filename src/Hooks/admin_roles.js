@@ -8,12 +8,13 @@ function useAddAdminRole() {
   const { config } = useUserContext()
   const [loading, setLoading] = useState(false)
 
-  const addAdminRole = async (data, password) => {
+  const addAdminRole = async (data) => {
     setLoading(true)
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/admins/type/create`,
         data,
+        config
       )
       const result = response.data
 

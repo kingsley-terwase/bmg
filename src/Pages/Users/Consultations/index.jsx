@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const ConsultationsPage = () => {
+const UserConsultationsPage = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
@@ -133,4 +133,4 @@ const ConsultationsPage = () => {
   );
 };
 
-export default ConsultationsPage;
+export default UserConsultationsPage;

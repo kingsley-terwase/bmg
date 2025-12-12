@@ -10,7 +10,8 @@ const InfoCard = ({
   value,
   actionLabel = "View More",
   onAction,
-  color = dbColors.main.default
+  color = dbColors.main.default,
+  arrow = false
 }) => {
   return (
     <Box
@@ -84,12 +85,14 @@ const InfoCard = ({
           >
             {actionLabel}
           </Typography>
+          { arrow && 
           <ArrowForwardRounded
             sx={{
               fontSize: { xs: 10, md: 20 },
               color: color
             }}
           />
+          }
         </Stack>
       </Box>
     </Box>

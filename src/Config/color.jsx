@@ -8,6 +8,25 @@ export const dbColors = {
   }
 };
 
+export const defaultColors = [
+  "#EF4444",
+  "#10B981",
+  "#3B82F6",
+  "#F59E0B",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
+  "#6366F1",
+  "#F97316",
+  "#06B6D4",
+  "#84CC16",
+  "#A855F7",
+  "#1E293B",
+  "#6B7280",
+  "#0EA5E9",
+  "#7C3AED"
+];
+
 export const lightModeColors = {
   primary: {
     main: "#2f317c",

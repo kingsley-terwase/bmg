@@ -86,7 +86,6 @@ export const getTheme = (mode) => {
             backgroundColor: mode === 'dark' ? '#22222265' : '#ffffff',
             borderRadius: 9,
             '& .MuiOutlinedInput-root': {
-              height: '48px',
               '& fieldset': {
                 borderWidth: '1.5px',
               },

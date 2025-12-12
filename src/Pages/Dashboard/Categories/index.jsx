@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
-import { categories, headers } from "./data";
 import {
-  AddOutlined,
-  VisibilityOutlined
-} from "@mui/icons-material";
+  CustomTable,
+  StatusChip,
+  PagesHeader,
+} from "../../../Component";
+import { categories, headers } from "./data";
+import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const CategoriesPage = () => {
@@ -16,8 +17,9 @@ const CategoriesPage = () => {
     <div>
       <PagesHeader
         label="Manage Categories"
-        desc="Control categories of services, add, edit and delet categories."
+        desc="Control and manage categories of services, add, edit and delete categories."
         enableSearch
+        placeholder="Search Categories..."
         searchValue={search}
         onSearchChange={setSearch}
         actions={[
@@ -25,6 +27,16 @@ const CategoriesPage = () => {
             label: "Add Category",
             icon: <AddOutlined />,
             onClick: () => navigate("/dashboard/admin/add/categories")
+          },
+          {
+            label: "Add SubCategory",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/sub-categories")
+          },
+          {
+            label: "Add Service",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/service")
           }
         ]}
       />
