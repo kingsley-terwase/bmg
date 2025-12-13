@@ -38,11 +38,22 @@ import { HeroSection } from '../Herosection';
 
 const MegaDropdown = ({ items, isOpen, onClose }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const [hoveredCategory, setHoveredCategory] = useState(items[0]?.category || '');
 
     if (!isOpen) return null;
 
     const currentCategory = items.find(item => item.category === hoveredCategory);
+
+    const handleItemClick = (e, path) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (path) {
+            onClose();
+            navigate(path);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     return (
         <Paper
@@ -67,7 +78,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
         >
             <Grid container sx={{ minHeight: 400 }}>
                 <Grid
-                    size={{ xs:3 }}
+                    size={{ xs: 3 }}
                     sx={{
                         backgroundColor: theme.palette.mode === 'dark'
                             ? theme.palette.primary.lightBg
@@ -140,7 +151,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                     ))}
                 </Grid>
 
-                <Grid size={{ xs:9 }}  sx={{ p: 4 }}>
+                <Grid size={{ xs: 9 }} sx={{ p: 4 }}>
                     {currentCategory && (
                         <>
                             <Box sx={{ mb: 3 }}>
@@ -166,20 +177,21 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                                 {currentCategory.items.map((subItem, idx) => (
                                     <Grid item xs={6} key={idx}>
                                         <Box
+                                            onClick={(e) => handleItemClick(e, subItem.path)}
                                             sx={{
                                                 p: 2,
                                                 borderRadius: 2,
-                                                cursor: 'pointer',
+                                                cursor: subItem.path ? 'pointer' : 'default',
                                                 transition: 'all 0.2s ease',
                                                 border: `1px solid ${theme.palette.divider}`,
-                                                '&:hover': {
+                                                '&:hover': subItem.path ? {
                                                     backgroundColor: theme.palette.primary.main + '08',
                                                     borderColor: theme.palette.primary.main,
                                                     transform: 'translateY(-2px)',
                                                     boxShadow: theme.palette.mode === 'dark'
                                                         ? '0 4px 12px rgba(144, 202, 249, 0.15)'
                                                         : '0 4px 12px rgba(47, 49, 124, 0.15)'
-                                                }
+                                                } : {}
                                             }}
                                         >
                                             <Typography
@@ -210,6 +222,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                             {currentCategory.cta && (
                                 <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
                                     <Button
+                                        onClick={(e) => handleItemClick(e, currentCategory.ctaPath)}
                                         variant="contained"
                                         sx={{
                                             backgroundColor: theme.palette.warning.light,
@@ -251,114 +264,129 @@ const Header = () => {
         setMobileOpen((prev) => !prev);
     };
 
-    // Services dropdown data
+    // Services dropdown data with routes
     const servicesData = [
         {
-            category: 'CRM',
-            icon: <People24Regular />,
-            description: 'Streamlined Customer Relations',
-            items: [
-                { title: 'Lead Management', description: 'Capture and convert leads with automated tracking' },
-                { title: 'Deals Management', description: 'Manage sales pipeline with visual kanban boards' },
-                { title: 'Goals Management', description: 'Set and track sales targets with real-time progress' },
-                { title: 'Sales Management', description: 'Complete sales automation from quotes to payments' },
-            ],
-            cta: 'Explore CRM'
-        },
-        {
-            category: 'Projects',
+            category: 'Business Services',
             icon: <Briefcase24Regular />,
-            description: 'Project Management Solutions',
+            description: 'Comprehensive business solutions',
             items: [
-                { title: 'Task Management', description: 'Organize and prioritize your team tasks' },
-                { title: 'Time Tracking', description: 'Monitor time spent on projects and tasks' },
-                { title: 'Team Collaboration', description: 'Work together seamlessly with your team' },
-                { title: 'Project Analytics', description: 'Get insights into project performance' },
-            ]
+                { title: 'CRM Solutions', description: 'Customer relationship management', path: '/service' },
+                { title: 'Project Management', description: 'Manage projects efficiently', path: '/service' },
+                { title: 'Consulting', description: 'Expert business consulting', path: '/service' },
+                { title: 'Analytics', description: 'Business intelligence and analytics', path: '/service' },
+            ],
+            cta: 'View All Services',
+            ctaPath: '/service'
         },
         {
-            category: 'Field Service',
-            icon: <Wrench24Regular />,
-            description: 'On-site Service Management',
+            category: 'Digital Services',
+            icon: <Code24Regular />,
+            description: 'Digital transformation services',
             items: [
-                { title: 'Scheduling', description: 'Optimize field technician schedules' },
-                { title: 'Work Orders', description: 'Create and manage work orders efficiently' },
-                { title: 'GPS Tracking', description: 'Track field team locations in real-time' },
-                { title: 'Mobile Access', description: 'Access everything from mobile devices' },
-            ]
+                { title: 'Web Development', description: 'Custom website solutions', path: '/service' },
+                { title: 'App Development', description: 'Mobile and web applications', path: '/service' },
+                { title: 'Cloud Services', description: 'Cloud infrastructure and migration', path: '/service' },
+                { title: 'API Integration', description: 'Third-party integrations', path: '/service' },
+            ],
+            cta: 'Explore Digital Services',
+            ctaPath: '/service'
         },
         {
-            category: 'Forms',
-            icon: <DocumentText24Regular />,
-            description: 'Custom Form Builder',
+            category: 'Marketing Services',
+            icon: <Megaphone24Regular />,
+            description: 'Digital marketing solutions',
             items: [
-                { title: 'Form Builder', description: 'Create custom forms with drag and drop' },
-                { title: 'Data Collection', description: 'Collect and organize data efficiently' },
-                { title: 'Integrations', description: 'Connect forms with other tools' },
-                { title: 'Analytics', description: 'Analyze form responses and submissions' },
-            ]
+                { title: 'SEO Services', description: 'Search engine optimization', path: '/service' },
+                { title: 'Social Media', description: 'Social media management', path: '/service' },
+                { title: 'Content Marketing', description: 'Content strategy and creation', path: '/service' },
+                { title: 'Email Marketing', description: 'Email campaign management', path: '/service' },
+            ],
+            cta: 'Marketing Solutions',
+            ctaPath: '/service'
+        },
+        {
+            category: 'AI Services',
+            icon: <Apps24Regular />,
+            description: 'AI-powered solutions',
+            items: [
+                { title: 'AI Suites', description: 'Complete AI toolset', path: '/ai-suites' },
+                { title: 'AI Web Generator', description: 'Generate websites with AI', path: '/ai-web' },
+                { title: 'Automation', description: 'Business process automation', path: '/service' },
+                { title: 'Machine Learning', description: 'ML model development', path: '/service' },
+            ],
+            cta: 'Discover AI Services',
+            ctaPath: '/ai-suites'
         }
     ];
 
-    // Gigs dropdown data
+    // Gigs dropdown data with routes
     const gigsData = [
         {
             category: 'Design & Creative',
             icon: <DesignIdeas24Regular />,
             description: 'Creative services for your business',
             items: [
-                { title: 'Logo Design', description: 'Professional logo design services' },
-                { title: 'Brand Identity', description: 'Complete brand identity packages' },
-                { title: 'UI/UX Design', description: 'User interface and experience design' },
-                { title: 'Illustration', description: 'Custom illustrations and artwork' },
-            ]
+                { title: 'Logo Design', description: 'Professional logo design services', path: '/category' },
+                { title: 'Brand Identity', description: 'Complete brand identity packages', path: '/category' },
+                { title: 'UI/UX Design', description: 'User interface and experience design', path: '/category' },
+                { title: 'Illustration', description: 'Custom illustrations and artwork', path: '/category' },
+            ],
+            cta: 'Browse Design Gigs',
+            ctaPath: '/category'
         },
         {
             category: 'Development',
             icon: <Code24Regular />,
             description: 'Software development services',
             items: [
-                { title: 'Web Development', description: 'Custom website development' },
-                { title: 'Mobile Apps', description: 'iOS and Android app development' },
-                { title: 'API Integration', description: 'Third-party API integrations' },
-                { title: 'Database Design', description: 'Database architecture and optimization' },
-            ]
+                { title: 'Web Development', description: 'Custom website development', path: '/category' },
+                { title: 'Mobile Apps', description: 'iOS and Android app development', path: '/category' },
+                { title: 'E-commerce', description: 'Online store development', path: '/category' },
+                { title: 'WordPress', description: 'WordPress customization', path: '/category' },
+            ],
+            cta: 'Find Developers',
+            ctaPath: '/category'
         },
         {
-            category: 'Marketing',
+            category: 'Digital Marketing',
             icon: <Megaphone24Regular />,
-            description: 'Digital marketing solutions',
+            description: 'Marketing and promotion services',
             items: [
-                { title: 'SEO Services', description: 'Search engine optimization' },
-                { title: 'Content Marketing', description: 'Content strategy and creation' },
-                { title: 'Social Media', description: 'Social media management' },
-                { title: 'Email Marketing', description: 'Email campaign management' },
-            ]
+                { title: 'SEO Services', description: 'Search engine optimization', path: '/category' },
+                { title: 'Content Marketing', description: 'Content strategy and creation', path: '/category' },
+                { title: 'Social Media', description: 'Social media management', path: '/category' },
+                { title: 'PPC Advertising', description: 'Pay-per-click campaigns', path: '/category' },
+            ],
+            cta: 'Marketing Experts',
+            ctaPath: '/category'
         },
         {
-            category: 'Writing',
+            category: 'Writing & Translation',
             icon: <Edit24Regular />,
             description: 'Professional writing services',
             items: [
-                { title: 'Copywriting', description: 'Compelling marketing copy' },
-                { title: 'Content Writing', description: 'Blog posts and articles' },
-                { title: 'Technical Writing', description: 'Documentation and guides' },
-                { title: 'Editing', description: 'Professional editing and proofreading' },
-            ]
+                { title: 'Copywriting', description: 'Compelling marketing copy', path: '/category' },
+                { title: 'Content Writing', description: 'Blog posts and articles', path: '/category' },
+                { title: 'Technical Writing', description: 'Documentation and guides', path: '/category' },
+                { title: 'Translation', description: 'Professional translation services', path: '/category' },
+            ],
+            cta: 'Hire Writers',
+            ctaPath: '/category'
         }
     ];
 
-    // Others dropdown data (for additional nav items)
+    // Others dropdown data
     const othersData = [
         {
             category: 'Company',
             icon: <Briefcase24Regular />,
             description: 'Learn more about us',
             items: [
-                { title: 'About Us', description: 'Our story and mission' },
-                { title: 'Careers', description: 'Join our growing team' },
-                { title: 'Press & Media', description: 'News and press releases' },
-                { title: 'Contact Us', description: 'Get in touch with us' },
+                { title: 'About Us', description: 'Our story and mission', path: '/about-us' },
+                { title: 'Pricing', description: 'View our pricing plans', path: '/pricing' },
+                { title: 'How It Works', description: 'Learn how our platform works', path: '/how-it-works' },
+                { title: 'Contact Us', description: 'Get in touch with us', path: '/contact-us' },
             ]
         },
         {
@@ -366,10 +394,10 @@ const Header = () => {
             icon: <People24Regular />,
             description: 'Help and support center',
             items: [
-                { title: 'Help Center', description: 'Find answers to common questions' },
-                { title: 'Community Forum', description: 'Connect with other users' },
-                { title: 'Live Chat', description: 'Chat with our support team' },
-                { title: 'Report Issue', description: 'Report bugs or issues' },
+                { title: 'Track Order', description: 'Track your order status', path: '/track-order' },
+                { title: 'Resources', description: 'Helpful resources and guides', path: '/resources' },
+                { title: 'AI Suites', description: 'Explore our AI tools', path: '/ai-suites' },
+                { title: 'AI Web Generator', description: 'Generate websites with AI', path: '/ai-web' },
             ]
         },
         {
@@ -377,21 +405,21 @@ const Header = () => {
             icon: <DocumentText24Regular />,
             description: 'Policies and terms',
             items: [
-                { title: 'Privacy Policy', description: 'How we protect your data' },
-                { title: 'Terms of Service', description: 'Terms and conditions' },
-                { title: 'Cookie Policy', description: 'How we use cookies' },
-                { title: 'Compliance', description: 'Legal compliance information' },
+                { title: 'Privacy Policy', description: 'How we protect your data', path: '/privacy-policy' },
+                { title: 'Terms & Conditions', description: 'Terms and conditions', path: '/terms-conditions' },
+                { title: 'Contact Us', description: 'Legal inquiries', path: '/contact-us' },
+                { title: 'About Us', description: 'Company information', path: '/about-us' },
             ]
         },
         {
-            category: 'Partners',
+            category: 'More',
             icon: <Apps24Regular />,
-            description: 'Partnership opportunities',
+            description: 'Additional features',
             items: [
-                { title: 'Become a Partner', description: 'Join our partner program' },
-                { title: 'Affiliate Program', description: 'Earn by referring customers' },
-                { title: 'API Access', description: 'Integrate with our platform' },
-                { title: 'Reseller Program', description: 'Resell our services' },
+                { title: 'Gift Voucher', description: 'Purchase gift vouchers', path: '/gift-voucher' },
+                { title: 'Portfolio', description: 'View our work portfolio', path: '/portfolio' },
+                { title: 'Blogs', description: 'Read our latest articles', path: '/blogs' },
+                { title: 'Resources', description: 'Helpful resources', path: '/resources' },
             ]
         }
     ];

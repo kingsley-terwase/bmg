@@ -44,7 +44,7 @@ const BreadcrumbBar = ({
                         sx={{
                             display: "flex",
                             alignItems: "center",
-                            width: '600px',
+                            width: {xs: '100%', md:'600px'},
                             px: 3,
                             py: 0.6,
                             borderRadius: "16px",

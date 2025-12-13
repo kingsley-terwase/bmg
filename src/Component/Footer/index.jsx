@@ -16,6 +16,8 @@ import {
   useTheme
 } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -24,46 +26,61 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 const Footer = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   // Social Media
   const socialLinks = [
-    { icon: <YouTubeIcon />, name: "YouTube" },
-    { icon: <FacebookIcon />, name: "Facebook" },
-    { icon: <TwitterIcon />, name: "Twitter" },
-    { icon: <InstagramIcon />, name: "Instagram" },
-    { icon: <LinkedInIcon />, name: "LinkedIn" }
+    { icon: <YouTubeIcon />, name: "YouTube", href: "#" },
+    { icon: <FacebookIcon />, name: "Facebook", href: "#" },
+    { icon: <TwitterIcon />, name: "Twitter", href: "#" },
+    { icon: <InstagramIcon />, name: "Instagram", href: "#" },
+    { icon: <LinkedInIcon />, name: "LinkedIn", href: "#" }
   ];
 
-  // Footer Links
+  // Footer Links with correct routes
   const footerLinks = {
     Company: [
-      { name: "About Us", href: "#" },
-      { name: "Media", href: "#" },
-      { name: "Press Releases", href: "#" },
-      { name: "Testimonials", href: "#" },
-      { name: "Careers", href: "#" }
+      { name: "About Us", path: "/about-us" },
+      { name: "Contact Us", path: "/contact-us" },
+      { name: "Pricing", path: "/pricing" },
+      { name: "How It Works", path: "/how-it-works" },
+      { name: "Portfolio", path: "/portfolio" }
     ],
     "Popular Services": [
-      { name: "Logo Design", href: "#" },
-      { name: "Website Development", href: "#" },
-      { name: "AI Generator", href: "#" },
-      { name: "Animation", href: "#" },
-      { name: "Digital Marketing", href: "#" }
+      { name: "All Services", path: "/service" },
+      { name: "AI Suites", path: "/ai-suites" },
+      { name: "AI Web Generator", path: "/ai-web" },
+      { name: "Gigs", path: "/category" },
+      { name: "Gift Voucher", path: "/gift-voucher" }
     ],
     "Get Started": [
-      { name: "Account Login", href: "#" },
-      { name: "How It Works", href: "#" },
-      { name: "All Services", href: "#" },
-      { name: "Free Consultation", href: "#" },
-      { name: "Packages", href: "#" }
+      { name: "Account Login", path: "/login" },
+      { name: "Register", path: "/register" },
+      { name: "Track Order", path: "/track-order" },
+      { name: "Checkout", path: "/checkout" },
+      { name: "Resources", path: "/resources" }
     ],
     Resources: [
-      { name: "Blog", href: "#" },
-      { name: "Help Centre", href: "#" },
-      { name: "Partners", href: "#" },
-      { name: "Gift Voucher", href: "#" },
-      { name: "FAQs", href: "#" }
+      { name: "Blog", path: "/blogs" },
+      { name: "Resources", path: "/resources" },
+      { name: "Portfolio", path: "/portfolio" },
+      { name: "Gift Voucher", path: "/gift-voucher" },
+      { name: "Privacy Policy", path: "/privacy-policy" }
     ]
+  };
+
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
+    if (path) {
+      navigate(path);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSocialClick = (e, href) => {
+    e.preventDefault();
+    // You can add actual social media links here
+    console.log(`Navigate to ${href}`);
   };
 
   return (
@@ -71,15 +88,21 @@ const Footer = () => {
       component="footer"
       sx={{
         color: theme.palette.primary.contrastText,
-        // backgroundColor: theme.palette.background.footer,
-        background:'linear-gradient(135deg, #111827, #1e293b, #111827)',
+        background: 'linear-gradient(135deg, #111827, #1e293b, #111827)',
         position: "relative"
       }}
     >
       <Box sx={{ maxWidth: "1200px", mx: "auto", px: 3, py: 8 }}>
         <Grid container spacing={6}>
-          <Grid size={{xs:12, md:4, lg:4 }}>
-            <Box display="flex" alignItems="center" gap={2} mb={3}>
+          <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={2}
+              mb={3}
+              onClick={() => navigate('/')}
+              sx={{ cursor: 'pointer' }}
+            >
               <Box
                 component="img"
                 src="/Logo/Logo.png"
@@ -130,8 +153,9 @@ const Footer = () => {
                 <Box
                   key={i}
                   component="a"
-                  href="#"
+                  href={s.href}
                   title={s.name}
+                  onClick={(e) => handleSocialClick(e, s.href)}
                   sx={{
                     width: 40,
                     height: 40,
@@ -147,7 +171,8 @@ const Footer = () => {
                       color: theme.palette.primary.contrastText
                     },
                     textDecoration: "none",
-                    color: theme.palette.text.primary
+                    color: theme.palette.text.primary,
+                    cursor: "pointer"
                   }}
                 >
                   {s.icon}
@@ -157,12 +182,12 @@ const Footer = () => {
           </Grid>
 
           {Object.entries(footerLinks).map(([category, links]) => (
-            <Grid size={{ xs:6, md:2, lg:2 }} key={category}>
+            <Grid size={{ xs: 6, md: 2, lg: 2 }} key={category}>
               <Typography
                 variant="h6"
                 fontWeight="bold"
                 mb={3}
-                sx={{ color: theme.palette.primary.contrastText, }}
+                sx={{ color: theme.palette.primary.contrastText }}
               >
                 {category}
               </Typography>
@@ -171,15 +196,21 @@ const Footer = () => {
                 <Box
                   key={idx}
                   component="a"
-                  href={link.href}
-                  style={{ textDecoration: "none" }}
+                  href={link.path}
+                  onClick={(e) => handleLinkClick(e, link.path)}
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: 1,
                     mb: 1.5,
                     color: theme.palette.primary.contrastText,
-                    "&:hover": { color: theme.palette.primary.main }
+                    textDecoration: "none",
+                    cursor: "pointer",
+                    transition: "0.2s",
+                    "&:hover": {
+                      color: theme.palette.primary.main,
+                      transform: "translateX(4px)"
+                    }
                   }}
                 >
                   <ChevronRight20Regular />
@@ -211,8 +242,8 @@ const Footer = () => {
         >
           {/* COPYRIGHT */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Typography sx={{ color: theme.palette.primary.contrastText, }}>
-              <strong style={{ color: theme.palette.primary.contrastText, }}>
+            <Typography sx={{ color: theme.palette.primary.contrastText }}>
+              <strong style={{ color: theme.palette.primary.contrastText }}>
                 BestMarketingGiggs
               </strong>{" "}
               © 2025. All rights reserved.
@@ -224,16 +255,54 @@ const Footer = () => {
             display="flex"
             alignItems="center"
             gap={3}
-            sx={{ color: theme.palette.primary.contrastText, }}
+            sx={{ color: theme.palette.primary.contrastText }}
           >
-            <a href="#" style={{ color: theme.palette.primary.contrastText, }}>Terms</a> •
-            <a href="#" style={{ color: theme.palette.primary.contrastText,}}>Privacy</a> •
-            <a href="#" style={{ color: theme.palette.primary.contrastText, }}>Contact</a>
+            <Box
+              component="a"
+              href="/terms-conditions"
+              onClick={(e) => handleLinkClick(e, '/terms-conditions')}
+              sx={{
+                color: theme.palette.primary.contrastText,
+                textDecoration: "none",
+                cursor: "pointer",
+                "&:hover": { color: theme.palette.primary.main }
+              }}
+            >
+              Terms
+            </Box>
+            •
+            <Box
+              component="a"
+              href="/privacy-policy"
+              onClick={(e) => handleLinkClick(e, '/privacy-policy')}
+              sx={{
+                color: theme.palette.primary.contrastText,
+                textDecoration: "none",
+                cursor: "pointer",
+                "&:hover": { color: theme.palette.primary.main }
+              }}
+            >
+              Privacy
+            </Box>
+            •
+            <Box
+              component="a"
+              href="/contact-us"
+              onClick={(e) => handleLinkClick(e, '/contact-us')}
+              sx={{
+                color: theme.palette.primary.contrastText,
+                textDecoration: "none",
+                cursor: "pointer",
+                "&:hover": { color: theme.palette.primary.main }
+              }}
+            >
+              Contact
+            </Box>
           </Box>
 
           {/* LANGUAGE SELECT */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Globe24Regular style={{ color: theme.palette.primary.contrastText, }} />
+            <Globe24Regular style={{ color: theme.palette.primary.contrastText }} />
 
             <Select
               defaultValue="EN"
@@ -242,7 +311,7 @@ const Footer = () => {
                 color: theme.palette.primary.contrastText,
                 borderRadius: 2,
                 "& .MuiSvgIcon-root": {
-                  color: theme.palette.primary.contrastText,
+                  color: theme.palette.primary.contrastText
                 }
               }}
             >
