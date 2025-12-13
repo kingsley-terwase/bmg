@@ -39,3 +39,4 @@ export { default as AddTestimonialsPage } from "./Testimonials/add";
 export { default as IndustriesPage } from "./Industries";
 export { default as AddIndustries } from "./Industries/add";
 export { default as SupportPage } from "./Support";
+export { default as AddColors } from "./Colors/add";

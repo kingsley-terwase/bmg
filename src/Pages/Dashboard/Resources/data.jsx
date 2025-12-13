@@ -9,7 +9,7 @@ export const headers = [
   { key: "actions", label: "", width: "40px" }
 ];
 
-export const industries = [
+export const resources = [
   {
     id: "4YBJ6",
     subject: "Logo",
@@ -99,4 +99,3 @@ export const industries = [
     status: "cancelled"
   }
 ];
-

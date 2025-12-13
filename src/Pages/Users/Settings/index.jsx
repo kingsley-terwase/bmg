@@ -33,7 +33,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { PagesHeader } from "../../../Component";
 
-const SettingsPage = () => {
+const UserSettingsPage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -72,22 +72,22 @@ const SettingsPage = () => {
     <Box>
       <PagesHeader
         label="Settings"
-        desc={"Manage application settings and preferences"}
+        desc={"Manage your account settings and preferences"}
         actions={[
           {
-            label: "Orders",
+            label: "Book Consultation",
             icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/user/book-consultation")
+          },
+          {
+            label: "My Orders",
+            icon: <VisibilityOutlined />,
             onClick: () => navigate("/dashboard/user/orders")
           },
           {
-            label: "Services",
+            label: "AI Services",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/services")
-          },
-          {
-            label: "Categories",
-            icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/categories")
+            onClick: () => navigate("/dashboard/user/artificial-intelligence")
           }
         ]}
       />
@@ -288,4 +288,4 @@ const SettingsPage = () => {
   );
 };
 
-export default SettingsPage;
+export default UserSettingsPage;

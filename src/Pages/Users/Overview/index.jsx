@@ -48,35 +48,36 @@ const UserOverview = () => {
     console.log("Update profile clicked");
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div>
       <Box>
-      <PagesHeader
-        title="Overview"
-        desc={
-          "Welcome to your dashboard, your central hub for managing orders, consultations, AI services, notifications and mails, and profile."
-        }
-        searchEnabled={false}
-        actions={[
-          {
-            label: "View Orders",
-            icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/orders")
-          },
-          {
-            label: "Book Consultation",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/user/consultations")
-          },
-          {
-            label: "AI Services",
-            icon: <TipsAndUpdatesOutlined />,
-            onClick: () => navigate("/dashboard/users/artificial-intelligence")
+        <PagesHeader
+          title="Overview"
+          desc={
+            "Welcome to your dashboard, your central hub for managing orders, consultations, AI services, notifications and mails, and profile."
           }
-        ]}
-      />
+          searchEnabled={false}
+          actions={[
+            {
+              label: "View Orders",
+              icon: <VisibilityOutlined />,
+              onClick: () => navigate("/dashboard/user/orders")
+            },
+            {
+              label: "Book Consultation",
+              icon: <AddOutlined />,
+              onClick: () => navigate("/dashboard/user/consultations")
+            },
+            {
+              label: "AI Services",
+              icon: <TipsAndUpdatesOutlined />,
+              onClick: () =>
+                navigate("/dashboard/users/artificial-intelligence")
+            }
+          ]}
+        />
 
         <Box>
           <Grid
@@ -97,8 +98,9 @@ const UserOverview = () => {
                     icon={ShoppingBagOutlined}
                     title="Total Orders"
                     value="37"
+                    arrow
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/orders")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -106,8 +108,9 @@ const UserOverview = () => {
                     icon={HelpCenterOutlined}
                     title="Consulations"
                     value="8"
+                    arrow
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/consultations")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -116,7 +119,10 @@ const UserOverview = () => {
                     title="AI Services"
                     value="20"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    arrow
+                    onAction={() =>
+                      navigate("/dashboard/user/artificial-intelligence")
+                    }
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -124,8 +130,9 @@ const UserOverview = () => {
                     icon={CreditCardOutlined}
                     title="Payments"
                     value="18"
+                    arrow
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/payments")}
                   />
                 </Grid>
               </Grid>

@@ -20,8 +20,9 @@ import {
   HourglassBottomOutlined,
   CancelOutlined,
   CheckCircleOutline,
-  AddOutlined, 
-  Visibility 
+  AddOutlined,
+  Visibility,
+  VisibilityOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -44,6 +45,11 @@ const UserConsultationsPage = () => {
             label: "Book Consultation",
             icon: <AddOutlined />,
             onClick: () => navigate("/dashboard/user/book-consultation")
+          },
+          {
+            label: "My Orders",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/user/orders")
           }
         ]}
       />

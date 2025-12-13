@@ -20,7 +20,9 @@ import {
   ShoppingBagOutlined,
   HourglassBottomOutlined,
   CancelOutlined,
-  CheckCircleOutline
+  CheckCircleOutline,
+  VisibilityOutlined,
+  TipsAndUpdatesOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -28,12 +30,27 @@ const UserOrders = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <PagesHeader
+
+
+            <PagesHeader
         label="Orders Overview"
         desc={
           "Manage all your orders, track orders progress, update orders status, payment status.  "
         }
-      />
+              searchEnabled={false}
+              actions={[
+                {
+                  label: "View Consulations",
+                  icon: <VisibilityOutlined />,
+                  onClick: () => navigate("/dashboard/user/orders")
+                },
+                {
+                  label: "AI Services",
+                  icon: <TipsAndUpdatesOutlined />,
+                  onClick: () => navigate("/dashboard/users/artificial-intelligence")
+                }
+              ]}
+            />
       <Grid
         container
         rowSpacing={2}

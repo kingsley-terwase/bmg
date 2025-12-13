@@ -14,10 +14,15 @@ import UserAvatar from "./UserAvatar";
 import MenuBox from "./MenuBox";
 import { WavingHandOutlined } from "@mui/icons-material";
 import { dbColors } from "../../../Config/color";
+import { useAuth } from "../../../Contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleSettingsClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,7 +42,9 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
 
   const handleLogout = () => {
     console.log("Logout clicked");
+    logout();
     handleMenuClose();
+    navigate("/login");
   };
 
   return (
@@ -93,7 +100,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
       </Stack>
 
       <Stack direction="row" alignItems="center" gap={{ xs: 1, md: 4 }}>
-        <Stack direction="row" alignItems="center" gap={{xs:2, md:7}}>
+        <Stack direction="row" alignItems="center" gap={{ xs: 2, md: 7 }}>
           <Box onClick={handleNotificationsClick}>
             <MenuBox icon={<Notifications />} count={3} />
           </Box>

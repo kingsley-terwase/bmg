@@ -8,12 +8,16 @@ import {
   Stack
 } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
-import { Visibility } from "@mui/icons-material";
+import {
+  Visibility,
+  AddOutlined,
+  VisibilityOutlined
+} from "@mui/icons-material";
 import { payments, headers } from "./data";
 import { useNavigate } from "react-router-dom";
 
 const UserPaymentsPage = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div>
       <PagesHeader
@@ -21,6 +25,23 @@ const UserPaymentsPage = () => {
         desc={
           "See all your payments, view their status and make pending payments on orders."
         }
+        actions={[
+          {
+            label: "Book Consultation",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/user/consultations")
+          },
+          {
+            label: "View Subscriptions",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/user/subscriptions")
+          },
+          {
+            label: "My Orders",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/user/orders")
+          }
+        ]}
       />
       <Box mt={3} mb={3}>
         <CustomTable title="Total Payments" headers={headers}>
@@ -42,7 +63,10 @@ const UserPaymentsPage = () => {
 
               <TableCell>
                 <Stack direction={"row"} gap={1}>
-                  <IconButton size="small" onClick={navigate("/dashboard/user/payments/single")}>
+                  <IconButton
+                    size="small"
+                    onClick={navigate("/dashboard/user/payments/single")}
+                  >
                     <Visibility fontSize="small" />
                   </IconButton>
                 </Stack>
@@ -52,7 +76,7 @@ const UserPaymentsPage = () => {
         </CustomTable>
       </Box>
     </div>
-  )
-}
+  );
+};
 
-export default UserPaymentsPage
+export default UserPaymentsPage;

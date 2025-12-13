@@ -36,7 +36,12 @@ import {
   ComposeMailPage,
   IndustriesPage,
   AddIndustries,
-  SupportPage
+  SupportPage,
+  SettingsPage,
+  ResourcesPage,
+  ColorsPage,
+  SubscriptionsPage,
+  AddColors
 } from "../../Pages/Dashboard";
 
 import { ExpertOverview, ExpertOrders } from "../../Pages/Experts";
@@ -48,10 +53,14 @@ import {
   UserPaymentsPage,
   UserSinglePayment,
   UserAIPage,
-  UserConsultationsPage
+  UserConsultationsPage,
+  UserNotificationsPage,
+  UserSettingsPage,
+  UserSubscriptionsPage
 } from "../../Pages/Users";
 
 import DashboardLayout from "../../Layout/dashboard";
+import UserSupportPage from "../../Pages/Users/Support";
 
 const DashboardRoutes = () => {
   return (
@@ -112,6 +121,11 @@ const DashboardRoutes = () => {
         <Route path="admin/industries" element={<IndustriesPage />} />
         <Route path="admin/add/industries" element={<AddIndustries />} />
         <Route path="admin/support" element={<SupportPage />} />
+        <Route path="admin/settings" element={<SettingsPage />} />
+        <Route path="admin/resources" element={<ResourcesPage />} />
+        <Route path="admin/colors" element={<ColorsPage />} />
+        <Route path="admin/subscriptions" element={<SubscriptionsPage />} />
+        <Route path="admin/add/colors" element={<AddColors />} />
 
         {/* ----- EXPERT ROUTES ----- */}
         <Route path="expert/overview" element={<ExpertOverview />} />
@@ -125,6 +139,10 @@ const DashboardRoutes = () => {
         <Route path="user/payments/single" element={<UserSinglePayment />} />
         <Route path="user/artificial-intelligence" element={<UserAIPage />} />
         <Route path="user/consultations" element={<UserConsultationsPage />} />
+        <Route path="user/notifications" element={<UserNotificationsPage />} />
+        <Route path="user/settings" element={<UserSettingsPage />} />
+        <Route path="user/subscriptions" element={<UserSubscriptionsPage />} />
+        <Route path="user/support" element={<UserSupportPage />} />
       </Routes>
     </DashboardLayout>
   );
