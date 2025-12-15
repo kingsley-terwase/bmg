@@ -27,7 +27,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   RecipientsTable,
   UserSearch,
-  Sidebar,
+  SideBar,
   CustomButton,
   PagesHeader
 } from "../../../Component";
@@ -169,7 +169,7 @@ const ComposeMailPage = () => {
           )}
 
           <Grid container spacing={3}>
-            {/* Sidebar */}
+            {/* SideBar */}
             <Grid size={{ xs: 12, md: 3 }}>
               <CustomButton
                 title={"Inbox"}
@@ -179,7 +179,7 @@ const ComposeMailPage = () => {
                 startIcon={<MailOutlined />}
                 style={{ marginBottom: "10px" }}
               />
-              <Sidebar mailCount={12} />
+              <SideBar mailCount={12} />
             </Grid>
 
             {/* Main Content */}
