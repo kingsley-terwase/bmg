@@ -49,6 +49,6 @@ export { default as CategoryOverviewCard } from "./Dashboard/Charts/CategoryOver
 export { default as StatusCard } from "./Dashboard/StatusCard";
 export { default as CustomModal } from "./Dashboard/CustomModal";
 export { default as NotificationItem } from "./Dashboard/NotificationItem";
-export { default as RecipientsTable } from "./Dashboard/Mails/RecipientsTable";
 export { default as UserSearch } from "./Dashboard/Mails/Search";
 export { default as Sidebar } from "./Dashboard/Mails/SideBar";
+export {default as RecipientsTable} from "./Dashboard/Mails/RecipientsTable"
