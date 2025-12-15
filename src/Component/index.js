@@ -28,7 +28,6 @@ export { default as FeatureSection } from './FeatSection';
 export { default as PricingSection } from './PricingSection';
 export { default as TestimonialSlider } from './TestimonialSlider';
 
-
 //---DASHBOARD COMPONENT PATHS----//
 export { default as InfoCard } from "./Dashboard/InfoCard";
 export { default as InsightPieCard } from "./Dashboard/Charts/InsightPieCard";
@@ -50,6 +49,6 @@ export { default as CategoryOverviewCard } from "./Dashboard/Charts/CategoryOver
 export { default as StatusCard } from "./Dashboard/StatusCard";
 export { default as CustomModal } from "./Dashboard/CustomModal";
 export { default as NotificationItem } from "./Dashboard/NotificationItem";
-export { default as RecipientsTable } from "./Dashboard/mails/RecipientsTable";
-export { default as UserSearch } from "./Dashboard/mails/Search";
-export { default as Sidebar } from "./Dashboard/mails/SideBar";
+export { default as RecipientsTable } from "./Dashboard/Mails/RecipientsTable";
+export { default as UserSearch } from "./Dashboard/Mails/Search";
+export { default as Sidebar } from "./Dashboard/Mails/SideBar";
