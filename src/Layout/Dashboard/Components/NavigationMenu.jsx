@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { getNav } from "../data";
-import { ActiveLink, InActiveLink } from "./customLink";
+import { ActiveLink, InActiveLink } from "./CustomLink";
 import { dbColors } from "../../../Config/color";
 
 function NavigationMenu({ role }) {
