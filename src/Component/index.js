@@ -44,11 +44,11 @@ export { default as ProfileStatusCard } from "./Dashboard/Charts/ProfileStatusCa
 export { default as PagesHeader } from "./Dashboard/PagesHeader";
 export { default as InputLabel } from "./Dashboard/InputLabel";
 export { default as CustomButton } from "./Dashboard/CustomButton";
+export { default as UserSearch} from "./Dashboard/Mails/Search";
 export { default as UploadMedia } from "./Dashboard/UploadMedia";
 export { default as CategoryOverviewCard } from "./Dashboard/Charts/CategoryOverview";
 export { default as StatusCard } from "./Dashboard/StatusCard";
 export { default as CustomModal } from "./Dashboard/CustomModal";
 export { default as NotificationItem } from "./Dashboard/NotificationItem";
-export { default as UserSearch } from "./Dashboard/Mails/Search";
 export { default as Sidebar } from "./Dashboard/Mails/SideBar";
 export {default as RecipientsTable} from "./Dashboard/Mails/RecipientsTable"
