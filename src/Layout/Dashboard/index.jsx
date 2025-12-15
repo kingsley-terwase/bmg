@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { lightModeColors } from "../../Config/color";
 import { useAuth } from "../../Contexts/AuthContext";
-import SideNav from "./Components/SideNav";
-import MobileSideNav from "./Components/MobileSidenav";
-import NavBar from "./Components/Navbar";
+import { NavBar, MobileSideNav, SideNav } from "./Components";
 
 const SIDE_NAV_WIDTH = 200;
 const LAYOUT_PADDING = 20;
