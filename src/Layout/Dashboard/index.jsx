@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import Sidenav from "./Components/SideNav";
-import MobileSidenav from "./Components/MobileSidenav";
 import { lightModeColors } from "../../Config/color";
-import NavBar from "./Components/Navbar";
 import { useAuth } from "../../Contexts/AuthContext";
+import SideNav from "./Components/SideNav";
+import MobileSideNav from "./Components/MobileSidenav";
+import NavBar from "./Components/Navbar";
 
 const SIDE_NAV_WIDTH = 200;
 const LAYOUT_PADDING = 20;
 const NAV_HEIGHT = 80;
 
-function DashboardLayout({ children}) {
+function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
-    const { user } = useAuth();
+  const { user } = useAuth();
   const role = user?.role;
 
   const handleDrawerClose = () => {
@@ -52,7 +52,7 @@ function DashboardLayout({ children}) {
         aria-label="side-navigation"
       >
         {/* Mobile Drawer */}
-        <MobileSidenav
+        <MobileSideNav
           open={mobileOpen}
           width={SIDE_NAV_WIDTH}
           role={role}
@@ -61,7 +61,7 @@ function DashboardLayout({ children}) {
         />
 
         {/* Desktop Drawer */}
-        <Sidenav width={SIDE_NAV_WIDTH} role={role} />
+        <SideNav width={SIDE_NAV_WIDTH} role={role} />
       </Box>
 
       {/* Main Content Area */}
@@ -76,7 +76,7 @@ function DashboardLayout({ children}) {
           pb: `${LAYOUT_PADDING}px`,
           backgroundColor: lightModeColors.background.default,
           maxWidth: "100%",
-          minHeight: "100vh",
+          minHeight: "100vh"
         }}
       >
         {children}
@@ -86,5 +86,3 @@ function DashboardLayout({ children}) {
 }
 
 export default DashboardLayout;
-
-
