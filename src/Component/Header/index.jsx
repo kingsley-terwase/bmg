@@ -838,7 +838,7 @@ const Header = () => {
                         <Box
                             component="img"
                             alt="Logo"
-                            src="/Logo/Logo.png"
+                            src={theme.palette.mode === 'dark' ? '/Logo/LogoLight.png' : '/Logo/Logo.png'}
                             sx={{ width: '70px', height: 'auto', borderRadius: 2 }}
                         />
                         <IconButton
