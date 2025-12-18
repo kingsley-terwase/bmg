@@ -14,7 +14,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const Sidebar = ({ mailCount = 0 }) => {
+const SideBar = ({ mailCount = 0 }) => {
   const [open, setOpen] = useState(true);
 
   return (
@@ -43,4 +43,4 @@ const Sidebar = ({ mailCount = 0 }) => {
   );
 };
 
-export default Sidebar;
+export default SideBar;

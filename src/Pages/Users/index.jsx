@@ -8,4 +8,4 @@ export { default as UserConsultationsPage } from "./Consultations";
 export { default as UserNotificationsPage } from "./Notifications";
 export { default as UserSettingsPage } from "./Settings";
 export { default as UserSubscriptionsPage } from "./Subscriptions";
-export { default as UserSupport } from "./Support";
+export { default as UserSupportPage } from "./Support";

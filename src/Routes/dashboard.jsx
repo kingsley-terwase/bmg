@@ -42,9 +42,9 @@ import {
   ColorsPage,
   SubscriptionsPage,
   AddColors
-} from "../../Pages/Dashboard";
+} from "../Pages/Dashboard";
 
-import { ExpertOverview, ExpertOrders } from "../../Pages/Experts";
+import { ExpertOverview, ExpertOrders } from "../Pages/Experts";
 
 import {
   UserOverview,
@@ -56,12 +56,11 @@ import {
   UserConsultationsPage,
   UserNotificationsPage,
   UserSettingsPage,
-  UserSubscriptionsPage
-} from "../../Pages/Users";
+  UserSubscriptionsPage,
+  UserSupportPage
+} from "../Pages/Users";
 
-// import DashboardLayout from "../../Layout/dashboard";
-import UserSupportPage from "../../Pages/Users/Support";
-import DashboardLayout from "../../Layout/dashboard";
+import DashboardLayout from "../Layout/Dashboard";
 
 const DashboardRoutes = () => {
   return (
