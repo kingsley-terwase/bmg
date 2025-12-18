@@ -53,7 +53,7 @@ export default function ServiceSlider() {
                 <Box
                     data-aos='fade-down'
                     sx={{
-                        display: 'flex',
+                        display: { xs: 'block', md:'flex' },
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         // mb: 3,

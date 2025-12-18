@@ -124,8 +124,8 @@ export default function HowBMGWorks() {
                         sx={{
                             position: 'relative',
                             zIndex: 2,
-                            width: 90,
-                            height: 90,
+                            width: 120,
+                            height: 120,
                             borderRadius: '50%',
                             bgcolor: 'rgba(255, 255, 255, 0.95)',
                             display: 'flex',
@@ -137,8 +137,8 @@ export default function HowBMGWorks() {
                     >
                         <PlayFilled
                             style={{
-                                fontSize: '52px',
-                                color: theme.palette.text.primary,
+                                fontSize: '62px',
+                                color: theme.palette.text.unique,
                                 marginLeft: '4px'
                             }}
                         />

@@ -171,7 +171,7 @@ const Footer = () => {
                       color: theme.palette.primary.contrastText
                     },
                     textDecoration: "none",
-                    color: theme.palette.text.primary,
+                    color: theme.palette.text.unique,
                     cursor: "pointer"
                   }}
                 >

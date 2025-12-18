@@ -76,7 +76,8 @@ export const lightModeColors = {
     primary: "rgba(0, 0, 0, 0.87)",
     secondary: "rgba(0, 0, 0, 0.6)",
     disabled: "rgba(0, 0, 0, 0.38)",
-    heading: "#1a1a1a"
+    heading: "#1a1a1a",
+    unique: '#000',
   },
   divider: "rgba(0, 0, 0, 0.12)",
   accent: {
@@ -138,7 +139,8 @@ export const darkModeColors = {
     primary: "#fff",
     secondary: "rgba(255, 255, 255, 0.7)",
     disabled: "rgba(255, 255, 255, 0.5)",
-    heading: "#ffffffe3"
+    heading: "#ffffffe3",
+    unique: '#000',
   },
   divider: "rgba(255, 255, 255, 0.12)",
   accent: {
