@@ -45,13 +45,34 @@ export const HeroSection = () => {
     }, []);
 
     return (
-        <Box sx={{ position: "relative", overflow: "hidden" }}>
+        <Box
+            sx={{
+                position: "relative",
+                overflow: "hidden",
+                backgroundImage: 'url(https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&q=80)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundColor: theme.palette.mode === 'dark'
+                        ? 'rgba(0, 0, 0, 0.8)'
+                        : 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(2px)',
+                    zIndex: 0
+                }
+            }}
+        >
             <Box
                 sx={{
                     display: "flex",
                     flexDirection: { xs: "column", md: "row" },
                     alignItems: "center",
-                    minHeight: { md: "600px" }
+                    minHeight: { md: "600px" },
+                    position: 'relative',
+                    zIndex: 1
                 }}
             >
                 <Box sx={{ flex: { md: "0 0 55%" }, width: "100%" }}>
@@ -63,7 +84,7 @@ export const HeroSection = () => {
                         }}
                     >
                         <Box sx={{ maxWidth: { md: "550px", lg: "600px" } }}>
-                            
+
                             <Fade in key={slide} timeout={700}>
                                 <Box sx={{ mt: 12, mb: 3 }}>
                                     <Typography
@@ -71,7 +92,7 @@ export const HeroSection = () => {
                                         sx={{
                                             fontSize: { xs: "2.5rem", md: "3rem", lg: "4rem" },
                                             fontWeight: 900,
-                                            color: theme.palette.primary.dark, 
+                                            color: theme.palette.primary.dark,
                                             lineHeight: 1.2
                                         }}
                                     >
@@ -234,7 +255,7 @@ export const HeroSection = () => {
                                     <Chip
                                         key={service}
                                         label={service}
-                                        onDelete={() => {}}
+                                        onDelete={() => { }}
                                         deleteIcon={<Close sx={{ fontSize: "1rem" }} />}
                                         sx={{
                                             backgroundColor: theme.palette.background.paper,

@@ -15,6 +15,9 @@ import {
     Paper,
     Typography,
     Grid,
+    Collapse,
+    Divider,
+    Chip,
 } from '@mui/material';
 
 import {
@@ -24,13 +27,13 @@ import {
     ChevronRight16Regular,
     People24Regular,
     Briefcase24Regular,
-    Wrench24Regular,
     DocumentText24Regular,
     Apps24Regular,
     DesignIdeas24Regular,
     Code24Regular,
     Megaphone24Regular,
     Edit24Regular,
+    ChevronUp20Regular,
 } from '@fluentui/react-icons';
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -74,14 +77,15 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                 overflow: 'hidden',
                 backgroundColor: theme.palette.background.paper,
                 boxShadow: theme.palette.mode === 'dark'
-                    ? '0 10px 40px rgba(0,0,0,0.5)'
-                    : '0 10px 40px rgba(0,0,0,0.12)',
+                    ? '0 20px 60px rgba(0,0,0,0.7)'
+                    : '0 20px 60px rgba(0,0,0,0.15)',
                 zIndex: 1300,
+                border: `1px solid ${theme.palette.divider}`,
             }}
         >
-            <Grid container sx={{ minHeight: 400 }}>
+            <Grid container sx={{ minHeight: 450 }}>
                 <Grid
-                    size={{ xs: 3 }}
+                    size={{ xs:3 }}
                     sx={{
                         backgroundColor: theme.palette.mode === 'dark'
                             ? theme.palette.primary.lightBg
@@ -96,7 +100,7 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                             onMouseEnter={() => setHoveredCategory(item.category)}
                             sx={{
                                 px: 3,
-                                py: 2,
+                                py: 2.5,
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -105,9 +109,9 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                                     ? theme.palette.primary.main + '15'
                                     : 'transparent',
                                 borderLeft: hoveredCategory === item.category
-                                    ? `3px solid ${theme.palette.primary.main}`
-                                    : '3px solid transparent',
-                                transition: 'all 0.2s ease',
+                                    ? `4px solid ${theme.palette.primary.main}`
+                                    : '4px solid transparent',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 '&:hover': {
                                     backgroundColor: theme.palette.primary.main + '10',
                                 }
@@ -116,9 +120,9 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                                 <Box
                                     sx={{
-                                        width: 40,
-                                        height: 40,
-                                        borderRadius: 2,
+                                        width: 42,
+                                        height: 42,
+                                        borderRadius: 2.5,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -128,7 +132,10 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                                         color: hoveredCategory === item.category
                                             ? theme.palette.primary.contrastText
                                             : theme.palette.primary.main,
-                                        transition: 'all 0.2s ease'
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: hoveredCategory === item.category
+                                            ? `0 4px 12px ${theme.palette.primary.main}44`
+                                            : 'none'
                                     }}
                                 >
                                     {item.icon}
@@ -136,8 +143,9 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                                 <Typography
                                     variant="body1"
                                     sx={{
-                                        fontWeight: hoveredCategory === item.category ? 700 : 500,
+                                        fontWeight: hoveredCategory === item.category ? 700 : 600,
                                         color: theme.palette.text.primary,
+                                        fontSize: '0.95rem'
                                     }}
                                 >
                                     {item.category}
@@ -145,64 +153,69 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                             </Box>
                             <ChevronRight16Regular
                                 style={{
-                                    color: theme.palette.text.secondary,
+                                    color: theme.palette.primary.main,
                                     opacity: hoveredCategory === item.category ? 1 : 0,
-                                    transition: 'opacity 0.2s ease'
+                                    transition: 'opacity 0.3s ease'
                                 }}
                             />
                         </Box>
                     ))}
                 </Grid>
 
-                <Grid size={{ xs: 9 }} sx={{ p: 4 }}>
+                <Grid size={{ xs:9 }} sx={{ p: 4 }}>
                     {currentCategory && (
                         <>
-                            <Box sx={{ mb: 3 }}>
+                            <Box sx={{ mb: 4 }}>
                                 <Typography
-                                    variant="h6"
+                                    variant="h5"
                                     sx={{
-                                        fontWeight: 700,
+                                        fontWeight: 800,
                                         color: theme.palette.text.heading,
-                                        mb: 0.5
+                                        mb: 1
                                     }}
                                 >
                                     {currentCategory.category}
                                 </Typography>
                                 <Typography
                                     variant="body2"
-                                    sx={{ color: theme.palette.text.secondary }}
+                                    sx={{
+                                        color: theme.palette.text.secondary,
+                                        fontSize: '0.95rem'
+                                    }}
                                 >
                                     {currentCategory.description}
                                 </Typography>
                             </Box>
 
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2.5}>
                                 {currentCategory.items.map((subItem, idx) => (
-                                    <Grid item xs={6} key={idx}>
+                                    <Grid size={{ xs:6 }} key={idx}>
                                         <Box
                                             onClick={(e) => handleItemClick(e, subItem.path)}
                                             sx={{
-                                                p: 2,
-                                                borderRadius: 2,
+                                                p: 2.5,
+                                                borderRadius: 3,
                                                 cursor: subItem.path ? 'pointer' : 'default',
-                                                transition: 'all 0.2s ease',
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 border: `1px solid ${theme.palette.divider}`,
+                                                backgroundColor: 'transparent',
                                                 '&:hover': subItem.path ? {
                                                     backgroundColor: theme.palette.primary.main + '08',
                                                     borderColor: theme.palette.primary.main,
-                                                    transform: 'translateY(-2px)',
+                                                    transform: 'translateY(-4px)',
                                                     boxShadow: theme.palette.mode === 'dark'
-                                                        ? '0 4px 12px rgba(144, 202, 249, 0.15)'
-                                                        : '0 4px 12px rgba(47, 49, 124, 0.15)'
+                                                        ? '0 8px 24px rgba(144, 202, 249, 0.2)'
+                                                        : '0 8px 24px rgba(47, 49, 124, 0.15)'
                                                 } : {}
                                             }}
                                         >
                                             <Typography
-                                                variant="subtitle2"
+                                                variant="subtitle1"
                                                 sx={{
-                                                    fontWeight: 600,
+                                                    fontWeight: 700,
                                                     color: theme.palette.text.primary,
-                                                    mb: 0.5
+                                                    mb: 0.5,
+                                                    fontSize: '0.95rem'
                                                 }}
                                             >
                                                 {subItem.title}
@@ -212,7 +225,8 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                                                 sx={{
                                                     color: theme.palette.text.secondary,
                                                     display: 'block',
-                                                    lineHeight: 1.4
+                                                    lineHeight: 1.5,
+                                                    fontSize: '0.85rem'
                                                 }}
                                             >
                                                 {subItem.description}
@@ -223,23 +237,26 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
                             </Grid>
 
                             {currentCategory.cta && (
-                                <Box sx={{ mt: 3, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
+                                <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
                                     <Button
                                         onClick={(e) => handleItemClick(e, currentCategory.ctaPath)}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: theme.palette.warning.light,
+                                            background: `linear-gradient(135deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 100%)`,
                                             color: theme.palette.warning.contrastText,
-                                            px: 3,
-                                            py: 1,
-                                            borderRadius: 2,
+                                            px: 4,
+                                            py: 1.3,
+                                            borderRadius: 2.5,
                                             textTransform: 'none',
-                                            fontWeight: 600,
-                                            boxShadow: 'none',
+                                            fontWeight: 700,
+                                            fontSize: '0.95rem',
+                                            boxShadow: `0 4px 16px ${theme.palette.warning.main}44`,
                                             '&:hover': {
-                                                backgroundColor: theme.palette.warning.main,
-                                                boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
-                                            }
+                                                background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`,
+                                                boxShadow: `0 6px 24px ${theme.palette.warning.main}66`,
+                                                transform: 'translateY(-2px)'
+                                            },
+                                            transition: 'all 0.3s ease'
                                         }}
                                     >
                                         {currentCategory.cta}
@@ -254,6 +271,187 @@ const MegaDropdown = ({ items, isOpen, onClose }) => {
     );
 };
 
+const MobileDropdown = ({ item, isOpen, onToggle, onNavigate }) => {
+    const theme = useTheme();
+    const [expandedCategory, setExpandedCategory] = useState(null);
+
+    const handleCategoryClick = (category) => {
+        setExpandedCategory(expandedCategory === category ? null : category);
+    };
+
+    const handleItemClick = (path) => {
+        onNavigate(path);
+    };
+
+    return (
+        <Box>
+            <ListItemButton
+                onClick={onToggle}
+                sx={{
+                    py: 2,
+                    borderRadius: 2,
+                    mb: 0.5,
+                    '&:hover': {
+                        backgroundColor: theme.palette.primary.main + '10'
+                    }
+                }}
+            >
+                <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        color: theme.palette.text.primary,
+                        fontFamily: FONT_FAMILY.unique
+                    }}
+                />
+                {isOpen ? <ChevronUp20Regular /> : <ChevronDown20Regular />}
+            </ListItemButton>
+
+            <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                <Box sx={{ pl: 2, pr: 1, pb: 2 }}>
+                    {item.dropdownData?.map((category) => (
+                        <Box key={category.category} sx={{ mb: 1 }}>
+                            <Box
+                                onClick={() => handleCategoryClick(category.category)}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    backgroundColor: expandedCategory === category.category
+                                        ? theme.palette.primary.main + '15'
+                                        : theme.palette.primary.main + '08',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    border: `1px solid ${expandedCategory === category.category ? theme.palette.primary.main : 'transparent'}`,
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.main + '15'
+                                    }
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                    <Box
+                                        sx={{
+                                            width: 36,
+                                            height: 36,
+                                            borderRadius: 2,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            backgroundColor: theme.palette.primary.main,
+                                            color: theme.palette.primary.contrastText,
+                                        }}
+                                    >
+                                        {category.icon}
+                                    </Box>
+                                    <Box>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                fontWeight: 700,
+                                                color: theme.palette.text.primary,
+                                                fontSize: '0.9rem'
+                                            }}
+                                        >
+                                            {category.category}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: theme.palette.text.secondary,
+                                                fontSize: '0.75rem'
+                                            }}
+                                        >
+                                            {category.description}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                {expandedCategory === category.category ?
+                                    <ChevronUp20Regular style={{ color: theme.palette.primary.main }} /> :
+                                    <ChevronDown20Regular style={{ color: theme.palette.text.secondary }} />
+                                }
+                            </Box>
+
+                            <Collapse in={expandedCategory === category.category} timeout="auto" unmountOnExit>
+                                <Box sx={{ pl: 2, pt: 1 }}>
+                                    {category.items.map((subItem, idx) => (
+                                        <Box
+                                            key={idx}
+                                            onClick={() => handleItemClick(subItem.path)}
+                                            sx={{
+                                                p: 1.5,
+                                                mb: 0.5,
+                                                borderRadius: 1.5,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease',
+                                                border: `1px solid ${theme.palette.divider}`,
+                                                '&:hover': {
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    borderColor: theme.palette.primary.main,
+                                                }
+                                            }}
+                                        >
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    color: theme.palette.text.primary,
+                                                    fontSize: '0.85rem',
+                                                    mb: 0.3
+                                                }}
+                                            >
+                                                {subItem.title}
+                                            </Typography>
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    color: theme.palette.text.secondary,
+                                                    fontSize: '0.75rem',
+                                                    lineHeight: 1.4
+                                                }}
+                                            >
+                                                {subItem.description}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+
+                                    {category.cta && (
+                                        <Button
+                                            fullWidth
+                                            onClick={() => handleItemClick(category.ctaPath)}
+                                            variant="contained"
+                                            size="small"
+                                            sx={{
+                                                mt: 1,
+                                                background: theme.palette.warning.light,
+                                                color: theme.palette.warning.contrastText,
+                                                textTransform: 'none',
+                                                fontWeight: 600,
+                                                fontSize: '0.85rem',
+                                                py: 1,
+                                                borderRadius: 1.5,
+                                                boxShadow: 'none',
+                                                '&:hover': {
+                                                    background: theme.palette.warning.main,
+                                                    boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
+                                                }
+                                            }}
+                                        >
+                                            {category.cta}
+                                        </Button>
+                                    )}
+                                </Box>
+                            </Collapse>
+                        </Box>
+                    ))}
+                </Box>
+            </Collapse>
+        </Box>
+    );
+};
+
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -262,9 +460,27 @@ const Header = () => {
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [mobileDropdownOpen, setMobileDropdownOpen] = useState({});
 
     const handleToggle = () => {
         setMobileOpen((prev) => !prev);
+        setMobileDropdownOpen({});
+    };
+
+    const handleMobileDropdownToggle = (label) => {
+        setMobileDropdownOpen(prev => ({
+            ...prev,
+            [label]: !prev[label]
+        }));
+    };
+
+    const handleMobileNavigate = (path) => {
+        if (path && path !== '#') {
+            navigate(path);
+            setMobileOpen(false);
+            setMobileDropdownOpen({});
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
     // Services dropdown data with routes
@@ -431,8 +647,6 @@ const Header = () => {
         { label: 'Gigs', path: '/category', hasDropdown: true, dropdownData: gigsData },
         { label: 'Services', path: '/service', hasDropdown: true, dropdownData: servicesData },
         { label: 'Portfolio', path: '/portfolio' },
-        // { label: 'Resources', path: '/resources' },
-        // { label: 'Blogs', path: '/blogs' },
         { label: 'Gift Voucher', path: '/gift-voucher' },
         { label: 'Others', path: '#', hasDropdown: true, dropdownData: othersData }
     ];
@@ -448,13 +662,14 @@ const Header = () => {
                 elevation={0}
                 sx={{
                     backgroundColor: theme.palette.background.paper,
-                    boxShadow: 0,
-                    borderRadius: 0
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: `0 2px 12px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.08)'}`,
+                    borderBottom: `1px solid ${theme.palette.divider}`
                 }}
             >
                 <Container maxWidth="lg">
                     <Toolbar sx={{ py: 1, display: "flex", justifyContent: "space-between" }}>
-
+                        {/* Logo */}
                         <Box onClick={() => navigate('/')} sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                             <Box
                                 component="img"
@@ -465,10 +680,15 @@ const Header = () => {
                                     height: '100%',
                                     borderRadius: 2,
                                     objectFit: 'cover',
+                                    transition: 'transform 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)'
+                                    }
                                 }}
                             />
                         </Box>
 
+                        {/* Desktop Menu */}
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4, ml: 4 }}>
                             {menuItems.map((item) => (
                                 <Box
@@ -483,17 +703,28 @@ const Header = () => {
                                         sx={{
                                             textDecoration: "none",
                                             color: theme.palette.text.primary,
-                                            fontWeight: 900,
-                                            fontFamily:FONT_FAMILY.unique,
+                                            fontWeight: 700,
+                                            fontFamily: FONT_FAMILY.unique,
                                             fontSize: '1rem',
                                             cursor: 'pointer',
-                                            transition: "0.2s",
+                                            transition: "all 0.3s ease",
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: 0.5,
+                                            position: 'relative',
                                             '&:hover': {
-                                                fontWeight: 700,
-                                                color: theme.palette.primary.dark
+                                                color: theme.palette.primary.main
+                                            },
+                                            '&::after': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                bottom: -8,
+                                                left: 0,
+                                                width: activeDropdown === item.label || location.pathname === item.path ? '100%' : '0%',
+                                                height: '3px',
+                                                backgroundColor: theme.palette.primary.main,
+                                                transition: 'width 0.3s ease',
+                                                borderRadius: '2px'
                                             }
                                         }}
                                     >
@@ -501,7 +732,7 @@ const Header = () => {
                                         {item.hasDropdown && (
                                             <ChevronDown20Regular
                                                 style={{
-                                                    transition: 'transform 0.2s',
+                                                    transition: 'transform 0.3s ease',
                                                     transform: activeDropdown === item.label ? 'rotate(180deg)' : 'rotate(0deg)'
                                                 }}
                                             />
@@ -518,35 +749,47 @@ const Header = () => {
                                 </Box>
                             ))}
                         </Box>
-                       
+
                         {/* CONTACT + CTA BUTTON (Desktop Only) */}
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                             <Button
-                                startIcon={<img src='/Icons/icons_1.png' style={{ width: '100%' }} />}
+                                onClick={() => navigate('/contact-us')}
+                                startIcon={<img src='/Icons/icons_1.png' style={{ width: 20 }} alt="contact" />}
                                 sx={{
                                     textTransform: 'none',
-                                    fontWeight: 500,
-                                    color: theme.palette.text.primary
+                                    fontWeight: 600,
+                                    color: theme.palette.text.primary,
+                                    px: 2,
+                                    fontFamily: FONT_FAMILY.unique,
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.main + '10'
+                                    }
                                 }}
                             >
-                                +2349008709
+                                Contact Us
                             </Button>
+
                             <ThemeToggleButton />
+
                             <Button
                                 onClick={handleGetStarted}
                                 variant="contained"
                                 sx={{
-                                    backgroundColor: theme.palette.warning.light,
-                                    color: theme.palette.warning.contrastText,
-                                    px: 3,
-                                    py: 1.2,
-                                    borderRadius: 2,
+                                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                                    color: theme.palette.primary.contrastText,
                                     textTransform: 'none',
-                                    fontWeight: 600,
-                                    boxShadow: 'none',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    px: 3,
+                                    py: 1,
+                                    borderRadius: 2,
+                                    fontFamily: FONT_FAMILY.unique,
+                                    boxShadow: `0 4px 14px ${theme.palette.primary.main}55`,
+                                    transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        backgroundColor: theme.palette.warning.main,
-                                        boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: `0 6px 20px ${theme.palette.primary.main}77`,
+                                        background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
                                     }
                                 }}
                             >
@@ -554,97 +797,180 @@ const Header = () => {
                             </Button>
                         </Box>
 
-                        {/* MOBILE MENU ICON */}
-                        <IconButton
-                            onClick={handleToggle}
-                            sx={{ display: { xs: 'flex', md: 'none' } }}
-                        >
-                            <Navigation24Regular style={{ color: theme.palette.text.primary }} />
-                        </IconButton>
-
+                        {/* Mobile Menu Button */}
+                        <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
+                            <ThemeToggleButton />
+                            <IconButton
+                                onClick={handleToggle}
+                                sx={{
+                                    color: theme.palette.text.primary,
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.main + '15'
+                                    }
+                                }}
+                            >
+                                <Navigation24Regular />
+                            </IconButton>
+                        </Box>
                     </Toolbar>
                 </Container>
             </AppBar>
 
-            {/* MOBILE DRAWER */}
+            {/* Mobile Drawer */}
             <Drawer
-                anchor="left"
+                anchor="right"
                 open={mobileOpen}
                 onClose={handleToggle}
-                PaperProps={{
-                    sx: {
-                        width: 260,
-                        backgroundColor: theme.palette.background.default
-                    }
+                sx={{
+                    display: { xs: 'block', md: 'none' },
+                    '& .MuiDrawer-paper': {
+                        width: '85%',
+                        maxWidth: 400,
+                        backgroundColor: theme.palette.background.paper,
+                        backgroundImage: 'none',
+                    },
                 }}
             >
-                <Box sx={{ display: "flex", justifyContent: "space-between", p: 2 }}>
-                    <Box
-                        component="img"
-                        src="/Logo/Logo.png"
-                        sx={{ width: 70 }}
-                    />
-                    <IconButton onClick={handleToggle}>
-                        <Dismiss24Regular style={{ color: theme.palette.text.primary }} />
-                    </IconButton>
-                </Box>
+                <Box sx={{ p: 3 }}>
+                    {/* Drawer Header */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                        <Box
+                            component="img"
+                            alt="Logo"
+                            src="/Logo/Logo.png"
+                            sx={{ width: '70px', height: 'auto', borderRadius: 2 }}
+                        />
+                        <IconButton
+                            onClick={handleToggle}
+                            sx={{
+                                color: theme.palette.text.primary,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.error.main + '15',
+                                    color: theme.palette.error.main
+                                }
+                            }}
+                        >
+                            <Dismiss24Regular />
+                        </IconButton>
+                    </Box>
 
-                <List>
-                    {menuItems.map((item) => (
-                        <ListItem key={item.path} disablePadding>
-                            <ListItemButton
-                                component={Link}
-                                to={item.path}
-                                onClick={handleToggle}
-                            >
-                                <ListItemText
-                                    primary={item.label}
-                                    primaryTypographyProps={{
-                                        fontSize: "1rem",
-                                        fontWeight: 500,
-                                        color: theme.palette.text.primary,
-                                        fontFamily:FONT_FAMILY.primary
-                                    }}
+                    <Divider sx={{ mb: 3 }} />
+
+                    {/* Mobile Menu Items */}
+                    <List sx={{ px: 1 }}>
+                        {menuItems.map((item) => (
+                            item.hasDropdown ? (
+                                <MobileDropdown
+                                    key={item.label}
+                                    item={item}
+                                    isOpen={mobileDropdownOpen[item.label]}
+                                    onToggle={() => handleMobileDropdownToggle(item.label)}
+                                    onNavigate={handleMobileNavigate}
                                 />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+                            ) : (
+                                <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
+                                    <ListItemButton
+                                        component={Link}
+                                        to={item.path}
+                                        onClick={handleToggle}
+                                        sx={{
+                                            borderRadius: 2,
+                                            py: 2,
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.primary.main + '10'
+                                            }
+                                        }}
+                                    >
+                                        <ListItemText
+                                            primary={item.label}
+                                            primaryTypographyProps={{
+                                                fontSize: "1rem",
+                                                fontWeight: 700,
+                                                color: theme.palette.text.primary,
+                                                fontFamily: FONT_FAMILY.unique
+                                            }}
+                                        />
+                                    </ListItemButton>
+                                </ListItem>
+                            )
+                        ))}
+                    </List>
 
-                <Box px={2} mt={2}>
-                    <Button
-                        fullWidth
-                        startIcon={<img src='/Icons/icons_1.png' style={{ width: 20 }} />}
-                        sx={{
-                            textTransform: 'none',
-                            fontWeight: 500,
-                            color: theme.palette.text.primary,
-                            mb: 2
-                        }}
-                    >
-                        +2349008709
-                    </Button>
+                    <Divider sx={{ my: 3 }} />
 
-                    <Button
-                        onClick={handleGetStarted}
-                        fullWidth
-                        variant="contained"
-                        sx={{
-                            backgroundColor: theme.palette.warning.light,
-                            color: theme.palette.warning.contrastText,
-                            py: 1.3,
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                        }}
-                    >
-                        Get Started
-                    </Button>
+                    {/* Mobile CTA Buttons */}
+                    <Box sx={{ px: 1 }}>
+                        <Button
+                            fullWidth
+                            onClick={() => {
+                                handleToggle();
+                                navigate('/contact-us');
+                            }}
+                            startIcon={<img src='/Icons/icons_1.png' style={{ width: 20 }} alt="contact" />}
+                            sx={{
+                                mb: 2,
+                                py: 1.5,
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                color: theme.palette.text.primary,
+                                border: `2px solid ${theme.palette.divider}`,
+                                borderRadius: 2,
+                                fontFamily: FONT_FAMILY.unique,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.primary.main + '10',
+                                    borderColor: theme.palette.primary.main
+                                }
+                            }}
+                        >
+                            Contact Us
+                        </Button>
+
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={() => {
+                                handleToggle();
+                                handleGetStarted();
+                            }}
+                            sx={{
+                                py: 1.5,
+                                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                                color: theme.palette.primary.contrastText,
+                                textTransform: 'none',
+                                fontWeight: 700,
+                                fontSize: '1rem',
+                                borderRadius: 2,
+                                fontFamily: FONT_FAMILY.unique,
+                                boxShadow: `0 4px 14px ${theme.palette.primary.main}55`,
+                                '&:hover': {
+                                    boxShadow: `0 6px 20px ${theme.palette.primary.main}77`,
+                                }
+                            }}
+                        >
+                            Get Started
+                        </Button>
+                    </Box>
+
+                    {/* Mobile Footer Info */}
+                    <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                            Need help?
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600} color="primary.main">
+                            support@bestmarketinggiggs.com
+                        </Typography>
+                    </Box>
                 </Box>
             </Drawer>
 
-            {isHomePage && <HeroSection />}
-            <PatnersLogo />
+            {isHomePage && (
+                <>
+                    <Box sx={{ pt: 0 }}>
+                        <HeroSection />
+                    </Box>
+                    <PatnersLogo />
+                </>
+            )}
         </Box>
     );
 };
