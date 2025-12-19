@@ -1,15 +1,5 @@
 import React from "react";
 import {
-  CampaignOutlined,
-  CategoryOutlined,
-  ContactPageOutlined,
-  HelpCenterOutlined,
-  MailOutlineSharp,
-  PeopleOutline,
-  RssFeedOutlined,
-  ShoppingBagOutlined,
-  ShoppingCartOutlined,
-  TipsAndUpdatesOutlined,
   MoreVertOutlined,
   AddOutlined,
   VisibilityOutlined
@@ -31,6 +21,7 @@ import {
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const DashboardHome = () => {
   const transactionsData = {
@@ -94,7 +85,7 @@ const DashboardHome = () => {
       <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={PeopleOutline}
+            icon={EMOJI_ICONS.people}
             title="Users"
             value="7000"
             onAction={() => console.log("View Users")}
@@ -102,7 +93,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={ShoppingCartOutlined}
+            icon={EMOJI_ICONS.shoppingCart}
             title="Orders"
             value="5000"
             onAction={() => console.log("View Users")}
@@ -110,7 +101,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CategoryOutlined}
+            icon={EMOJI_ICONS.category}
             title="Categories"
             value="500"
             onAction={() => console.log("View Users")}
@@ -118,7 +109,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={ShoppingBagOutlined}
+            icon={EMOJI_ICONS.shoppingBasket}
             title="Services"
             value="7000"
             onAction={() => console.log("View Users")}
@@ -126,7 +117,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={RssFeedOutlined}
+            icon={EMOJI_ICONS.rss}
             title="Blogs"
             value="3000"
             onAction={() => console.log("View Users")}
@@ -134,7 +125,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={MailOutlineSharp}
+            icon={EMOJI_ICONS.mail}
             title="Mails"
             value="1000"
             onAction={() => console.log("View Users")}
@@ -142,7 +133,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={ContactPageOutlined}
+            icon={EMOJI_ICONS.contactPage}
             title="Testimonials"
             value="7000"
             onAction={() => console.log("View Users")}
@@ -150,7 +141,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={HelpCenterOutlined}
+            icon={EMOJI_ICONS.supportAgent}
             title="Consultations"
             value="7000"
             onAction={() => console.log("View Users")}
@@ -158,7 +149,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CampaignOutlined}
+            icon={EMOJI_ICONS.campaign}
             title="Campaign"
             value="7000"
             onAction={() => console.log("View Users")}
@@ -166,7 +157,7 @@ const DashboardHome = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={TipsAndUpdatesOutlined}
+            icon={EMOJI_ICONS.tips}
             title="AI"
             value="7000"
             onAction={() => console.log("View Users")}

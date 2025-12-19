@@ -1,43 +1,19 @@
 import {
-  GridViewRounded,
-  SettingsRounded,
-  ShoppingCartRounded,
-  AssessmentRounded,
-  NotificationsRounded,
-  SupportAgentRounded,
-  TipsAndUpdatesRounded,
-  HelpCenterRounded,
-  SubscriptionsRounded,
-  CreditCardRounded,
-  AdminPanelSettingsRounded,
-  PeopleRounded,
-  HandymanRounded,
-  CategoryRounded,
-  ShoppingBasketRounded,
-  WorkRounded,
-  RssFeedRounded,
-  CardGiftcardRounded,
-  CampaignRounded,
-  ContactPageRounded,
-  MailRounded,
-  FactoryRounded,
-  LayersRounded,
-  ColorLensRounded,
-  AccountTreeRounded,
-  LocalActivityRounded
+  FactoryRounded
 } from "@mui/icons-material";
+import { EMOJI_ICONS } from "../../Config/emojiIcons";
 export const getNav = (role = "user", userRole = null, subRole = null) => {
   const baseNav = [
     {
       label: "Dashboard",
       path: "/dashboard",
-      icon: <GridViewRounded />,
+      icon: EMOJI_ICONS.gridView,
       children: []
     },
     {
       label: "Administrators",
       path: "#",
-      icon: <AdminPanelSettingsRounded />,
+      icon: EMOJI_ICONS.adminPanel,
       children: [
         { label: "Add Admin", path: "/dashboard/add/admin" },
         { label: "View Admins", path: "/dashboard/view/admins" },
@@ -47,13 +23,13 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Users",
       path: "/dashboard/users",
-      icon: <PeopleRounded />,
+      icon: EMOJI_ICONS.people,
       children: []
     },
     {
       label: "Experts",
       path: "#",
-      icon: <HandymanRounded />,
+      icon: EMOJI_ICONS.handyman,
       children: [
         { label: "Add Expert", path: "/dashboard/admin/add/experts" },
         { label: "View Expert", path: "/dashboard/admin/experts" }
@@ -62,7 +38,7 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Categories",
       path: "#",
-      icon: <CategoryRounded />,
+      icon: EMOJI_ICONS.category,
       children: [
         {
           label: "Requirements",
@@ -75,7 +51,7 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Sub Categories",
       path: "#",
-      icon: <AccountTreeRounded />,
+      icon: EMOJI_ICONS.accountTree,
       children: [
         {
           label: "Add Sub Category",
@@ -90,7 +66,7 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Services",
       path: "#",
-      icon: <ShoppingBasketRounded />,
+      icon: EMOJI_ICONS.shoppingBasket,
       children: [
         { label: "Add Service", path: "/dashboard/admin/add/services" },
         { label: "View Services", path: "/dashboard/admin/services" }
@@ -99,79 +75,79 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Orders",
       path: "/dashboard/admin/orders",
-      icon: <ShoppingCartRounded />,
+      icon: EMOJI_ICONS.shoppingCart,
       children: []
     },
     {
       label: "Payments",
       path: "/dashboard/admin/payments",
-      icon: <CreditCardRounded />,
+      icon: EMOJI_ICONS.creditCard,
       children: []
     },
     {
       label: "AI",
       path: "/dashboard/admin/artificial-intelligence",
-      icon: <TipsAndUpdatesRounded />,
+      icon: EMOJI_ICONS.tips,
       children: []
     },
     {
       label: "Portfolio",
       path: "/dashboard/admin/portfolios",
-      icon: <WorkRounded />,
+      icon: EMOJI_ICONS.work,
       children: []
     },
     {
       label: "Blog",
       path: "/dashboard/admin/blogs",
-      icon: <RssFeedRounded />,
+      icon: EMOJI_ICONS.rss,
       children: []
     },
     {
       label: "Gifts",
       path: "/dashboard/admin/gifts",
-      icon: <CardGiftcardRounded />,
+      icon: EMOJI_ICONS.cardGift,
       children: []
     },
     {
       label: "Coupons",
       path: "/dashboard/admin/coupons",
-      icon: <LocalActivityRounded />,
+      icon: EMOJI_ICONS.localActivity,
       children: []
     },
     {
       label: "Consultations",
       path: "/dashboard/admin/consultations",
-      icon: <HelpCenterRounded />,
+      icon: EMOJI_ICONS.helpCenter,
       children: []
     },
     {
       label: "Campaigns",
       path: "/dashboard/admin/campaigns",
-      icon: <CampaignRounded />,
+      icon: EMOJI_ICONS.campaign,
       children: []
     },
     {
       label: "Testimonials",
       path: "/dashboard/admin/testimonials",
-      icon: <ContactPageRounded />,
+      icon: EMOJI_ICONS.contactPage,
       children: []
     },
     {
       label: "Notifications",
       path: "/dashboard/admin/notifications",
-      icon: <NotificationsRounded />,
+      icon: EMOJI_ICONS.notifications,
       children: []
     },
     {
       label: "Mails",
       path: "/dashboard/admin/mails",
-      icon: <MailRounded />,
+      icon: EMOJI_ICONS.mail,
       children: []
     },
     {
       label: "Support",
       path: "/dashboard/admin/support",
-      icon: <CampaignRounded />,
+      icon: EMOJI_ICONS.supportAgent,
       children: []
     },
     {
@@ -183,25 +159,25 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Resources",
       path: "/dashboard/admin/resources",
-      icon: <LayersRounded />,
+      icon: EMOJI_ICONS.layers,
       children: []
     },
     {
       label: "Subscription",
       path: "/dashboard/admin/subscriptions",
-      icon: <SubscriptionsRounded />,
+      icon: EMOJI_ICONS.subscriptions,
       children: []
     },
     {
       label: "Colors",
       path: "/dashboard/admin/colors",
-      icon: <ColorLensRounded />,
+      icon: EMOJI_ICONS.colorLens,
       children: []
     },
     {
       label: "Settings",
       path: "/dashboard/admin/settings",
-      icon: <SettingsRounded />,
+      icon: EMOJI_ICONS.settings,
       children: []
     }
   ];
@@ -210,37 +186,37 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Dashboard",
       path: "/dashboard/expert/overview",
-      icon: <GridViewRounded />,
+      icon: EMOJI_ICONS.gridView,
       children: []
     },
     {
       label: "Orders",
       path: "/dashboard/expert/orders",
-      icon: <ShoppingCartRounded />,
+      icon: EMOJI_ICONS.shoppingCart,
       children: []
     },
     {
       label: "Earnings",
       path: "/dashboard/expert/earnings",
-      icon: <AssessmentRounded />,
+      icon: EMOJI_ICONS.assessment,
       children: []
     },
     {
       label: "Notifications",
       path: "/dashboard/expert/notifications",
-      icon: <NotificationsRounded />,
+      icon: EMOJI_ICONS.notifications,
       children: []
     },
     {
       label: "Support",
       path: "/dashboard/expert/support",
-      icon: <SupportAgentRounded />,
+      icon: EMOJI_ICONS.supportAgent,
       children: []
     },
     {
       label: "Settings",
       path: "/dashboard/expert/settings",
-      icon: <SettingsRounded />,
+      icon: EMOJI_ICONS.settings,
       children: []
     }
   ];
@@ -249,55 +225,55 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     {
       label: "Dashboard",
       path: "/dashboard/user/overview",
-      icon: <GridViewRounded />,
+      icon: EMOJI_ICONS.gridView,
       children: []
     },
     {
       label: "Orders",
       path: "/dashboard/user/orders",
-      icon: <ShoppingCartRounded />,
+      icon: EMOJI_ICONS.shoppingCart,
       children: []
     },
     {
       label: "Payments",
       path: "/dashboard/user/payments",
-      icon: <CreditCardRounded />,
+      icon: EMOJI_ICONS.creditCard,
       children: []
     },
     {
       label: "AI",
       path: "/dashboard/user/artificial-intelligence",
-      icon: <TipsAndUpdatesRounded />,
+      icon: EMOJI_ICONS.tips,
       children: []
     },
     {
       label: "Consultations",
       path: "/dashboard/user/consultations",
-      icon: <HelpCenterRounded />,
+      icon: EMOJI_ICONS.helpCenter,
       children: []
     },
     {
       label: "Notifications",
       path: "/dashboard/user/notifications",
-      icon: <NotificationsRounded />,
+      icon: EMOJI_ICONS.notifications,
       children: []
     },
     {
       label: "Support",
       path: "/dashboard/user/support",
-      icon: <SupportAgentRounded />,
+      icon: EMOJI_ICONS.supportAgent,
       children: []
     },
     {
       label: "Subscriptions",
       path: "/dashboard/user/subscriptions",
-      icon: <SubscriptionsRounded />,
+      icon: EMOJI_ICONS.subscriptions,
       children: []
     },
     {
       label: "Settings",
       path: "/dashboard/user/settings",
-      icon: <SettingsRounded />,
+      icon: EMOJI_ICONS.settings,
       children: []
     }
   ];

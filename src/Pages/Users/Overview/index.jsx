@@ -1,10 +1,7 @@
 import React from "react";
 import {
-  ShoppingBagOutlined,
   MoreVertOutlined,
-  HelpCenterOutlined,
   TipsAndUpdatesOutlined,
-  CreditCardOutlined,
   VisibilityOutlined,
   AddOutlined
 } from "@mui/icons-material";
@@ -22,6 +19,7 @@ import {
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const UserOverview = () => {
   const transactionsData = {
@@ -95,7 +93,7 @@ const UserOverview = () => {
               >
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={ShoppingBagOutlined}
+                    icon={EMOJI_ICONS.shoppingCart}
                     title="Total Orders"
                     value="37"
                     arrow
@@ -105,7 +103,7 @@ const UserOverview = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={HelpCenterOutlined}
+                    icon={EMOJI_ICONS.helpCenter}
                     title="Consulations"
                     value="8"
                     arrow
@@ -115,7 +113,7 @@ const UserOverview = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={TipsAndUpdatesOutlined}
+                    icon={EMOJI_ICONS.tips}
                     title="AI Services"
                     value="20"
                     color="#61B5FF"
@@ -127,7 +125,7 @@ const UserOverview = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.creditCard}
                     title="Payments"
                     value="18"
                     arrow

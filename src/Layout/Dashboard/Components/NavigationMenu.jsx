@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { getNav } from "../data";
 import { ActiveLink, InActiveLink } from "./CustomLink";
 import { dbColors } from "../../../Config/color";
+import { EmojiIcon } from "../../../Component";
 
 function NavigationMenu({ role }) {
   const currentPath = window.location.pathname;
@@ -24,16 +25,15 @@ function NavigationMenu({ role }) {
             to={cell.path}
             isactive={cell.path == currentPath}
           >
-            <Box
-              component="span"
-              sx={{
-                color: openItemIndex == i
-                  ? dbColors.main.primary
-                  : dbColors.main.default
+            <EmojiIcon
+              name={cell.icon}
+              styles={{
+                color:
+                  openItemIndex == i
+                    ? dbColors.main.primary
+                    : dbColors.main.default
               }}
-            >
-              {cell.icon}
-            </Box>
+            />
             {cell.label}
           </ActiveLink>
           {openItemIndex === i && cell.children && cell.children.length > 0 && (

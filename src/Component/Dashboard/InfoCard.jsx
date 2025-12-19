@@ -3,9 +3,10 @@ import { Box, Typography, Divider, Stack } from "@mui/material";
 import { styles } from "../../styles/dashboard";
 import { dbColors } from "../../Config/color";
 import { ArrowForwardRounded } from "@mui/icons-material";
+import EmojiIcon from "./EmojiIcon";
 
 const InfoCard = ({
-  icon: Icon,
+  icon,
   title,
   value,
   actionLabel = "View More",
@@ -41,15 +42,18 @@ const InfoCard = ({
             justifyContent: "space-between"
           }}
         >
-          {Icon && (
+          {icon && (
             <Box sx={styles.iconCon}>
-              <Icon
+              {/* <Icon
                 style={styles.icon}
                 sx={{
                   fontSize: { xs: 30, md: 35 },
                   color: dbColors.main.default
                 }}
-              />
+              /> */}
+
+              <EmojiIcon name={icon} style={styles.icon} size={24} />
+
             </Box>
           )}
 
@@ -85,14 +89,14 @@ const InfoCard = ({
           >
             {actionLabel}
           </Typography>
-          { arrow && 
-          <ArrowForwardRounded
-            sx={{
-              fontSize: { xs: 10, md: 20 },
-              color: color
-            }}
-          />
-          }
+          {arrow && (
+            <ArrowForwardRounded
+              sx={{
+                fontSize: { xs: 10, md: 20 },
+                color: color
+              }}
+            />
+          )}
         </Stack>
       </Box>
     </Box>

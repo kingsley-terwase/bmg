@@ -52,3 +52,4 @@ export { default as NotificationItem } from "./Dashboard/NotificationItem";
 export { default as UserSearch } from "./Dashboard/Mails/UserSearch";
 export { default as RecipientsTable } from "./Dashboard/Mails/RecipientsTable";
 export { default as SideBar } from "./Dashboard/Mails/SideBar";
+export { default as EmojiIcon } from "./Dashboard/EmojiIcon";

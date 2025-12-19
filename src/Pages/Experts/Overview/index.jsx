@@ -1,10 +1,7 @@
 import React from "react";
 import {
-  ShoppingBagOutlined,
   MoreVertOutlined,
-  HourglassBottomOutlined,
-  CancelOutlined,
-  CheckCircleOutline
+  VisibilityOutlined
 } from "@mui/icons-material";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -14,9 +11,11 @@ import {
   InfoCard,
   CustomTable,
   StatusChip,
-  HeaderBreadCrumb
+  PagesHeader
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
+import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const ExpertOverview = () => {
   const revenueData = [
@@ -33,13 +32,28 @@ const ExpertOverview = () => {
     { month: "Nov", value: 21, amount: "$21K" },
     { month: "Dec", value: 24, amount: "$24K" }
   ];
+  const navigate = useNavigate();
 
   return (
     <Box>
-      <HeaderBreadCrumb
+      <PagesHeader
+        title="Overview"
         desc={
           "View your recent orders, manage your billing addresses, and edit your password and account details"
         }
+        searchEnabled={false}
+        actions={[
+          {
+            label: "View Assigned Orders",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/expert/orders")
+          },
+          {
+            label: "Notifications",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/expert/notifications")
+          }
+        ]}
       />
 
       <Box>
@@ -52,7 +66,7 @@ const ExpertOverview = () => {
         >
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={ShoppingBagOutlined}
+              icon={EMOJI_ICONS.shoppingCart}
               title="Total Orders"
               value="68"
               color="#61B5FF"
@@ -61,7 +75,7 @@ const ExpertOverview = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={HourglassBottomOutlined}
+              icon={EMOJI_ICONS.pending}
               title="Pending Orders"
               value="30"
               color="#61B5FF"
@@ -70,7 +84,7 @@ const ExpertOverview = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={CancelOutlined}
+              icon={EMOJI_ICONS.cancel}
               title="Cancelled Orders"
               value="6"
               color="#61B5FF"
@@ -79,7 +93,7 @@ const ExpertOverview = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={CheckCircleOutline}
+              icon={EMOJI_ICONS.success}
               title="Completed Orders"
               value="32"
               color="#61B5FF"
@@ -107,7 +121,7 @@ const ExpertOverview = () => {
       </Grid>
 
       <Box mt={3} mb={3}>
-        <CustomTable title="Assigned Orders" headers={headers}>
+        <CustomTable title="Recents Assigned Orders" headers={headers}>
           {data.map((row) => (
             <TableRow hover key={row.id}>
               <TableCell>
