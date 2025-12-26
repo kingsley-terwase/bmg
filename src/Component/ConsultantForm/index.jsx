@@ -51,14 +51,14 @@ export default function ConsultantForm() {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                minHeight:{ xs: "0", md:"100vh"},
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 background: theme.palette.background.default,
                 position: "relative",
                 overflow: "hidden",
-                py: { xs: 6, md: 0 },
+                pt: { xs: 4, md: 0 },
             }}
         >
             <Container data-aos='fade-up' maxWidth="lg">
@@ -302,7 +302,7 @@ export default function ConsultantForm() {
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Box
                             sx={{
-                                display: "flex",
+                                display:{ xs: "none", md:"flex"},
                                 alignItems: "center",
                                 justifyContent: "center",
                                 borderRadius: 4,

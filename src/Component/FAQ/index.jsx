@@ -2,11 +2,6 @@ import React, { useState } from "react";
 import {
     ChevronDown24Regular,
     Question24Regular,
-    Lightbulb24Regular,
-    ShieldCheckmark24Regular,
-    Payment24Regular,
-    People24Regular,
-    Globe24Regular,
 } from "@fluentui/react-icons";
 
 import {
@@ -153,8 +148,14 @@ const FAQSection = () => {
                             px={3}
                             py={1}
                             borderRadius="50px"
-                            bgcolor="#E0E7FF"
-                            color="#4338CA"
+                            bgcolor={theme.palette.mode === 'dark' 
+                                ? theme.palette.primary.main + '20' 
+                                : '#E0E7FF'
+                            }
+                            color={theme.palette.mode === 'dark'
+                                ? theme.palette.primary.main
+                                : '#4338CA'
+                            }
                             fontWeight="bold"
                             mb={2}
                         >
@@ -162,13 +163,29 @@ const FAQSection = () => {
                             FAQ
                         </Box>
 
-                        <Typography variant="h2" fontWeight="900" mb={2}>
+                        <Typography 
+                            variant="h2" 
+                            fontWeight="900" 
+                            mb={2}
+                            color={theme.palette.text.heading}
+                        >
                             Frequently Asked Questions
                         </Typography>
 
-                        <Typography variant="h6" color="text.secondary" maxWidth="700px" mx="auto">
-                            Everything you need to know about BMG AI Service. Can’t find the answer?
-                            <span style={{ color: "#4F46E5", fontWeight: 600, cursor: "pointer" }}>
+                        <Typography 
+                            variant="h6" 
+                            color={theme.palette.text.secondary} 
+                            maxWidth="700px" 
+                            mx="auto"
+                        >
+                            Everything you need to know about BMG AI Service. Can't find the answer?
+                            <span 
+                                style={{ 
+                                    color: theme.palette.primary.main, 
+                                    fontWeight: 600, 
+                                    cursor: "pointer" 
+                                }}
+                            >
                                 {" "}
                                 Contact our support team.
                             </span>
@@ -181,8 +198,13 @@ const FAQSection = () => {
                                 {faqs[activeCategory].map((faq, index) => (
                                     <Paper
                                         key={index}
-                                        elevation={3}
-                                        sx={{ p: 0, borderRadius: 3, overflow: "hidden" }}
+                                        elevation={theme.palette.mode === 'dark' ? 2 : 3}
+                                        sx={{ 
+                                            borderRadius: 3, 
+                                            overflow: "hidden",
+                                            border: `1px solid ${theme.palette.divider}`,
+                                            backgroundColor: theme.palette.background.paper,
+                                        }}
                                     >
                                         <Button
                                             onClick={() => toggleFAQ(index)}
@@ -195,6 +217,14 @@ const FAQSection = () => {
                                                 textTransform: "none",
                                                 color: theme.palette.text.primary,
                                                 fontWeight: "bold",
+                                                backgroundColor: theme.palette.mode === 'dark'
+                                                    ? 'rgba(144, 202, 249, 0.08)'
+                                                    : 'rgba(8, 12, 150, 0.04)',
+                                                '&:hover': {
+                                                    backgroundColor: theme.palette.mode === 'dark'
+                                                        ? 'rgba(144, 202, 249, 0.12)'
+                                                        : 'rgba(8, 12, 150, 0.08)',
+                                                }
                                             }}
                                             endIcon={
                                                 <ChevronDown24Regular
@@ -202,7 +232,7 @@ const FAQSection = () => {
                                                     style={{
                                                         transition: "0.3s",
                                                         transform: openIndex === index ? "rotate(180deg)" : "rotate(0)",
-                                                        color: "#4F46E5",
+                                                        color: theme.palette.primary.main,
                                                     }}
                                                 />
                                             }
@@ -214,9 +244,14 @@ const FAQSection = () => {
                                             <Box
                                                 px={3}
                                                 pb={3}
-                                                pt={1}
-                                                sx={{color: theme.palette.text.primary,}}
-                                                borderTop="1px solid #E5E7EB"
+                                                pt={2}
+                                                sx={{
+                                                    color: theme.palette.text.secondary,
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    borderTop: `1px solid ${theme.palette.divider}`,
+                                                    lineHeight: 1.8,
+                                                    fontSize: '0.95rem'
+                                                }}
                                             >
                                                 {faq.answer}
                                             </Box>

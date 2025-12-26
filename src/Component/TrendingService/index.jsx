@@ -102,27 +102,28 @@ export default function TrendingService() {
 
                     <Button
                         onClick={handleViewMore}
-                        variant="contained"
+                        variant="outlined"
                         endIcon={<ArrowRight24Filled />}
                         sx={{
-                            background: theme.palette.warning.light,
+                            // background: theme.palette.primary.light,
                             px: 3,
                             py: 1.5,
                             borderRadius: 2,
                             fontWeight: "bold",
-                            textTransform: "none",
+                            textTransform: "none",                            
                             boxShadow: 3,
                             "&:hover": {
                                 background: `linear-gradient(to right, 
-                                    ${theme.palette.warning.dark}, 
-                                    ${theme.palette.warning.main}
+                                    ${theme.palette.primary.dark}, 
+                                    ${theme.palette.primary.main}
                                 )`,
+                                color: theme.palette.text.small,
                                 transform: "translateY(-3px)",
                                 boxShadow: 6,
                             },
                         }}
                     >
-                        View More
+                        Discover more services
                     </Button>
                 </Box>
 

@@ -20,14 +20,14 @@ export default function LetsWorkTogether() {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                minHeight:{ xs: "none", md:"100vh"},
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 background: theme.palette.background.default,
                 position: "relative",
                 overflow: "hidden",
-                py: { xs: 8, md: 0 },
+                pb: { xs: 6, md: 0 },
             }}
         >
             <Container maxWidth="xl">
