@@ -6,62 +6,55 @@ import {
   Select,
   FormControl,
   MenuItem,
-  Stack
+  Stack,
+  CircularProgress
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined
 } from "@mui/icons-material";
 import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
-import { countries, adminTypes } from "./data";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
 import { useAddAdmin } from "../../../Hooks/admins";
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../../../utils/toast";
+import { useGetAdminTypes } from "../../../Hooks/admin_types";
 
 const AddAdminPage = () => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
+  const [first_name, setFirstname] = useState("");
+  const [last_name, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState("");
-  const [country_id, setCountryId] = useState("");
-  const [sub_role, setSubRole] = useState("");
+  const [sub_role, setSubRole] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
   const submitAdmin = useAddAdmin();
-
-  // If your API hooks work, replace dummyCountries/dummyAdminTypes here:
-  const countryData = countries;
-  const admin_types = adminTypes;
-
+  const { adminTypes, loading: typesLoading } = useGetAdminTypes();
   const navigate = useNavigate();
 
+  console.log("administrator TYPES:", adminTypes);
+
   const adminFormData = {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     email,
     phone,
-    gender,
-    country_id: String(country_id),
-    sub_role: String(sub_role)
+    sub_role
   };
 
   const handleSubmitAdmin = async () => {
     if (
-      !firstname.trim() ||
-      !lastname.trim() ||
+      !first_name.trim() ||
+      !last_name.trim() ||
       !email.trim() ||
       !phone.trim() ||
-      !gender ||
-      !country_id ||
-      !sub_role ||
+      sub_role.length === 0 ||
       !validateEmail(email)
     ) {
-      toast.error("Please fill in all fields correctly.");
+      showToast.warning("Please fill in all fields correctly.");
       return;
     }
 
@@ -74,12 +67,10 @@ const AddAdminPage = () => {
         setLastname("");
         setEmail("");
         setPhone("");
-        setGender("");
-        setCountryId("");
-        setSubRole("");
+        setSubRole([]);
       }
     } catch (error) {
-      toast.error("Admin registration failed.");
+      showToast.error(error || "Admin registration failed.");
     } finally {
       setLoading(false);
     }
@@ -88,7 +79,7 @@ const AddAdminPage = () => {
   return (
     <>
       <PagesHeader
-        title="Add Administrator"
+        label="Add Administrator"
         desc={"Add an administrator, assign privileges and manage controls"}
         searchEnabled={false}
         actions={[
@@ -114,7 +105,7 @@ const AddAdminPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={firstname}
+                value={first_name}
                 placeholder=""
                 onChange={(e) => setFirstname(e.target.value)}
               />
@@ -126,7 +117,7 @@ const AddAdminPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={lastname}
+                value={last_name}
                 onChange={(e) => setLastname(e.target.value)}
               />
             </Grid>
@@ -158,67 +149,36 @@ const AddAdminPage = () => {
           </Grid>
 
           <Grid container spacing={2} mt={1.5}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <InputLabel text="Country" />
-                <Select
-                  value={country_id}
-                  onChange={(e) => setCountryId(e.target.value)}
-                  disableUnderline
-                  sx={styles.input}
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <em>Select a country</em>
-                  </MenuItem>
-
-                  {countryData.map((country) => (
-                    <MenuItem key={country.id} value={country.id}>
-                      {country.country_name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <InputLabel text="Gender" />
-                <Select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  disableUnderline
-                  sx={styles.input}
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <em>Select gender</em>
-                  </MenuItem>
-
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel text="Admin Role" />
                 <Select
+                  multiple
                   value={sub_role}
                   onChange={(e) => setSubRole(e.target.value)}
                   disableUnderline
-                  sx={styles.input}
                   displayEmpty
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <em>Select admin role(s)</em>;
+                    }
+                    return selected.join(", ");
+                  }}
                 >
                   <MenuItem value="" disabled>
                     <em>Select admin role</em>
                   </MenuItem>
 
-                  {admin_types.map((type) => (
-                    <MenuItem key={type.admin_type} value={type.admin_type}>
-                      {type.admin_type}
+                  {adminTypes.map((type) => (
+                    <MenuItem key={type.id} value={type.name}>
+                      {typesLoading ? (
+                        <CircularProgress
+                          color="secondary"
+                          sx={{ display: "block", marginX: "auto" }}
+                        />
+                      ) : (
+                        type.name
+                      )}
                     </MenuItem>
                   ))}
                 </Select>

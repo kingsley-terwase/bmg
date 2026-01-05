@@ -5,7 +5,7 @@ import { sideNavPaperStyles } from "../data";
 import NavigationMenu from "./NavigationMenu";
 import { styles } from "../../../styles/dashboard";
 
-function MobileSideNav({ open, width, role, onClose, onTransitionEnd }) {
+function MobileSideNav({ open, width, onClose, onTransitionEnd }) {
   return (
     <Drawer
       variant="temporary"
@@ -16,7 +16,7 @@ function MobileSideNav({ open, width, role, onClose, onTransitionEnd }) {
         keepMounted: true
       }}
       sx={[
-        sideNavPaperStyles(width, role),
+        sideNavPaperStyles(width),
         {
           display: { xs: "block", sm: "none" },
           "& .MuiDrawer-paper": {
@@ -32,7 +32,7 @@ function MobileSideNav({ open, width, role, onClose, onTransitionEnd }) {
             <img src="/logo.png" style={styles.mobileLogo} alt="Bmg Logo" />
           </Link>
         </div>
-        <NavigationMenu role={role} />
+        <NavigationMenu />
       </Box>
     </Drawer>
   );

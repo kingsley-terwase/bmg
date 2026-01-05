@@ -16,15 +16,12 @@ import {
 } from "../../../Component";
 import { consultations, headers } from "./data";
 import {
-  ShoppingBagOutlined,
-  HourglassBottomOutlined,
-  CancelOutlined,
-  CheckCircleOutline,
   AddOutlined,
   Visibility,
   VisibilityOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const UserConsultationsPage = () => {
   const navigate = useNavigate();
@@ -63,40 +60,40 @@ const UserConsultationsPage = () => {
       >
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={ShoppingBagOutlined}
+            icon={EMOJI_ICONS.shoppingBasket}
             title="Total"
             value="37"
             color="#61B5FF"
-            actionLabel="Total Orders"
+            actionLabel="Total Consultations"
             onAction={() => console.log("View Users")}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CheckCircleOutline}
+            icon={EMOJI_ICONS.success}
             title="Completed"
             value="8"
-            actionLabel="Completed Orders"
+            actionLabel="Closed Consultations"
             color="#61B5FF"
             onAction={() => console.log("View Users")}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={HourglassBottomOutlined}
+            icon={EMOJI_ICONS.pending}
             title="Pending"
             value="20"
-            actionLabel="Pending Orders"
+            actionLabel="Ongoing Consultations"
             color="#61B5FF"
             onAction={() => console.log("View Users")}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CancelOutlined}
+            icon={EMOJI_ICONS.cancel}
             title="Cancelled"
             value="18"
-            actionLabel="Cancelled Orders"
+            actionLabel="Cancelled Consultations"
             color="#61B5FF"
             onAction={() => console.log("View Users")}
           />

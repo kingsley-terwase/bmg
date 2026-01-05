@@ -14,14 +14,12 @@ import UserAvatar from "./UserAvatar";
 import MenuBox from "./MenuBox";
 import { WavingHandOutlined } from "@mui/icons-material";
 import { dbColors } from "../../../Config/color";
-import { useAuth } from "../../../Contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
 
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleSettingsClick = (event) => {
@@ -42,7 +40,6 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
 
   const handleLogout = () => {
     console.log("Logout clicked");
-    logout();
     handleMenuClose();
     navigate("/login");
   };

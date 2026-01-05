@@ -17,40 +17,35 @@ import {
 import { Visibility } from "@mui/icons-material";
 import { orders, headers } from "./data";
 import {
-  ShoppingBagOutlined,
-  HourglassBottomOutlined,
-  CancelOutlined,
-  CheckCircleOutline,
   VisibilityOutlined,
   TipsAndUpdatesOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const UserOrders = () => {
   const navigate = useNavigate();
   return (
     <div>
-
-
-            <PagesHeader
+      <PagesHeader
         label="Orders Overview"
         desc={
           "Manage all your orders, track orders progress, update orders status, payment status.  "
         }
-              searchEnabled={false}
-              actions={[
-                {
-                  label: "View Consulations",
-                  icon: <VisibilityOutlined />,
-                  onClick: () => navigate("/dashboard/user/orders")
-                },
-                {
-                  label: "AI Services",
-                  icon: <TipsAndUpdatesOutlined />,
-                  onClick: () => navigate("/dashboard/users/artificial-intelligence")
-                }
-              ]}
-            />
+        searchEnabled={false}
+        actions={[
+          {
+            label: "View Consulations",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/user/orders")
+          },
+          {
+            label: "AI Services",
+            icon: <TipsAndUpdatesOutlined />,
+            onClick: () => navigate("/dashboard/users/artificial-intelligence")
+          }
+        ]}
+      />
       <Grid
         container
         rowSpacing={2}
@@ -60,7 +55,7 @@ const UserOrders = () => {
       >
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={ShoppingBagOutlined}
+            icon={EMOJI_ICONS.shoppingCart}
             title="Total"
             value="37"
             color="#61B5FF"
@@ -70,7 +65,7 @@ const UserOrders = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CheckCircleOutline}
+            icon={EMOJI_ICONS.success}
             title="Completed"
             value="8"
             actionLabel="Completed Orders"
@@ -80,7 +75,7 @@ const UserOrders = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={HourglassBottomOutlined}
+            icon={EMOJI_ICONS.pending}
             title="Pending"
             value="20"
             actionLabel="Pending Orders"
@@ -90,7 +85,7 @@ const UserOrders = () => {
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <InfoCard
-            icon={CancelOutlined}
+            icon={EMOJI_ICONS.cancel}
             title="Cancelled"
             value="18"
             actionLabel="Cancelled Orders"

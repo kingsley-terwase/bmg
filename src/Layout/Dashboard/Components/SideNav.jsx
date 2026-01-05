@@ -5,12 +5,12 @@ import NavigationMenu from "./NavigationMenu";
 import { sideNavPaperStyles } from "../data";
 import { styles } from "../../../styles/dashboard";
 
-function SideNav({ width, role }) {
+function SideNav({ width }) {
   return (
     <Drawer
       variant="permanent"
       sx={[
-        sideNavPaperStyles(width, role),
+        sideNavPaperStyles(width),
         { display: { xs: "none", sm: "block" } }
       ]}
       open
@@ -21,7 +21,7 @@ function SideNav({ width, role }) {
             <img src="/logo-v2.png" style={styles.logo} alt="Bmg Logo" />
           </Link>
         </div>
-        <NavigationMenu role={role} />
+        <NavigationMenu />
       </Box>
     </Drawer>
   );

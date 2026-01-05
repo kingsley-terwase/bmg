@@ -1,8 +1,8 @@
 export { default as DashboardHome } from "./DashboardHome";
 export { default as Administrators } from "./Administrators";
 export { default as AddAdminPage } from "./Administrators/add-admin";
-export { default as AdminRoles } from "./Administrators/admin-roles";
-export { default as AddAdminRole } from "./Administrators/add-admin-role";
+export { default as AdminRoles } from "./RolesPermissions/admin-roles";
+export { default as AddAdminRole } from "./RolesPermissions/add-admin-role";
 export { default as UsersPage } from "./Users";
 export { default as ExpertsPage } from "./Experts";
 export { default as AddExpertPage } from "./Experts/add";
@@ -40,3 +40,4 @@ export { default as IndustriesPage } from "./Industries";
 export { default as AddIndustries } from "./Industries/add";
 export { default as SupportPage } from "./Support";
 export { default as AddColors } from "./Colors/add";
+export { default as AdminPermissions } from "./RolesPermissions/admin-permissions";

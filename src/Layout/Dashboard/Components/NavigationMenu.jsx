@@ -1,24 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
-import { getNav } from "../data";
 import { ActiveLink, InActiveLink } from "./CustomLink";
 import { dbColors } from "../../../Config/color";
 import { EmojiIcon } from "../../../Component";
+import { useUserContext } from "../../../Contexts";
+import { useNavigate } from "react-router-dom";
+import { getNav } from "../../../utils/getNav";
 
-function NavigationMenu({ role }) {
+function NavigationMenu() {
   const currentPath = window.location.pathname;
   const [openItemIndex, setOpenItemIndex] = useState(null);
+  const { user } = useUserContext();
+  const navigate = useNavigate();
 
-  // Pass null for user and subRole since we're not tracking auth
-  const nav = getNav(role, null, null);
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
+  const navItems = getNav(user?.user);
   const toggleItem = (index) => {
     setOpenItemIndex(index === openItemIndex ? null : index);
   };
 
   return (
     <Box>
-      {nav.map((cell, i) => (
+      {navItems.map((cell, i) => (
         <Box key={i}>
           <ActiveLink
             onClick={() => toggleItem(i)}
@@ -45,6 +53,7 @@ function NavigationMenu({ role }) {
                   isactive={child.path == currentPath}
                   data-aos="fade-up"
                   data-aos-delay={`${(i + 1) * 100}`}
+                  data-aos-once="true"
                 >
                   {child.label}
                 </InActiveLink>

@@ -15,16 +15,13 @@ import {
 } from "../../../Component";
 import { blogs, headers } from "./data";
 import {
-  CancelOutlined,
-  CheckCircleOutlined,
-  HourglassTopOutlined,
-  ShoppingCartOutlined,
   VisibilityOutlined,
   AddOutlined,
   RssFeedOutlined,
   PeopleOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const BlogsPage = () => {
   const [search, setSearch] = useState();
@@ -68,7 +65,7 @@ const BlogsPage = () => {
         >
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={RssFeedOutlined}
+              icon={EMOJI_ICONS.rss}
               title="Posts"
               value="20"
               actionLabel="Total Posts"
@@ -78,7 +75,7 @@ const BlogsPage = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={PeopleOutlined}
+              icon={EMOJI_ICONS.people}
               actionLabel="Total Views"
               title="Views"
               value="18"

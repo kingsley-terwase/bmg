@@ -16,6 +16,7 @@ import {
   HeaderBreadCrumb
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const UserAIPage = () => {
 
@@ -44,7 +45,7 @@ const UserAIPage = () => {
               >
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={ShoppingBagOutlined}
+                    icon={EMOJI_ICONS.gridView}
                     title="Videos Generated"
                     value="30"
                     actionLabel="Generate Video"
@@ -54,7 +55,7 @@ const UserAIPage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={HelpCenterOutlined}
+                    icon={EMOJI_ICONS.supportAgent}
                     title="Edited Videos"
                     value="8"
                     actionLabel="Edit Video"
@@ -64,7 +65,7 @@ const UserAIPage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={TipsAndUpdatesOutlined}
+                    icon={EMOJI_ICONS.tips}
                     title="Generated Speeches"
                     value="20"
                     actionLabel="Generate Speech"
@@ -74,7 +75,7 @@ const UserAIPage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Website"
                     title="Built Websites"
                     value="18"
@@ -84,7 +85,7 @@ const UserAIPage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Images"
                     title="Generated Images"
                     value="18"
@@ -94,7 +95,7 @@ const UserAIPage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Business Strategy"
                     title="Strategies Generated"
                     value="18"

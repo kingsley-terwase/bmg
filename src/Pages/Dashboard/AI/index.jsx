@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  ShoppingBagOutlined,
-  MoreVertOutlined,
-  HelpCenterOutlined,
-  TipsAndUpdatesOutlined,
-  CreditCardOutlined
-} from "@mui/icons-material";
+import { MoreVertOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {
@@ -13,19 +7,42 @@ import {
   InfoCard,
   CustomTable,
   StatusChip,
-  HeaderBreadCrumb
+  PagesHeader
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { useNavigate } from "react-router-dom";
 
 const ArtificialIntelligencePage = () => {
+  const [search, setSearch] = React.useState();
+  const navigate = useNavigate();
 
   return (
     <div>
       <Box>
-        <HeaderBreadCrumb
+        <PagesHeader
+          label="Manage AI Services"
           desc={
             "View your generated AI services here, create more AI services and export your documents, subscribe to premium."
           }
+          enableSearch
+          placeholder={"Search services..."}
+          searchValue={search}
+          onSearchChange={setSearch}
+          actions={[
+            {
+              label: "Generated Strategies",
+              icon: <VisibilityOutlined />,
+              onClick: () =>
+                navigate("/dashboard/admin/artificial-intelligience/strategies")
+            },
+            {
+              label: "Generated Images",
+              icon: <VisibilityOutlined />,
+              onClick: () =>
+                navigate("/dashboard/admin/artificial-intelligience/images")
+            }
+          ]}
         />
 
         <Box>
@@ -44,7 +61,7 @@ const ArtificialIntelligencePage = () => {
               >
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={ShoppingBagOutlined}
+                    icon={EMOJI_ICONS.generateVideo}
                     title="Videos Generated"
                     value="30"
                     actionLabel="Generate Video"
@@ -54,7 +71,7 @@ const ArtificialIntelligencePage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={HelpCenterOutlined}
+                    icon={EMOJI_ICONS.editedVideo}
                     title="Edited Videos"
                     value="8"
                     actionLabel="Edit Video"
@@ -64,7 +81,7 @@ const ArtificialIntelligencePage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={TipsAndUpdatesOutlined}
+                    icon={EMOJI_ICONS.generatedSpeeches}
                     title="Generated Speeches"
                     value="20"
                     actionLabel="Generate Speech"
@@ -74,7 +91,7 @@ const ArtificialIntelligencePage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.generatedWebsites}
                     actionLabel="Generate Website"
                     title="Built Websites"
                     value="18"
@@ -84,7 +101,7 @@ const ArtificialIntelligencePage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.generatedImages}
                     actionLabel="Generate Images"
                     title="Generated Images"
                     value="18"
@@ -94,7 +111,7 @@ const ArtificialIntelligencePage = () => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
-                    icon={CreditCardOutlined}
+                    icon={EMOJI_ICONS.generateBusinessStrategy}
                     actionLabel="Generate Business Strategy"
                     title="Strategies Generated"
                     value="18"

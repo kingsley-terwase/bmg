@@ -1,33 +1,38 @@
-import {
-  FactoryRounded
-} from "@mui/icons-material";
+import { FactoryRounded } from "@mui/icons-material";
 import { EMOJI_ICONS } from "../../Config/emojiIcons";
-export const getNav = (role = "user", userRole = null, subRole = null) => {
-  const baseNav = [
-    {
+import { PERMISSIONS } from "../../Config/auth/permissions";
+
+export const getNav = (role, subRole = null, type = null) => {
+  const adminNav = [
+    role === 1 && {
       label: "Dashboard",
       path: "/dashboard",
       icon: EMOJI_ICONS.gridView,
       children: []
     },
-    {
+    role === 1 && {
       label: "Administrators",
       path: "#",
       icon: EMOJI_ICONS.adminPanel,
       children: [
         { label: "Add Admin", path: "/dashboard/add/admin" },
-        { label: "View Admins", path: "/dashboard/view/admins" },
-        { label: "Manage Roles", path: "/dashboard/view/admin-roles" }
+        { label: "View Admins", path: "/dashboard/view/admins" }
       ]
     },
+    role === 1 && {
+      label: "Roles and Permissions",
+      path: "/dashboard/view/admin-roles",
+      icon: EMOJI_ICONS.adminPanel,
+      children: []
+    },
     {
-      label: "Users",
+      label: "Manage Users",
       path: "/dashboard/users",
       icon: EMOJI_ICONS.people,
       children: []
     },
     {
-      label: "Experts",
+      label: "Manage Experts",
       path: "#",
       icon: EMOJI_ICONS.handyman,
       children: [
@@ -182,6 +187,50 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
     }
   ];
 
+  const ADMIN_NAV_EXAMPLE = [
+    {
+      label: "Dashboard",
+      path: "/dashboard",
+      icon: EMOJI_ICONS.gridView
+    },
+    {
+      label: "Blogs",
+      path: "/dashboard/admin/blogs",
+      icon: EMOJI_ICONS.rss,
+      permission: PERMISSIONS.BLOGS.VIEW
+    },
+    {
+      label: "Orders",
+      path: "/dashboard/admin/orders",
+      icon: EMOJI_ICONS.shoppingCart,
+      permission: PERMISSIONS.ORDERS.VIEW
+    },
+    {
+      label: "Finance",
+      path: "/dashboard/admin/payments",
+      icon: EMOJI_ICONS.creditCard,
+      permission: PERMISSIONS.FINANCE.VIEW
+    },
+    {
+      label: "Users",
+      path: "/dashboard/admin/users",
+      icon: EMOJI_ICONS.people,
+      permission: PERMISSIONS.USERS.VIEW
+    },
+    {
+      label: "Support",
+      path: "/dashboard/admin/support",
+      icon: EMOJI_ICONS.supportAgent,
+      permission: PERMISSIONS.SUPPORT.VIEW
+    },
+    {
+      label: "Settings",
+      path: "/dashboard/admin/settings",
+      icon: EMOJI_ICONS.settings,
+      permission: PERMISSIONS.SETTINGS.MANAGE
+    }
+  ];
+
   const expertNav = [
     {
       label: "Dashboard",
@@ -279,11 +328,11 @@ export const getNav = (role = "user", userRole = null, subRole = null) => {
   ];
 
   // Return navigation based on role
-  if (role === "admin") return baseNav;
-  if (role === "expert") return expertNav;
-  if (role === "user") return userNav;
+  if (role === "1") return adminNav;
+  if (role === "4") return expertNav;
+  if (role === "3") return userNav;
 
-  return [...baseNav];
+  return [];
 };
 
 // side nav drawer styles

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Grid,
   Box,
@@ -6,137 +6,125 @@ import {
   Select,
   FormControl,
   MenuItem,
+  CircularProgress,
   Stack
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
   VisibilityOutlined
 } from "@mui/icons-material";
-import {
-  InputLabel,
-  CustomButton,
-  PagesHeader,
-  InsightPieCard,
-  TopRankingExpertsCard
-} from "../../../Component";
+import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
 import { skills, experience } from "./data";
 import { validateEmail } from "../../../utils/functions";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAddExpert } from "../../../Hooks/experts";
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+
+const INITIAL_FORM_STATE = {
+  firstname: "",
+  lastname: "",
+  email: "",
+  phone: "",
+  skill: "",
+  experience: ""
+};
 
 const AddExpertPage = () => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState("");
-  const [country_id, setCountryId] = useState("");
-  const [sub_role, setSubRole] = useState("");
-
+  const [form, setForm] = useState(INITIAL_FORM_STATE);
   const [loading, setLoading] = useState(false);
+  const { hideLoader, showLoader } = useLoader();
 
   const addExpert = useAddExpert();
-
   const navigate = useNavigate();
 
-  const formData = {
-    firstname,
-    lastname,
-    email,
-    phone,
-    gender,
-    country_id: String(country_id),
-    sub_role: String(sub_role)
-  };
+  const handleChange = useCallback(
+    (field) => (e) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    },
+    []
+  );
 
-  const handleSubmitAdmin = async () => {
+  const validateForm = () => {
+    const { firstname, lastname, email, phone, skill, experience } = form;
+
     if (
       !firstname.trim() ||
       !lastname.trim() ||
       !email.trim() ||
       !phone.trim() ||
-      !gender ||
-      !country_id ||
-      !sub_role ||
-      !validateEmail(email)
+      !skill ||
+      !experience
     ) {
-      toast.error("Please fill in all fields correctly.");
-      return;
+      showToast.error("Please fill in all fields.");
+      return false;
     }
 
-    setLoading(true);
+    if (!validateEmail(email)) {
+      showToast.error("Please enter a valid email address.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
     try {
-      const response = await addExpert(formData);
+      setLoading(true);
+      showLoader();
+      const response = await addExpert(form);
 
       if (response) {
-        setFirstname("");
-        setLastname("");
-        setEmail("");
-        setPhone("");
-        setGender("");
-        setCountryId("");
-        setSubRole("");
+        showToast.success("Expert added successfully");
+        setForm(INITIAL_FORM_STATE);
+        navigate("/dashboard/view/experts");
       }
     } catch (error) {
-      toast.error(error);
+      showToast.error(error.message || "Failed to add expert");
     } finally {
+      hideLoader();
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    navigate("/dashboard/view/experts");
   };
 
   return (
     <>
       <PagesHeader
         label="Add Expert"
-        desc={"Add an expert, assign privileges and manage controls"}
+        desc="Add an expert, assign privileges and manage controls"
         searchEnabled={false}
         actions={[
           {
             label: "View Experts",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/view/admins")
+            onClick: () => navigate("/dashboard/view/experts")
           }
         ]}
       />
 
-      <Box>
-        <Grid
-          container
-          rowSpacing={2}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          mt={3}
-        >
-          <Grid size={{ xs: 12, md: 6 }}>
-            <InsightPieCard
-              title="Orders Insight"
-              chartData={[
-                { name: "Active Experts", value: 5000, color: "#4CAF50" },
-                { name: "Suspended Experts", value: 2500, color: "#FF9800" },
-                { name: "Terminated Experts", value: 1000, color: "#F44336" }
-              ]}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TopRankingExpertsCard />
-          </Grid>
-        </Grid>
-      </Box>
-
       <Box sx={styles.card}>
         <Box component="form" mt={3}>
+          {/* Names */}
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <InputLabel text="First Name" mb />
+              <InputLabel text="First Name" />
               <Input
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={firstname}
-                placeholder=""
-                onChange={(e) => setFirstname(e.target.value)}
+                value={form.firstname}
+                onChange={handleChange("firstname")}
+                disabled={loading}
               />
             </Grid>
 
@@ -146,12 +134,14 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
+                value={form.lastname}
+                onChange={handleChange("lastname")}
+                disabled={loading}
               />
             </Grid>
           </Grid>
 
+          {/* Contact */}
           <Grid container spacing={2} mt={1.5}>
             <Grid size={{ xs: 12, md: 6 }}>
               <InputLabel text="Email Address" />
@@ -159,8 +149,9 @@ const AddExpertPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={form.email}
+                onChange={handleChange("email")}
+                disabled={loading}
               />
             </Grid>
 
@@ -169,32 +160,34 @@ const AddExpertPage = () => {
               <Input
                 disableUnderline
                 fullWidth
-                sx={styles.input}
                 type="number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                sx={styles.input}
+                value={form.phone}
+                onChange={handleChange("phone")}
+                disabled={loading}
               />
             </Grid>
           </Grid>
 
+          {/* Skill & Experience */}
           <Grid container spacing={2} mt={1.5}>
             <Grid size={{ xs: 12, md: 4 }}>
               <FormControl fullWidth>
                 <InputLabel text="Skill" />
                 <Select
-                  value={country_id}
-                  onChange={(e) => setCountryId(e.target.value)}
+                  value={form.skill}
+                  onChange={handleChange("skill")}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty
+                  disabled={loading}
                 >
                   <MenuItem value="" disabled>
-                    <InputLabel text="Select a skill" />
+                    Select a skill
                   </MenuItem>
-
-                  {skills.map((skill) => (
-                    <MenuItem key={skill.id} value={skill.id}>
-                      {skill.skill}
+                  {skills.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.skill}
                     </MenuItem>
                   ))}
                 </Select>
@@ -203,39 +196,18 @@ const AddExpertPage = () => {
 
             <Grid size={{ xs: 12, md: 4 }}>
               <FormControl fullWidth>
-                <InputLabel text="Gender" />
-                <Select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  disableUnderline
-                  sx={styles.input}
-                  displayEmpty
-                >
-                  <MenuItem value="" disabled>
-                    <InputLabel text="Select Gender" />
-                  </MenuItem>
-
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
                 <InputLabel text="Experience" />
                 <Select
-                  value={sub_role}
-                  onChange={(e) => setSubRole(e.target.value)}
+                  value={form.experience}
+                  onChange={handleChange("experience")}
                   disableUnderline
                   sx={styles.input}
                   displayEmpty
+                  disabled={loading}
                 >
                   <MenuItem value="" disabled>
-                    <InputLabel text="Select expert experience level" />
+                    Select experience level
                   </MenuItem>
-
                   {experience.map((exp) => (
                     <MenuItem key={exp.experience} value={exp.experience}>
                       {exp.experience}
@@ -246,8 +218,9 @@ const AddExpertPage = () => {
             </Grid>
           </Grid>
 
+          {/* Actions */}
           <Grid container spacing={2} mt={3}>
-            <Grid size={{ xs: 12, md: 6 }}></Grid>
+            <Grid size={{ xs: 12, md: 6 }} />
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Stack direction="row" justifyContent="flex-end" gap={2}>
@@ -256,18 +229,22 @@ const AddExpertPage = () => {
                   color="warning"
                   variant="filled"
                   startIcon={<DeleteOutlined />}
-                  onClick={() => {}}
-                  sx={{ textTransform: "none", paddingInline: 20 }}
+                  onClick={handleCancel}
+                  disabled={loading}
+                  sx={{ textTransform: "none", px: 4 }}
                 />
 
                 <CustomButton
-                  title={loading ? "Adding..." : "Add Administrator"}
+                  title={loading ? "Adding..." : "Add Expert"}
                   color="primary"
                   variant="filled"
-                  startIcon={<AddOutlined />}
+                  startIcon={
+                    loading ? <CircularProgress size={20} /> : <AddOutlined />
+                  }
                   disabled={loading}
-                  onClick={handleSubmitAdmin}
-                  sx={{ textTransform: "none", paddingInline: 20 }}
+                  type="submit"
+                  onClick={handleSubmit}
+                  sx={{ textTransform: "none", px: 4 }}
                 />
               </Stack>
             </Grid>

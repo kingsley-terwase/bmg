@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { lightModeColors } from "../../Config/color";
-import { useAuth } from "../../Contexts/AuthContext";
 import { NavBar, MobileSideNav, SideNav } from "./Components";
+import { useUserContext } from "../../Contexts";
+import { useNavigate } from "react-router-dom";
 
 const SIDE_NAV_WIDTH = 200;
 const LAYOUT_PADDING = 20;
@@ -11,9 +12,19 @@ const NAV_HEIGHT = 80;
 function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const { user } = useUserContext();
 
-  const { user } = useAuth();
+  console.log("DashboardLayout user:", user);
+
   const role = user?.role;
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
   const handleDrawerClose = () => {
     setIsClosing(true);

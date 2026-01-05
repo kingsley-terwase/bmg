@@ -22,6 +22,7 @@ import {
   AddOutlined
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 
 const PaymentsPage = () => {
   const [search, setSearch] = useState();
@@ -58,7 +59,7 @@ const PaymentsPage = () => {
         >
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={HourglassTopOutlined}
+              icon={EMOJI_ICONS.pending}
               title="Total Pending"
               value="20"
               actionLabel="Pending Payments"
@@ -68,7 +69,7 @@ const PaymentsPage = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={CheckCircleOutlined}
+              icon={EMOJI_ICONS.success}
               actionLabel="Total Revenue"
               title="Total Completed"
               value="18"

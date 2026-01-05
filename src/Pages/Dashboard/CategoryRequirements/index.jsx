@@ -15,7 +15,7 @@ const CategoryRequirementPage = () => {
         label="Categories  Requirements"
         desc="Control and manage categories of services, add, edit and delete categories."
         enableSearch
-        placeholder="Search Categories..."
+        placeholder="Search Requirements..."
         searchValue={search}
         onSearchChange={setSearch}
         actions={[
@@ -30,11 +30,6 @@ const CategoryRequirementPage = () => {
             icon: <AddOutlined />,
             onClick: () => navigate("/dashboard/admin/categories")
           },
-          {
-            label: "Add SubCategory",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/sub-categories")
-          }
         ]}
       />
 

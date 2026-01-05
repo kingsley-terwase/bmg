@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext } from "react";
 import { useSelector } from "react-redux";
 
@@ -9,8 +10,8 @@ export default function UserContextProvider({ children }) {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${user?.token}`,
-    },
+      Authorization: `Bearer ${user?.token}`
+    }
   };
 
   //console.log(user?.token)

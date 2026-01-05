@@ -2,25 +2,18 @@ export const countries = [
   { id: 1, country_name: "Nigeria" },
   { id: 2, country_name: "Ghana" },
   { id: 3, country_name: "Kenya" },
-  { id: 4, country_name: "South Africa" },
-];
-
-export const adminTypes = [
-  { admin_type: "Super Admin" },
-  { admin_type: "Account Manager" },
-  { admin_type: "Support Staff" },
-  { admin_type: "Country Manager" },
+  { id: 4, country_name: "South Africa" }
 ];
 
 export const headers = [
   { key: "select", label: "", width: "40px" },
-  { key: "select", label: "User ID" },
   { key: "firstname", label: "First Name" },
   { key: "lastname", label: "Last Name" },
   { key: "email", label: "Email" },
   { key: "phone", label: "Phone" },
+  { key: "created_at", label: "Created At" },
   { key: "status", label: "Status" },
-  { key: "actions", label: "", width: "40px" }
+  { key: "actions", label: "Action", width: "40px" }
 ];
 
 export const admins = [

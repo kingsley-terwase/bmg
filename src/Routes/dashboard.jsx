@@ -41,7 +41,8 @@ import {
   ResourcesPage,
   ColorsPage,
   SubscriptionsPage,
-  AddColors
+  AddColors,
+  AdminPermissions
 } from "../Pages/Dashboard";
 
 import { ExpertOverview, ExpertOrders } from "../Pages/Experts";
@@ -126,6 +127,7 @@ const DashboardRoutes = () => {
         <Route path="admin/colors" element={<ColorsPage />} />
         <Route path="admin/subscriptions" element={<SubscriptionsPage />} />
         <Route path="admin/add/colors" element={<AddColors />} />
+        <Route path="manage/admin-permissions" element={<AdminPermissions />} />
 
         {/* ----- EXPERT ROUTES ----- */}
         <Route path="expert/overview" element={<ExpertOverview />} />

@@ -1,28 +1,29 @@
 import React, { useState } from "react";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
-import { admins, headers } from "./data";
+import { admins, headers } from "../Administrators/data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const AdminRoles = () => {
-  const [search, setSearch] = useState();
+const AdminPermissions = () => {
   const navigate = useNavigate();
 
   return (
     <div>
       <PagesHeader
-        label="Manage Roles"
-        desc="Manage admministrators roles, add, edit and disable admin roles. "
-        enableSearch
-        placeholder="Seach admin role.."
-        searchValue={search}
-        onSearchChange={setSearch}
+        label="Manage Permissions"
+        desc="Manage admministrators permissions, add, edit and disable admininistrator permissions. "
+        enableSearch={false}
         actions={[
           {
             label: "Add Role",
             icon: <AddOutlined />,
             onClick: () => navigate("/dashboard/add/admin-roles")
+          },
+          {
+            label: "Manage Permissions",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/manage/admin-permissions")
           }
         ]}
       />
@@ -58,4 +59,4 @@ const AdminRoles = () => {
   );
 };
 
-export default AdminRoles;
+export default AdminPermissions;

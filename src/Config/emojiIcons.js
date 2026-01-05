@@ -29,5 +29,14 @@ export const EMOJI_ICONS = {
   more: "⋯",
   pending: "⏳",
   cancel: "❌",
-  success: "✅"
+  success: "✅",
+  editedVideo: "✂️",
+  generateVideo: "🎥",
+  generatedImages: "🖼️",
+  generateBusinessStrategy: "📊",
+  generatedVideos: "🎬",
+  generatedWebsites: "🌐",
+  generatedSpeeches: "🗣️",
+  permissions: "🔑",
+  paymethods: "🖥️",
 };

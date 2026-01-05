@@ -14,12 +14,23 @@ const validatePassword = (password) => {
 };
 
 const formatDate = (dateString) => {
+  if (!dateString) return "-";
+
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+
+  const datePart = date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric"
   });
+
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+
+  return `${datePart} | ${timePart.toLowerCase()}`;
 };
 
 export { validateEmail, validatePassword, formatDate };
