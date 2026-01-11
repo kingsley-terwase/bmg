@@ -57,12 +57,6 @@ export const ADMIN_NAV = [
     ],
   },
   {
-    label: "Category Requirements",
-    path: "/dashboard/admin/categories-requirements",
-    icon: EMOJI_ICONS.requirements,
-    children: [],
-  },
-  {
     label: "Sub Categories",
     path: "#",
     icon: EMOJI_ICONS.accountTree,

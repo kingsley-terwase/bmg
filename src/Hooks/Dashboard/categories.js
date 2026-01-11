@@ -49,7 +49,7 @@ const useFetchCategories = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/get/categories`,
+        `${BASE_SERVER_URL}/admin/categories`,
         config
       );
 

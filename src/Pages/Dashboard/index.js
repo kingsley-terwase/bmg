@@ -26,8 +26,6 @@ export { default as SubscriptionsPage } from "./Subscriptions";
 export { default as ColorsPage } from "./Colors";
 export { default as SettingsPage } from "./Settings";
 export { default as OrdersPage } from "./Orders";
-export { default as CategoryRequirementPage } from "./CategoryRequirements";
-export { default as AddCategoryRequirement } from "./CategoryRequirements/add";
 export { default as PaymentsPage } from "./Payments";
 export { default as AddPorfolios } from "./Portfolios/add";
 export { default as AddBlogsPage } from "./Blogs/add";

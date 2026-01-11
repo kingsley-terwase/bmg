@@ -16,8 +16,6 @@ import {
   SubCategoriesPage,
   AddSubCategoriesPage,
   ArtificialIntelligencePage,
-  CategoryRequirementPage,
-  AddCategoryRequirement,
   PaymentsPage,
   PortfoliosPage,
   AddPorfolios,
@@ -84,7 +82,6 @@ const DashboardRoutes = () => {
         <Route path="add/admin" element={<AddAdminPage />} />
         <Route path="view/admin-roles" element={<AdminRoles />} />
         <Route path="add/admin-roles" element={<AddAdminRole />} />
-
         <Route path="admin/customers" element={<UsersPage />} />
         <Route path="admin/experts" element={<ExpertsPage />} />
         <Route path="admin/add/experts" element={<AddExpertPage />} />
@@ -97,15 +94,6 @@ const DashboardRoutes = () => {
           path="admin/add/sub-categories"
           element={<AddSubCategoriesPage />}
         />
-        <Route
-          path="admin/categories-requirements"
-          element={<CategoryRequirementPage />}
-        />
-        <Route
-          path="admin/add/categories-requirement"
-          element={<AddCategoryRequirement />}
-        />
-
         <Route path="admin/orders" element={<OrdersPage />} />
         <Route
           path="admin/artificial-intelligence"

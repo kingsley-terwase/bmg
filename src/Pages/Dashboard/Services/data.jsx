@@ -23,4 +23,3 @@ export const serviceData = [
   { name: "Website", value: 15, color: "#EF4444" },
   { name: "Sports", value: 10, color: "#8B5CF6" },
 ];
-s;

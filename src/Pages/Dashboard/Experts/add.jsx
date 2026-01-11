@@ -111,6 +111,11 @@ const AddExpertPage = () => {
             icon: <VisibilityOutlined />,
             onClick: () => navigate("/dashboard/admin/experts"),
           },
+          {
+            label: "Add Customer",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/add/customer"),
+          },
         ]}
       />
 

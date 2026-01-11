@@ -16,24 +16,20 @@ function useAddExpert() {
       );
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error === 2) {
+      if (result?.code !== 0) {
         showToast.success(result.message);
-        return false;
-      }
-      if (result?.error) {
-        showToast.error(result?.message);
         return false;
       }
     } catch (error) {
       console.error("Error:", error.response.data);
-      if (error.response.data?.error) {
-        showToast.error(error.response.data.message);
+      if (error.response.data?.error !== 0) {
+        showToast.error(error?.response?.data?.message);
       } else {
-        showToast.error("An error occurred while adding Admin.");
+        showToast.error("An error occurred while adding Expert.");
       }
       return false;
     }

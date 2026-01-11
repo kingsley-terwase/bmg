@@ -70,6 +70,7 @@ const AddAdminPage = () => {
         setEmail("");
         setPhone("");
         setSubRole([]);
+        navigate("/dashboard/admin/experts");
       }
     } catch (error) {
       showToast.error(error || "Admin registration failed.");
