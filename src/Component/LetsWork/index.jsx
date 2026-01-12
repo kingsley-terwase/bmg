@@ -20,7 +20,7 @@ export default function LetsWorkTogether() {
     return (
         <Box
             sx={{
-                minHeight:{ xs: "none", md:"100vh"},
+                minHeight: { xs: "none", md: "100vh" },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -40,6 +40,7 @@ export default function LetsWorkTogether() {
                 >
                     {/* Main Heading */}
                     <Typography
+                        component="div"
                         sx={{
                             fontSize: { xs: "3rem", sm: "5rem", md: "7rem", lg: "11rem" },
                             fontWeight: 900,

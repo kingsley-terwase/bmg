@@ -4,6 +4,7 @@ import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
 import AIVideoEditor from "../Pages/Public/AIVideoEditor";
 import AIBizStrategy from "../Pages/Public/AIBizStrategy";
+import { CategoryServices } from "../Component";
 
 const PublicRoutes = () => {
     return (
@@ -12,8 +13,9 @@ const PublicRoutes = () => {
                 <Route path="/">
                     <Route index element={<HomePage />} />
                     <Route path="/category" element={<CategoryPage />} />
+                    <Route path="/category/:categoryId" element={<CategoryServices />} />
                     <Route path="/service" element={<ServicePage />} />
-                    <Route path="/service/:title" element={<ServiceDetailPage />} />
+                    <Route path="/service/:id" element={<ServiceDetailPage />} />
                     <Route path="/track-order" element={<TrackOrderPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
@@ -22,8 +24,8 @@ const PublicRoutes = () => {
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/reset-success" element={<PasswordResetSuccessPage />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/blogs" element={<BlogPage />} />
-                    <Route path="/blog-detail" element={<BlogDetailPage />} />
+                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/blog/:id" element={<BlogDetailPage />} />
                     <Route path="/web-generator" element={<AIWebGeneratorPage />} />
                     <Route path="/ai-suites" element={<AISuitesPage />} />
                     <Route path="/about-us" element={<AboutUsPage />} />

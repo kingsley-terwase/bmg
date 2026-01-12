@@ -1,7 +1,7 @@
 import axios from "axios"
 import { toast } from "react-toastify"
-import {BASE_SERVER_URL} from "../Config/paths"
-import {useUserContext} from "../Contexts"
+import { BASE_SERVER_URL } from "../Config/paths"
+import { useUserContext } from "../Contexts"
 
 function useAddCategories() {
   const { config } = useUserContext()

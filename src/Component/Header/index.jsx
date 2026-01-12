@@ -17,6 +17,7 @@ import {
     Grid,
     Collapse,
     Divider,
+    CircularProgress,
 } from '@mui/material';
 
 import {
@@ -40,15 +41,33 @@ import { HeroSection } from '../Herosection';
 import ThemeToggleButton from '../ThemeToggleBtn';
 import PatnersLogo from '../PatnersLogo';
 import { FONT_FAMILY } from '../../Config/font';
+import { useCategories } from '../../Hooks/web_categories';
 
-const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
+const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave, isGigs, categories, categoriesLoading }) => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const [hoveredCategory, setHoveredCategory] = useState(items[0]?.category || '');
+
+    const resolveAwsImage = (image) => {
+        if (!image) return null;
+        if (image.startsWith('http')) return image;
+        return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
+    };
+
+    // Initialize hoveredCategory based on whether it's Gigs or not
+    const [hoveredCategory, setHoveredCategory] = useState(null);
+
+    // Update hoveredCategory when dropdown opens or data changes
+    React.useEffect(() => {
+        if (isOpen && !hoveredCategory) {
+            if (isGigs && categories?.length > 0) {
+                setHoveredCategory(categories[0]?.id);
+            } else if (items?.length > 0) {
+                setHoveredCategory(items[0]?.category);
+            }
+        }
+    }, [isOpen, isGigs, categories, items, hoveredCategory]);
 
     if (!isOpen) return null;
-
-    const currentCategory = items.find(item => item.category === hoveredCategory);
 
     const handleItemClick = (e, path) => {
         e.preventDefault();
@@ -59,6 +78,19 @@ const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
+
+    // For Gigs, use API categories; for others, use static items
+    const displayItems = isGigs && categories?.length > 0 ? categories : items;
+    const currentCategory = isGigs && categories?.length > 0
+        ? categories.find(cat => cat.id === hoveredCategory)
+        : items.find(item => item.category === hoveredCategory);
+
+    // 🔹 FIX: Return early if no current category found
+    if (!currentCategory) {
+        return null;
+    }
+
+    const hashedCategoryId = btoa(String(currentCategory.id));
 
     return (
         <Paper
@@ -83,6 +115,7 @@ const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
             }}
         >
             <Grid container sx={{ minHeight: 450 }}>
+                {/* Sidebar with categories */}
                 <Grid
                     size={{ xs: 3 }}
                     sx={{
@@ -90,102 +123,203 @@ const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
                             ? theme.palette.primary.lightBg
                             : '#f8f9fa',
                         borderRight: `1px solid ${theme.palette.divider}`,
-                        py: 3
+                        py: 3,
+                        overflowY: 'auto',
+                        maxHeight: 450
                     }}
                 >
-                    {items.map((item) => (
-                        <Box
-                            key={item.category}
-                            onMouseEnter={() => setHoveredCategory(item.category)}
-                            sx={{
-                                px: 3,
-                                py: 2.5,
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                backgroundColor: hoveredCategory === item.category
-                                    ? theme.palette.primary.main + '15'
-                                    : 'transparent',
-                                borderLeft: hoveredCategory === item.category
-                                    ? `4px solid ${theme.palette.primary.main}`
-                                    : '4px solid transparent',
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                '&:hover': {
-                                    backgroundColor: theme.palette.primary.main + '10',
-                                }
-                            }}
-                        >
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    {categoriesLoading && isGigs ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                            <CircularProgress size={30} />
+                        </Box>
+                    ) : (
+                        displayItems.map((item) => {
+                            const itemId = isGigs ? item.id : item.category;
+                            const itemName = isGigs ? item.name : item.category;
+                            const itemIcon = isGigs ? <DesignIdeas24Regular /> : item.icon;
+
+                            return (
                                 <Box
+                                    key={itemId}
+                                    onMouseEnter={() => setHoveredCategory(itemId)}
                                     sx={{
-                                        width: 42,
-                                        height: 42,
-                                        borderRadius: 2.5,
+                                        px: 3,
+                                        py: 2.5,
+                                        cursor: 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        justifyContent: 'center',
-                                        backgroundColor: hoveredCategory === item.category
-                                            ? theme.palette.primary.main
-                                            : theme.palette.primary.main + '20',
-                                        color: hoveredCategory === item.category
-                                            ? theme.palette.primary.contrastText
-                                            : theme.palette.primary.main,
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: hoveredCategory === item.category
-                                            ? `0 4px 12px ${theme.palette.primary.main}44`
-                                            : 'none'
+                                        justifyContent: 'space-between',
+                                        backgroundColor: hoveredCategory === itemId
+                                            ? theme.palette.primary.main + '15'
+                                            : 'transparent',
+                                        borderLeft: hoveredCategory === itemId
+                                            ? `4px solid ${theme.palette.primary.main}`
+                                            : '4px solid transparent',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            backgroundColor: theme.palette.primary.main + '10',
+                                        }
                                     }}
                                 >
-                                    {item.icon}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                        <Box
+                                            sx={{
+                                                width: 42,
+                                                height: 42,
+                                                borderRadius: 2.5,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: hoveredCategory === itemId
+                                                    ? theme.palette.primary.main
+                                                    : theme.palette.primary.main + '20',
+                                                color: hoveredCategory === itemId
+                                                    ? theme.palette.primary.contrastText
+                                                    : theme.palette.primary.main,
+                                                transition: 'all 0.3s ease',
+                                                boxShadow: hoveredCategory === itemId
+                                                    ? `0 4px 12px ${theme.palette.primary.main}44`
+                                                    : 'none'
+                                            }}
+                                        >
+                                            {itemIcon}
+                                        </Box>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                fontWeight: hoveredCategory === itemId ? 700 : 600,
+                                                color: theme.palette.text.primary,
+                                                fontSize: '0.95rem'
+                                            }}
+                                        >
+                                            {itemName}
+                                        </Typography>
+                                    </Box>
+                                    <ChevronRight16Regular
+                                        style={{
+                                            color: theme.palette.primary.main,
+                                            opacity: hoveredCategory === itemId ? 1 : 0,
+                                            transition: 'opacity 0.3s ease'
+                                        }}
+                                    />
                                 </Box>
-                                <Typography
-                                    variant="body1"
-                                    sx={{
-                                        fontWeight: hoveredCategory === item.category ? 700 : 600,
-                                        color: theme.palette.text.primary,
-                                        fontSize: '0.95rem'
-                                    }}
-                                >
-                                    {item.category}
-                                </Typography>
-                            </Box>
-                            <ChevronRight16Regular
-                                style={{
-                                    color: theme.palette.primary.main,
-                                    opacity: hoveredCategory === item.category ? 1 : 0,
-                                    transition: 'opacity 0.3s ease'
-                                }}
-                            />
-                        </Box>
-                    ))}
+                            );
+                        })
+                    )}
                 </Grid>
 
-                <Grid size={{ xs: 9 }} sx={{ p: 4 }}>
-                    {currentCategory && (
-                        <>
-                            <Box sx={{ mb: 4 }}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontWeight: 800,
-                                        color: theme.palette.text.heading,
-                                        mb: 1
-                                    }}
-                                >
-                                    {currentCategory.category}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: theme.palette.text.secondary,
-                                        fontSize: '0.95rem'
-                                    }}
-                                >
-                                    {currentCategory.description}
-                                </Typography>
-                            </Box>
+                <Grid size={{ xs: 9 }} sx={{ p: 4, overflowY: 'auto', maxHeight: 450 }}>
+                    <Box sx={{ mb: 4 }}>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                fontWeight: 800,
+                                color: theme.palette.text.heading,
+                                mb: 1
+                            }}
+                        >
+                            {isGigs ? currentCategory.name : currentCategory.category}
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: theme.palette.text.secondary,
+                                fontSize: '0.95rem'
+                            }}
+                        >
+                            {isGigs ? currentCategory.description : currentCategory.description}
+                        </Typography>
+                    </Box>
 
+                    {isGigs ? (
+                        // Display category image and short descriptions for Gigs
+                        <Box>
+                            {currentCategory.image && (
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        height: 200,
+                                        borderRadius: 3,
+                                        overflow: 'hidden',
+                                        mb: 3,
+                                        boxShadow: theme.palette.mode === 'dark'
+                                            ? '0 4px 20px rgba(0,0,0,0.5)'
+                                            : '0 4px 20px rgba(0,0,0,0.1)',
+                                    }}
+                                >
+                                    <img
+                                        src={resolveAwsImage(currentCategory.image)}
+                                        alt={currentCategory.name}
+                                        loading="lazy"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "/images/fallback-category.jpg";
+                                        }}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover'
+                                        }}
+                                    />
+                                </Box>
+                            )}
+
+                            {currentCategory.short_descriptions && (
+                                <Grid container spacing={2}>
+                                    {Object.entries(currentCategory.short_descriptions)
+                                        .filter(([_, value]) => value && value.trim())
+                                        .map(([key, desc]) => (
+                                            <Grid size={{ xs: 12, sm: 6 }} key={key}>
+                                                <Box
+                                                    onClick={(e) =>
+                                                        handleItemClick(e, `/category/${currentCategory.id}`)
+                                                    }
+                                                    sx={{
+                                                        p: 2.5,
+                                                        borderRadius: 3,
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        border: `1px solid ${theme.palette.divider}`,
+                                                        '&:hover': {
+                                                            backgroundColor: theme.palette.primary.main + '08',
+                                                            borderColor: theme.palette.primary.main,
+                                                            transform: 'translateY(-4px)',
+                                                        }
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            color: theme.palette.text.primary,
+                                                            lineHeight: 1.6,
+                                                            fontSize: '0.9rem'
+                                                        }}
+                                                    >
+                                                        {desc}
+                                                    </Typography>
+                                                </Box>
+                                            </Grid>
+                                        ))}
+                                </Grid>
+                            )}
+
+                            <Box sx={{ mt: 4, pt: 3, borderTop: `1px solid ${theme.palette.divider}` }}>
+                                <Button
+                                    variant="contained"
+                                    onClick={(e) =>
+                                        handleItemClick(
+                                            e,
+                                            `/category/${encodeURIComponent(hashedCategoryId)}`
+                                        )
+                                    }
+                                >
+                                    Explore {currentCategory.name}
+                                </Button>
+                            </Box>
+                        </Box>
+
+                    ) : (
+                        // Display static items for non-Gigs dropdowns
+                        <>
                             <Grid container spacing={2.5}>
                                 {currentCategory.items.map((subItem, idx) => (
                                     <Grid size={{ xs: 6 }} key={idx}>
@@ -270,17 +404,20 @@ const MegaDropdown = ({ items, isOpen, onMouseEnter, onMouseLeave }) => {
     );
 };
 
-const MobileDropdown = ({ item, isOpen, onToggle, onNavigate }) => {
+const MobileDropdown = ({ item, isOpen, onToggle, onNavigate, isGigs, categories, categoriesLoading }) => {
     const theme = useTheme();
     const [expandedCategory, setExpandedCategory] = useState(null);
 
-    const handleCategoryClick = (category) => {
-        setExpandedCategory(expandedCategory === category ? null : category);
+    const handleCategoryClick = (categoryId) => {
+        setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
     };
 
     const handleItemClick = (path) => {
         onNavigate(path);
     };
+
+    // For Gigs, use API categories; for others, use static dropdownData
+    const displayData = isGigs && categories?.length > 0 ? categories : item.dropdownData;
 
     return (
         <Box>
@@ -309,142 +446,251 @@ const MobileDropdown = ({ item, isOpen, onToggle, onNavigate }) => {
 
             <Collapse in={isOpen} timeout="auto" unmountOnExit>
                 <Box sx={{ pl: 2, pr: 1, pb: 2 }}>
-                    {item.dropdownData?.map((category) => (
-                        <Box key={category.category} sx={{ mb: 1 }}>
-                            <Box
-                                onClick={() => handleCategoryClick(category.category)}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    p: 1.5,
-                                    borderRadius: 2,
-                                    backgroundColor: expandedCategory === category.category
-                                        ? theme.palette.primary.main + '15'
-                                        : theme.palette.primary.main + '08',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    border: `1px solid ${expandedCategory === category.category ? theme.palette.primary.main : 'transparent'}`,
-                                    '&:hover': {
-                                        backgroundColor: theme.palette.primary.main + '15'
-                                    }
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    {categoriesLoading && isGigs ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+                            <CircularProgress size={24} />
+                        </Box>
+                    ) : (
+                        displayData?.map((category) => {
+                            const categoryId = isGigs ? category.id : category.category;
+                            const categoryName = isGigs ? category.name : category.category;
+                            const categoryDesc = category.description;
+                            const categoryIcon = isGigs ? <DesignIdeas24Regular /> : category.icon;
+
+                            return (
+                                <Box key={categoryId} sx={{ mb: 1 }}>
                                     <Box
+                                        onClick={() => handleCategoryClick(categoryId)}
                                         sx={{
-                                            width: 36,
-                                            height: 36,
-                                            borderRadius: 2,
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'center',
-                                            backgroundColor: theme.palette.primary.main,
-                                            color: theme.palette.primary.contrastText,
+                                            justifyContent: 'space-between',
+                                            p: 1.5,
+                                            borderRadius: 2,
+                                            backgroundColor: expandedCategory === categoryId
+                                                ? theme.palette.primary.main + '15'
+                                                : theme.palette.primary.main + '08',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            border: `1px solid ${expandedCategory === categoryId ? theme.palette.primary.main : 'transparent'}`,
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.primary.main + '15'
+                                            }
                                         }}
                                     >
-                                        {category.icon}
-                                    </Box>
-                                    <Box>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                fontWeight: 700,
-                                                color: theme.palette.text.primary,
-                                                fontSize: '0.9rem'
-                                            }}
-                                        >
-                                            {category.category}
-                                        </Typography>
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                color: theme.palette.text.secondary,
-                                                fontSize: '0.75rem'
-                                            }}
-                                        >
-                                            {category.description}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                {expandedCategory === category.category ?
-                                    <ChevronUp20Regular style={{ color: theme.palette.primary.main }} /> :
-                                    <ChevronDown20Regular style={{ color: theme.palette.text.secondary }} />
-                                }
-                            </Box>
-
-                            <Collapse in={expandedCategory === category.category} timeout="auto" unmountOnExit>
-                                <Box sx={{ pl: 2, pt: 1 }}>
-                                    {category.items.map((subItem, idx) => (
-                                        <Box
-                                            key={idx}
-                                            onClick={() => handleItemClick(subItem.path)}
-                                            sx={{
-                                                p: 1.5,
-                                                mb: 0.5,
-                                                borderRadius: 1.5,
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s ease',
-                                                border: `1px solid ${theme.palette.divider}`,
-                                                '&:hover': {
-                                                    backgroundColor: theme.palette.background.paper,
-                                                    borderColor: theme.palette.primary.main,
-                                                }
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="body2"
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+                                            <Box
                                                 sx={{
-                                                    fontWeight: 600,
-                                                    color: theme.palette.text.primary,
-                                                    fontSize: '0.85rem',
-                                                    mb: 0.3
+                                                    width: 36,
+                                                    height: 36,
+                                                    borderRadius: 2,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    backgroundColor: theme.palette.primary.main,
+                                                    color: theme.palette.primary.contrastText,
+                                                    flexShrink: 0
                                                 }}
                                             >
-                                                {subItem.title}
-                                            </Typography>
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    color: theme.palette.text.secondary,
-                                                    fontSize: '0.75rem',
-                                                    lineHeight: 1.4
-                                                }}
-                                            >
-                                                {subItem.description}
-                                            </Typography>
+                                                {categoryIcon}
+                                            </Box>
+                                            <Box sx={{ minWidth: 0 }}>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        fontWeight: 700,
+                                                        color: theme.palette.text.primary,
+                                                        fontSize: '0.9rem'
+                                                    }}
+                                                >
+                                                    {categoryName}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: theme.palette.text.secondary,
+                                                        fontSize: '0.75rem',
+                                                        display: 'block',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap'
+                                                    }}
+                                                >
+                                                    {categoryDesc}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    ))}
+                                        {expandedCategory === categoryId ?
+                                            <ChevronUp20Regular style={{ color: theme.palette.primary.main, flexShrink: 0 }} /> :
+                                            <ChevronDown20Regular style={{ color: theme.palette.text.secondary, flexShrink: 0 }} />
+                                        }
+                                    </Box>
 
-                                    {category.cta && (
-                                        <Button
-                                            fullWidth
-                                            onClick={() => handleItemClick(category.ctaPath)}
-                                            variant="contained"
-                                            size="small"
-                                            sx={{
-                                                mt: 1,
-                                                background: theme.palette.warning.light,
-                                                color: theme.palette.warning.contrastText,
-                                                textTransform: 'none',
-                                                fontWeight: 600,
-                                                fontSize: '0.85rem',
-                                                py: 1,
-                                                borderRadius: 1.5,
-                                                boxShadow: 'none',
-                                                '&:hover': {
-                                                    background: theme.palette.warning.main,
-                                                    boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
-                                                }
-                                            }}
-                                        >
-                                            {category.cta}
-                                        </Button>
-                                    )}
+                                    <Collapse in={expandedCategory === categoryId} timeout="auto" unmountOnExit>
+                                        <Box sx={{ pl: 2, pt: 1 }}>
+                                            {isGigs ? (
+                                                // For Gigs: show image and short descriptions
+                                                <>
+                                                    {category.image && (
+                                                        <Box
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: 120,
+                                                                borderRadius: 2,
+                                                                overflow: 'hidden',
+                                                                mb: 1.5,
+                                                            }}
+                                                        >
+                                                            <img
+                                                                src={category.image}
+                                                                alt={category.name}
+                                                                style={{
+                                                                    width: '100%',
+                                                                    height: '100%',
+                                                                    objectFit: 'cover'
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    )}
+
+                                                    {category.short_descriptions && (
+                                                        <>
+                                                            {Object.entries(category.short_descriptions)
+                                                                .filter(([_, value]) => value && value.trim())
+                                                                .map(([key, desc]) => (
+                                                                    <Box
+                                                                        key={key}
+                                                                        onClick={() => handleItemClick(`/category/${category.id}`)}
+                                                                        sx={{
+                                                                            p: 1.5,
+                                                                            mb: 0.5,
+                                                                            borderRadius: 1.5,
+                                                                            cursor: 'pointer',
+                                                                            transition: 'all 0.2s ease',
+                                                                            border: `1px solid ${theme.palette.divider}`,
+                                                                            '&:hover': {
+                                                                                backgroundColor: theme.palette.background.paper,
+                                                                                borderColor: theme.palette.primary.main,
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <Typography
+                                                                            variant="caption"
+                                                                            sx={{
+                                                                                color: theme.palette.text.primary,
+                                                                                fontSize: '0.8rem',
+                                                                                lineHeight: 1.5
+                                                                            }}
+                                                                        >
+                                                                            {desc}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                ))
+                                                            }
+                                                        </>
+                                                    )}
+
+                                                    <Button
+                                                        fullWidth
+                                                        onClick={() => handleItemClick(`/category/${category.id}`)}
+                                                        variant="contained"
+                                                        size="small"
+                                                        sx={{
+                                                            mt: 1,
+                                                            background: theme.palette.warning.light,
+                                                            color: theme.palette.warning.contrastText,
+                                                            textTransform: 'none',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.85rem',
+                                                            py: 1,
+                                                            borderRadius: 1.5,
+                                                            boxShadow: 'none',
+                                                            '&:hover': {
+                                                                background: theme.palette.warning.main,
+                                                                boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
+                                                            }
+                                                        }}
+                                                    >
+                                                        Explore {category.name}
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                // For non-Gigs: show static items
+                                                <>
+                                                    {category.items.map((subItem, idx) => (
+                                                        <Box
+                                                            key={idx}
+                                                            onClick={() => handleItemClick(subItem.path)}
+                                                            sx={{
+                                                                p: 1.5,
+                                                                mb: 0.5,
+                                                                borderRadius: 1.5,
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s ease',
+                                                                border: `1px solid ${theme.palette.divider}`,
+                                                                '&:hover': {
+                                                                    backgroundColor: theme.palette.background.paper,
+                                                                    borderColor: theme.palette.primary.main,
+                                                                }
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant="body2"
+                                                                sx={{
+                                                                    fontWeight: 600,
+                                                                    color: theme.palette.text.primary,
+                                                                    fontSize: '0.85rem',
+                                                                    mb: 0.3
+                                                                }}
+                                                            >
+                                                                {subItem.title}
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="caption"
+                                                                sx={{
+                                                                    color: theme.palette.text.secondary,
+                                                                    fontSize: '0.75rem',
+                                                                    lineHeight: 1.4
+                                                                }}
+                                                            >
+                                                                {subItem.description}
+                                                            </Typography>
+                                                        </Box>
+                                                    ))}
+
+                                                    {category.cta && (
+                                                        <Button
+                                                            fullWidth
+                                                            onClick={() => handleItemClick(category.ctaPath)}
+                                                            variant="contained"
+                                                            size="small"
+                                                            sx={{
+                                                                mt: 1,
+                                                                background: theme.palette.warning.light,
+                                                                color: theme.palette.warning.contrastText,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.85rem',
+                                                                py: 1,
+                                                                borderRadius: 1.5,
+                                                                boxShadow: 'none',
+                                                                '&:hover': {
+                                                                    background: theme.palette.warning.main,
+                                                                    boxShadow: `0 4px 12px ${theme.palette.warning.main}55`
+                                                                }
+                                                            }}
+                                                        >
+                                                            {category.cta}
+                                                        </Button>
+                                                    )}
+                                                </>
+                                            )}
+                                        </Box>
+                                    </Collapse>
                                 </Box>
-                            </Collapse>
-                        </Box>
-                    ))}
+                            );
+                        })
+                    )}
                 </Box>
             </Collapse>
         </Box>
@@ -460,6 +706,9 @@ const Header = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState({});
+
+    // Fetch categories from API
+    const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
 
     const handleToggle = () => {
         setMobileOpen((prev) => !prev);
@@ -538,62 +787,6 @@ const Header = () => {
         }
     ];
 
-    // Gigs dropdown data with routes
-    const gigsData = [
-        {
-            category: 'Design & Creative',
-            icon: <DesignIdeas24Regular />,
-            description: 'Creative services for your business',
-            items: [
-                { title: 'Logo Design', description: 'Professional logo design services', path: '/category' },
-                { title: 'Brand Identity', description: 'Complete brand identity packages', path: '/category' },
-                { title: 'UI/UX Design', description: 'User interface and experience design', path: '/category' },
-                { title: 'Illustration', description: 'Custom illustrations and artwork', path: '/category' },
-            ],
-            cta: 'Browse Design Gigs',
-            ctaPath: '/category'
-        },
-        {
-            category: 'Development',
-            icon: <Code24Regular />,
-            description: 'Software development services',
-            items: [
-                { title: 'Web Development', description: 'Custom website development', path: '/category' },
-                { title: 'Mobile Apps', description: 'iOS and Android app development', path: '/category' },
-                { title: 'E-commerce', description: 'Online store development', path: '/category' },
-                { title: 'WordPress', description: 'WordPress customization', path: '/category' },
-            ],
-            cta: 'Find Developers',
-            ctaPath: '/category'
-        },
-        {
-            category: 'Digital Marketing',
-            icon: <Megaphone24Regular />,
-            description: 'Marketing and promotion services',
-            items: [
-                { title: 'SEO Services', description: 'Search engine optimization', path: '/category' },
-                { title: 'Content Marketing', description: 'Content strategy and creation', path: '/category' },
-                { title: 'Social Media', description: 'Social media management', path: '/category' },
-                { title: 'PPC Advertising', description: 'Pay-per-click campaigns', path: '/category' },
-            ],
-            cta: 'Marketing Experts',
-            ctaPath: '/category'
-        },
-        {
-            category: 'Writing & Translation',
-            icon: <Edit24Regular />,
-            description: 'Professional writing services',
-            items: [
-                { title: 'Copywriting', description: 'Compelling marketing copy', path: '/category' },
-                { title: 'Content Writing', description: 'Blog posts and articles', path: '/category' },
-                { title: 'Technical Writing', description: 'Documentation and guides', path: '/category' },
-                { title: 'Translation', description: 'Professional translation services', path: '/category' },
-            ],
-            cta: 'Hire Writers',
-            ctaPath: '/category'
-        }
-    ];
-
     // Others dropdown data
     const othersData = [
         {
@@ -643,7 +836,13 @@ const Header = () => {
     ];
 
     const menuItems = [
-        { label: 'Gigs', path: '/category', hasDropdown: true, dropdownData: gigsData },
+        {
+            label: 'Gigs',
+            path: '/category',
+            hasDropdown: true,
+            dropdownData: [], // Will use categories from API
+            isGigs: true // Flag to identify Gigs dropdown
+        },
         { label: 'Services', path: '/service', hasDropdown: true, dropdownData: servicesData },
         { label: 'Portfolio', path: '/portfolio' },
         { label: 'Gift Voucher', path: '/gift-voucher' },
@@ -755,6 +954,9 @@ const Header = () => {
                                             isOpen={activeDropdown === item.label}
                                             onMouseEnter={() => handleDropdownMouseEnter(item.label)}
                                             onMouseLeave={handleDropdownMouseLeave}
+                                            isGigs={item.isGigs}
+                                            categories={categories}
+                                            categoriesLoading={categoriesLoading}
                                         />
                                     )}
                                 </Box>
@@ -877,6 +1079,9 @@ const Header = () => {
                                     isOpen={mobileDropdownOpen[item.label]}
                                     onToggle={() => handleMobileDropdownToggle(item.label)}
                                     onNavigate={handleMobileNavigate}
+                                    isGigs={item.isGigs}
+                                    categories={categories}
+                                    categoriesLoading={categoriesLoading}
                                 />
                             ) : (
                                 <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>

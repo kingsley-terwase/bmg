@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { Box, Container, Typography, TextField, Button, Card, CardContent, Grid, Chip, InputAdornment, Divider, Paper, Stepper, Step, StepLabel } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Container, Typography, TextField, Button, Card, CardContent, Grid, Chip, InputAdornment, Divider, Paper, Stepper, Step, StepLabel, CircularProgress, Alert, Snackbar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Gift24Regular, Mail24Regular, Person24Regular, Money24Regular, CheckmarkCircle24Filled, Sparkle24Regular, ArrowRight24Regular, CheckmarkCircleFilled } from '@fluentui/react-icons';
 import { useNavigate } from 'react-router-dom';
+import { useGiftCards } from '../../../Hooks/web_giftVoucher';
+import axios from 'axios';
+import { BASE_SERVER_URL } from '../../../Config/paths';
 
 const GiftVoucherPage = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
+
+    // Use the gift cards hook
+    const { giftCards, loading: giftCardsLoading, error: giftCardsError } = useGiftCards();
+
     const [activeStep, setActiveStep] = useState(0);
     const [selectedAmount, setSelectedAmount] = useState('50');
     const [customAmount, setCustomAmount] = useState('');
@@ -18,11 +26,59 @@ const GiftVoucherPage = () => {
         message: '',
     });
 
+    // API state management for gift card creation
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [createdGiftCard, setCreatedGiftCard] = useState(null);
+
+    // Snackbar state
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleNext = () => {
+        // Validation for each step
+        if (activeStep === 0) {
+            const amount = parseFloat(customAmount || selectedAmount);
+            if (!amount || amount < 10) {
+                setSnackbar({
+                    open: true,
+                    message: 'Please select or enter an amount of at least $10',
+                    severity: 'error'
+                });
+                return;
+            }
+        }
+
+        if (activeStep === 1) {
+            if (!formData.recipientName || !formData.recipientEmail || !formData.senderName || !formData.senderEmail) {
+                setSnackbar({
+                    open: true,
+                    message: 'Please fill in all required fields',
+                    severity: 'error'
+                });
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.recipientEmail) || !emailRegex.test(formData.senderEmail)) {
+                setSnackbar({
+                    open: true,
+                    message: 'Please enter valid email addresses',
+                    severity: 'error'
+                });
+                return;
+            }
+        }
+
         setActiveStep((prevStep) => prevStep + 1);
     };
 
@@ -30,15 +86,94 @@ const GiftVoucherPage = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
 
-    const navigate = useNavigate();
+    const handlePurchaseGiftCard = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const amount = parseFloat(customAmount || selectedAmount);
+
+            // Prepare gift card data
+            const giftCardData = {
+                gift_card_amount_id: 1, // You may need to map this based on selected amount
+                recipient_email: formData.recipientEmail,
+                amount: amount.toFixed(2),
+                message: formData.message || `A gift from ${formData.senderName}`,
+                purchaser_id: null, // This should come from authenticated user if available
+                sender_name: formData.senderName,
+                sender_email: formData.senderEmail,
+                recipient_name: formData.recipientName,
+                design: selectedDesign,
+            };
+
+            // You may need to get authentication token if user is logged in
+            const token = localStorage.getItem('authToken'); // Adjust based on your auth implementation
+
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            // Create gift card
+            const response = await axios.post(
+                `${BASE_SERVER_URL}/web/gift-card`,
+                giftCardData,
+                { headers }
+            );
+
+            if (response.data.success) {
+                setCreatedGiftCard(response.data.result);
+                setSuccess(true);
+
+                setSnackbar({
+                    open: true,
+                    message: 'Gift card created successfully! Redirecting to payment...',
+                    severity: 'success'
+                });
+
+                // Redirect to checkout/payment page after 2 seconds
+                setTimeout(() => {
+                    navigate('/checkout', {
+                        state: {
+                            giftCard: response.data.result,
+                            amount: amount,
+                            paymentReference: response.data.result.payment_reference,
+                        }
+                    });
+                }, 2000);
+            } else {
+                throw new Error(response.data.message || 'Failed to create gift card');
+            }
+        } catch (err) {
+            console.error('Error creating gift card:', err);
+            const errorMessage = err.response?.data?.message || err.message || 'Failed to create gift card. Please try again.';
+
+            setError(errorMessage);
+            setSnackbar({
+                open: true,
+                message: errorMessage,
+                severity: 'error'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Gift voucher data:', { ...formData, amount: customAmount || selectedAmount, design: selectedDesign });
+        handlePurchaseGiftCard();
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     const steps = ['Choose Amount', 'Personalize', 'Review & Purchase'];
 
+    // Default amounts (can be overridden by API data)
     const amounts = [
         { value: '25', label: '$25', description: 'Starter' },
         { value: '50', label: '$50', description: 'Popular', popular: true },
@@ -64,6 +199,7 @@ const GiftVoucherPage = () => {
 
     return (
         <Box sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
+            {/* Hero Section */}
             <Box sx={{
                 position: 'relative',
                 overflow: 'hidden',
@@ -116,7 +252,7 @@ const GiftVoucherPage = () => {
                                     textTransform: 'none',
                                     boxShadow: '0 8px 32px rgba(255, 107, 53, 0.4)',
                                     '&:hover': {
-                                        bgcolor:  theme.palette.warning.main,
+                                        bgcolor: theme.palette.warning.main,
                                         transform: 'translateY(-2px)',
                                         boxShadow: '0 12px 40px rgba(255, 107, 53, 0.5)',
                                     },
@@ -233,6 +369,7 @@ const GiftVoucherPage = () => {
                 </Grid>
             </Container>
 
+            {/* Gift Card Creation Form */}
             <Container maxWidth="lg" sx={{ py: 8 }}>
                 <Typography variant="h3" sx={{ textAlign: 'center', fontWeight: 700, mb: 2 }}>
                     Create Your Gift Voucher
@@ -324,6 +461,7 @@ const GiftVoucherPage = () => {
                                                 ),
                                             }}
                                             placeholder="Enter custom amount (min $10)"
+                                            inputProps={{ min: 10, step: 1 }}
                                         />
                                     </Box>
                                 )}
@@ -439,9 +577,11 @@ const GiftVoucherPage = () => {
                                                     }}
                                                 />
                                             </Grid>
-                                            <Grid size={{ xs: 12 }} >
+                                            <Grid size={{ xs: 12 }}>
                                                 <TextField
                                                     fullWidth
+                                                    multiline
+                                                    rows={3}
                                                     name="message"
                                                     label="Personal Message (Optional)"
                                                     value={formData.message}
@@ -453,11 +593,18 @@ const GiftVoucherPage = () => {
                                     </Box>
                                 )}
 
+                                {/* Step 3: Review */}
                                 {activeStep === 2 && (
                                     <Box>
                                         <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
                                             Review & Purchase
                                         </Typography>
+
+                                        {error && (
+                                            <Alert severity="error" sx={{ mb: 3 }}>
+                                                {error}
+                                            </Alert>
+                                        )}
 
                                         <Card sx={{ p: 3, bgcolor: '#f5f5f5', mb: 3 }}>
                                             <Grid container spacing={2}>
@@ -470,7 +617,7 @@ const GiftVoucherPage = () => {
                                                 <Grid size={{ xs: 12 }}>
                                                     <Typography variant="subtitle2" color="text.secondary">Design:</Typography>
                                                     <Typography variant="body1">
-                                                        {designs.find(d => d.id === selectedDesign)?.name}
+                                                        {designs.find(d => d.id === selectedDesign)?.name} {designs.find(d => d.id === selectedDesign)?.emoji}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid size={{ xs: 12 }}>
@@ -501,7 +648,7 @@ const GiftVoucherPage = () => {
                                 {/* Navigation Buttons */}
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
                                     <Button
-                                        disabled={activeStep === 0}
+                                        disabled={activeStep === 0 || loading}
                                         onClick={handleBack}
                                         sx={{ textTransform: 'none' }}
                                     >
@@ -511,8 +658,8 @@ const GiftVoucherPage = () => {
                                         <Button
                                             type="submit"
                                             variant="contained"
-                                            onClick={() => navigate('/checkout')}
-                                            endIcon={<CheckmarkCircle24Filled />}
+                                            disabled={loading}
+                                            endIcon={loading ? <CircularProgress size={20} /> : <CheckmarkCircle24Filled />}
                                             sx={{
                                                 bgcolor: theme.palette.primary.main,
                                                 px: 4,
@@ -524,12 +671,13 @@ const GiftVoucherPage = () => {
                                                 },
                                             }}
                                         >
-                                            Complete Purchase
+                                            {loading ? 'Processing...' : 'Complete Purchase'}
                                         </Button>
                                     ) : (
                                         <Button
                                             variant="contained"
                                             onClick={handleNext}
+                                            disabled={loading}
                                             endIcon={<ArrowRight24Regular />}
                                             sx={{
                                                 bgcolor: theme.palette.primary.main,
@@ -551,7 +699,7 @@ const GiftVoucherPage = () => {
                     </Grid>
 
                     {/* Preview Section */}
-                    <Grid size={{ xs: 12, md: 5 }} >
+                    <Grid size={{ xs: 12, md: 5 }}>
                         <Box sx={{ position: 'sticky', top: 20 }}>
                             <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
                                 Voucher Preview
@@ -592,13 +740,27 @@ const GiftVoucherPage = () => {
                                     )}
                                 </Box>
                                 <Box sx={{ textAlign: 'center', mt: 3 }}>
-                                    <Gift24Regular style={{ fontSize: '4rem' }} />
+                                    <Typography sx={{ fontSize: '4rem' }}>
+                                        {designs.find(d => d.id === selectedDesign)?.emoji}
+                                    </Typography>
                                 </Box>
                             </Card>
                         </Box>
                     </Grid>
                 </Grid>
             </Container>
+
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

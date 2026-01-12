@@ -18,7 +18,7 @@ export { default as CategoryBanner } from "./CategoryBanner";
 export { default as ServiceCategoryExplorer } from "./ExploreCategories";
 export { default as ServicesGrid } from "./ServiceGrid";
 export { default as LogoTypeSelector } from "./LogoType";
-export { default as LuxurySlider } from "./LuxurySlider";
+export { default as ServiceDetailSlider } from "./ServiceDetailSlider";
 export { default as Gallery } from "./Gallery";
 export { default as ServiceOutline } from "./ServiceOutline";
 export { default as OrderTracker } from "./TrackOrder";
@@ -31,6 +31,7 @@ export { default as LetsWorkTogether } from "./LetsWork";
 export { default as OtpModal } from "./Auth/OtpModal";
 export { default as CustomToast } from "./CustomToast";
 export { default as GlobalLoader } from "./Loader";
+export { default as CategoryServices } from "./CategoryServices";
 
 //---DASHBOARD COMPONENT PATHS----//
 export { default as InfoCard } from "./Dashboard/InfoCard";
