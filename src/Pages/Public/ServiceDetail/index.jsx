@@ -12,10 +12,10 @@ import {
     HeroMarketingSection,
     FAQSection,
     CategoryTabs,
-    LuxurySlider,
     Gallery,
     ServiceOutline,
     TestimonialsSection,
+    ServiceDetailSlider,
 } from '../../../Component';
 
 import {
@@ -66,7 +66,7 @@ const ServiceDetailPage = () => {
             />
 
             <HeroMarketingSection />
-            <LuxurySlider />
+            <ServiceDetailSlider />
             <Gallery />
             <ServiceOutline />
             <TestimonialsSection />
