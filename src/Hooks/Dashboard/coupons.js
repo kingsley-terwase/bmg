@@ -10,7 +10,7 @@ function useCreateCoupon() {
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/payment/method`,
+        `${BASE_SERVER_URL}/admin/create/coupon`,
         data,
         config
       );
@@ -43,13 +43,13 @@ function useCreateCoupon() {
 const useFetchCoupons = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [methods, setMethods] = useState([]);
+  const [coupons, setCoupons] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/payment-methods`,
+        `${BASE_SERVER_URL}/admin/coupons`,
         config
       );
 
@@ -58,7 +58,7 @@ const useFetchCoupons = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setMethods(result.result);
+        setCoupons(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -71,7 +71,7 @@ const useFetchCoupons = () => {
     fetchData();
   }, []);
 
-  return { methods, refetch: fetchData, loading };
+  return { coupons, refetch: fetchData, loading };
 };
 
 export { useCreateCoupon, useFetchCoupons };

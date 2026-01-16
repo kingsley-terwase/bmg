@@ -18,15 +18,15 @@ import {
   Close,
   Image as ImageIcon,
 } from "@mui/icons-material";
-import { useGenerateImage } from "../../../../Hooks/Dashboard/generate_images";
+import { useGenerateImageToImage } from "../../../../Hooks/Users/generate_images";
 import { showToast } from "../../../../utils/toast";
 
 const ImageToImageInput = ({ onGeneratingChange }) => {
   const [prompt, setPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const generateImage = useGenerateImage();
+  const generateImage = useGenerateImageToImage();
 
   /* notify parent whenever generating changes */
   useEffect(() => {

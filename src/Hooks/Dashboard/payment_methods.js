@@ -52,8 +52,6 @@ const useFetchPayMethods = () => {
 
       const result = response.data;
 
-      console.log(" Response:", result);
-
       if (result.code === 0) {
         setMethods(result.result);
       }
@@ -83,7 +81,6 @@ function useGetPayMethod() {
     }
 
     setLoading(true);
-    console.log("Fetching method with ID:", methodId);
 
     try {
       const response = await axios.get(
@@ -108,4 +105,60 @@ function useGetPayMethod() {
   return { methodData, loading, getMethod };
 }
 
-export { useAddPayMethods, useFetchPayMethods, useGetPayMethod };
+const useUpdatePayMethod = () => {
+  return async (data, id) => {
+    if (!id || typeof id === "object") {
+      console.error("Invalid payment method ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/payment-method/${id}`,
+        data
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating this payment method."
+      );
+    }
+  };
+};
+
+const useDeletePayMethod = () => {
+  return async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_SERVER_URL}/admin/blog/delete/${id}`,
+        {}
+      );
+
+      const result = response.data;
+
+      console.log("Delete Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error("error occurred while deleting this payment method.");
+      throw error;
+    }
+  };
+};
+
+export {
+  useAddPayMethods,
+  useFetchPayMethods,
+  useGetPayMethod,
+  useUpdatePayMethod,
+  useDeletePayMethod,
+};

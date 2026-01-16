@@ -1,289 +1,316 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Grid,
   Card,
   CardContent,
-  Typography,
   TextField,
   Button,
-  Switch,
-  FormControlLabel,
   Avatar,
-  IconButton,
-  Tabs,
-  Tab,
   Stack,
-  Divider,
-  Alert,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
+  Typography,
 } from "@mui/material";
 import {
   PhotoCamera,
-  Visibility,
-  VisibilityOff,
   Save,
-  Delete,
   AddOutlined,
-  VisibilityOutlined
+  VisibilityOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PagesHeader } from "../../../Component";
+import { DashboardTab, CustomTab } from "../../../Component";
+import { settingsTabs } from "./data";
+import { useUserContext } from "../../../Contexts";
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [showPassword, setShowPassword] = useState(false);
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
+  const userInfo = user?.user;
 
   const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "user@example.com",
-    phone: "+1 (555) 123-4567",
-    bio: "Creative professional passionate about design and innovation",
-    country: "United States",
-    timezone: "America/New_York"
+    name: "",
+    logo: null, // base64
+    email: "",
+    phone: "",
+    address_one: "",
+    address_two: "",
+    postal_code: "",
+    country: "",
+    country_code: "",
+    welc_msg: "",
+    about_us: "",
+    facebook_link: "",
+    instagram_link: "",
+    twitter_link: "",
+    youtube_link: "",
   });
 
-  const [notifications, setNotifications] = useState({
-    emailNotifications: true,
-    pushNotifications: true,
-    smsNotifications: false,
-    weeklyDigest: true,
-    productUpdates: true
-  });
+  useEffect(() => {
+    if (!userInfo) return;
 
-  const [security, setSecurity] = useState({
-    twoFactor: false,
-    loginAlerts: true,
-    sessionTimeout: "30"
-  });
+    setProfileData({
+      name: userInfo.name || "",
+      email: userInfo.email || "",
+      phone: userInfo.phone || "",
+      address_one: userInfo.address_one || "",
+      address_two: userInfo.address_two || "",
+      postal_code: userInfo.postal_code || "",
+      country: userInfo.country || "",
+      country_code: userInfo.country_code || "",
+      welc_msg: userInfo.welc_msg || "",
+      about_us: userInfo.about_us || "",
+      facebook_link: userInfo.facebook_link || "",
+      instagram_link: userInfo.instagram_link || "",
+      twitter_link: userInfo.twitter_link || "",
+      youtube_link: userInfo.youtube_link || "",
+      logo: null,
+    });
+  }, [userInfo]);
 
-  const handleTabChange = (_, newValue) => setActiveTab(newValue);
+  const handleChange = (field) => (e) => {
+    setProfileData((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
+  };
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileData((prev) => ({
+        ...prev,
+        logo: reader.result,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = () => {
-    console.log("Settings saved");
+    const payload = new FormData();
+
+    Object.entries(profileData).forEach(([key, value]) => {
+      if (value !== null && value !== "") {
+        payload.append(key, value);
+      }
+    });
+
+    console.log("Submitting profile update:", [...payload.entries()]);
   };
-  const navigate = useNavigate();
 
   return (
     <Box>
       <PagesHeader
         label="Settings"
-        desc={"Manage application settings and preferences"}
+        desc="Manage your account settings and preferences"
         actions={[
           {
-            label: "Orders",
+            label: "Book Consultation",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/user/orders")
+            onClick: () => navigate("/dashboard/user/consultations"),
           },
           {
-            label: "Services",
+            label: "My Orders",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/services")
+            onClick: () => navigate("/dashboard/user/orders"),
           },
           {
-            label: "Categories",
+            label: "AI Services",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/user/categories")
-          }
+            onClick: () => navigate("/dashboard/user/artificial-intelligence"),
+          },
         ]}
       />
 
-      <Card>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}
-        >
-          <Tab label="Profile" />
-          <Tab label="Security" />
-          <Tab label="Notifications" />
-          <Tab label="Preferences" />
-          <Tab label="Privacy" />
-        </Tabs>
+      <CustomTab
+        tabs={settingsTabs}
+        activeTab={activeTab}
+        updateActiveTab={setActiveTab}
+      />
 
-        <CardContent sx={{ p: 4 }}>
-          {activeTab === 0 && (
-            <Box>
-              <Stack direction="row" spacing={3} mb={4}>
-                <Avatar
-                  sx={{ width: 120, height: 120, bgcolor: "primary.main" }}
-                >
-                  JD
-                </Avatar>
-                <Button startIcon={<PhotoCamera />} variant="outlined">
-                  Upload Photo
-                </Button>
-              </Stack>
-
-              <Grid container spacing={3}>
-                {["firstName", "lastName", "email", "phone"].map((field) => (
-                  <Grid item xs={12} md={6} key={field}>
-                    <TextField
-                      fullWidth
-                      label={field.replace(/^\w/, (c) => c.toUpperCase())}
-                      value={profileData[field]}
-                      onChange={(e) =>
-                        setProfileData({
-                          ...profileData,
-                          [field]: e.target.value
-                        })
-                      }
-                    />
-                  </Grid>
-                ))}
-
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    label="Bio"
-                    value={profileData.bio}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, bio: e.target.value })
-                    }
-                  />
-                </Grid>
-              </Grid>
+      <DashboardTab tabKey={0} activeTab={activeTab}>
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            {/* Header */}
+            <Stack direction="row" spacing={3} mb={4} alignItems="center">
+              <Avatar
+                src={profileData.logo}
+                sx={{ width: 96, height: 96, bgcolor: "primary.main" }}
+              >
+                {profileData.name?.[0] || "B"}
+              </Avatar>
 
               <Button
-                variant="contained"
-                startIcon={<Save />}
-                sx={{ mt: 4 }}
-                onClick={handleSave}
+                component="label"
+                startIcon={<PhotoCamera />}
+                variant="outlined"
               >
-                Save Changes
-              </Button>
-            </Box>
-          )}
-
-          {/* SECURITY TAB */}
-          {activeTab === 1 && (
-            <Box>
-              <Typography variant="h6" mb={2}>
-                Password & Security
-              </Typography>
-
-              <TextField
-                fullWidth
-                label="Current Password"
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  )
-                }}
-              />
-
-              <Divider sx={{ my: 3 }} />
-
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={security.twoFactor}
-                    onChange={(e) =>
-                      setSecurity({ ...security, twoFactor: e.target.checked })
-                    }
-                  />
-                }
-                label="Enable Two-Factor Authentication"
-              />
-
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={security.loginAlerts}
-                    onChange={(e) =>
-                      setSecurity({
-                        ...security,
-                        loginAlerts: e.target.checked
-                      })
-                    }
-                  />
-                }
-                label="Login Alerts"
-              />
-            </Box>
-          )}
-
-          {/* NOTIFICATIONS TAB */}
-          {activeTab === 2 && (
-            <Box>
-              <Typography variant="h6" mb={3}>
-                Notification Settings
-              </Typography>
-
-              {Object.keys(notifications).map((key) => (
-                <FormControlLabel
-                  key={key}
-                  control={
-                    <Switch
-                      checked={notifications[key]}
-                      onChange={(e) =>
-                        setNotifications({
-                          ...notifications,
-                          [key]: e.target.checked
-                        })
-                      }
-                    />
-                  }
-                  label={key.replace(/([A-Z])/g, " $1")}
+                Upload Logo
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
                 />
-              ))}
-            </Box>
-          )}
-
-          {/* PREFERENCES TAB */}
-          {activeTab === 3 && (
-            <Box>
-              <Typography variant="h6" mb={3}>
-                Preferences
-              </Typography>
-
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Theme</InputLabel>
-                <Select label="Theme" defaultValue="system">
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
-                  <MenuItem value="system">System</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
-                <Select label="Language" defaultValue="en">
-                  <MenuItem value="en">English</MenuItem>
-                  <MenuItem value="fr">French</MenuItem>
-                  <MenuItem value="es">Spanish</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          )}
-
-          {/* PRIVACY TAB */}
-          {activeTab === 4 && (
-            <Box>
-              <Typography variant="h6" mb={2} color="error">
-                Danger Zone
-              </Typography>
-
-              <Alert severity="warning" sx={{ mb: 3 }}>
-                Deleting your account is permanent and cannot be undone.
-              </Alert>
-
-              <Button variant="contained" color="error" startIcon={<Delete />}>
-                Delete Account
               </Button>
-            </Box>
-          )}
-        </CardContent>
-      </Card>
+            </Stack>
+
+            <Grid container spacing={3}>
+              {/* Platform Name */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Platform Name"
+                  fullWidth
+                  value={profileData.name}
+                  onChange={handleChange("name")}
+                />
+              </Grid>
+
+              {/* Email */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Contact Email"
+                  fullWidth
+                  value={profileData.email}
+                  onChange={handleChange("email")}
+                />
+              </Grid>
+
+              {/* Phone */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Phone Number"
+                  fullWidth
+                  value={profileData.phone}
+                  onChange={handleChange("phone")}
+                />
+              </Grid>
+
+              {/* Country */}
+              <Grid size={{ xs: 12, md: 3 }}>
+                <TextField
+                  label="Country"
+                  fullWidth
+                  value={profileData.country}
+                  onChange={handleChange("country")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 3 }}>
+                <TextField
+                  label="Country Code"
+                  fullWidth
+                  value={profileData.country_code}
+                  onChange={handleChange("country_code")}
+                />
+              </Grid>
+
+              {/* Address */}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Address Line 1"
+                  fullWidth
+                  value={profileData.address_one}
+                  onChange={handleChange("address_one")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Address Line 2"
+                  fullWidth
+                  value={profileData.address_two}
+                  onChange={handleChange("address_two")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 4 }}>
+                <TextField
+                  label="Postal Code"
+                  fullWidth
+                  value={profileData.postal_code}
+                  onChange={handleChange("postal_code")}
+                />
+              </Grid>
+
+              {/* Welcome Message */}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="Welcome Message"
+                  fullWidth
+                  multiline
+                  rows={2}
+                  value={profileData.welc_msg}
+                  onChange={handleChange("welc_msg")}
+                />
+              </Grid>
+
+              {/* About Us */}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  label="About Us"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  value={profileData.about_us}
+                  onChange={handleChange("about_us")}
+                />
+              </Grid>
+
+              {/* Social Links */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Facebook Link"
+                  fullWidth
+                  value={profileData.facebook_link}
+                  onChange={handleChange("facebook_link")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Instagram Link"
+                  fullWidth
+                  value={profileData.instagram_link}
+                  onChange={handleChange("instagram_link")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Twitter / X Link"
+                  fullWidth
+                  value={profileData.twitter_link}
+                  onChange={handleChange("twitter_link")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="YouTube Link"
+                  fullWidth
+                  value={profileData.youtube_link}
+                  onChange={handleChange("youtube_link")}
+                />
+              </Grid>
+            </Grid>
+
+            <Button
+              variant="contained"
+              startIcon={<Save />}
+              sx={{ mt: 4 }}
+              onClick={handleSave}
+            >
+              Save Organization Profile
+            </Button>
+          </CardContent>
+        </Card>
+      </DashboardTab>
     </Box>
   );
 };

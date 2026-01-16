@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -21,11 +22,34 @@ const UploadMedia = ({
   onFilesChange,
   title = "Media Upload",
   description = "Add your documents here, and you can upload up to 5 files max",
+  initialImage = null, // New prop for existing image
 }) => {
   const [files, setFiles] = useState([]);
   const [urlInput, setUrlInput] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Set initial image if provided
+  useEffect(() => {
+    if (initialImage && files.length === 0) {
+      const isUrl =
+        typeof initialImage === "string" && initialImage.startsWith("http");
+      const isBase64 =
+        typeof initialImage === "string" && initialImage.startsWith("data:");
+
+      if (isUrl || isBase64) {
+        setFiles([
+          {
+            name: "Existing Image",
+            size: 0,
+            type: isUrl ? "url" : "base64",
+            url: initialImage,
+            preview: initialImage,
+          },
+        ]);
+      }
+    }
+  }, [initialImage]);
 
   const convertFileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -43,8 +67,8 @@ const UploadMedia = ({
       // For single mode, return just the base64 string or URL string
       if (updatedFiles.length > 0) {
         const file = updatedFiles[0];
-        if (file.type === "url") {
-          onFilesChange(file.url);
+        if (file.type === "url" || file.type === "base64") {
+          onFilesChange(file.url || file.preview);
         } else {
           const base64String = await convertFileToBase64(file);
           onFilesChange(base64String);
@@ -56,8 +80,8 @@ const UploadMedia = ({
       // For multiple mode, return array of base64 strings
       const fileStrings = await Promise.all(
         updatedFiles.map(async (file) => {
-          if (file.type === "url") {
-            return file.url;
+          if (file.type === "url" || file.type === "base64") {
+            return file.url || file.preview;
           } else {
             return await convertFileToBase64(file);
           }
@@ -68,6 +92,7 @@ const UploadMedia = ({
   };
 
   const formatFileSize = (bytes) => {
+    if (bytes === 0) return "N/A";
     return `${(bytes / 1024).toFixed(0)}kb`;
   };
 
@@ -145,6 +170,7 @@ const UploadMedia = ({
       size: 0,
       type: "url",
       url: urlInput,
+      preview: urlInput,
     };
 
     const updatedFiles = mode === "single" ? [urlFile] : [...files, urlFile];
@@ -162,6 +188,15 @@ const UploadMedia = ({
 
   const onButtonClick = () => {
     fileInputRef.current.click();
+  };
+
+  const isImageFile = (file) => {
+    const imageFormats = ["jpg", "jpeg", "png", "svg", "gif", "webp"];
+    if (file.type === "url" || file.type === "base64") {
+      return true;
+    }
+    const extension = file.name.split(".").pop().toLowerCase();
+    return imageFormats.includes(extension);
   };
 
   return (
@@ -187,10 +222,51 @@ const UploadMedia = ({
             {description}
           </Typography>
         </Box>
-        <IconButton size="small">
-          <CloseOutlined />
-        </IconButton>
       </Stack>
+
+      {/* Image Preview Section - Show if file exists and is an image */}
+      {files.length > 0 && files.some(isImageFile) && (
+        <Box mb={3}>
+          {files.filter(isImageFile).map((file, index) => (
+            <Box
+              key={index}
+              sx={{
+                position: "relative",
+                border: "2px solid #e0e0e0",
+                borderRadius: 2,
+                overflow: "hidden",
+                mb: 2,
+              }}
+            >
+              <img
+                src={file.preview || file.url || URL.createObjectURL(file)}
+                alt={file.name}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "300px",
+                  objectFit: "contain",
+                  backgroundColor: "#f5f5f5",
+                }}
+              />
+              <IconButton
+                size="small"
+                onClick={() => removeFile(index)}
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  bgcolor: "rgba(0,0,0,0.5)",
+                  color: "white",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                }}
+              >
+                <CloseOutlined fontSize="small" />
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
+      )}
 
       {/* Drag and Drop Area */}
       <Box
@@ -242,7 +318,7 @@ const UploadMedia = ({
         textAlign="center"
         my={2}
       >
-        Only support .{acceptedFormats.join(", .")} and .zip files
+        Only support .{acceptedFormats.join(", .")} files
       </Typography>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 3 }}>
@@ -282,36 +358,38 @@ const UploadMedia = ({
         </Box>
       </Box>
 
-      {/* Uploaded Files List */}
-      {files.length > 0 && (
+      {/* Uploaded Files List - Non-image files */}
+      {files.length > 0 && files.some((f) => !isImageFile(f)) && (
         <Box mt={3}>
-          {files.map((file, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                p: 1.5,
-                border: "1px solid #e0e0e0",
-                borderRadius: 1,
-                mb: 1,
-              }}
-            >
-              <InsertDriveFileOutlined sx={{ color: "#ff9800" }} />
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body2" fontWeight={500}>
-                  {file.name}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {file.type === "url" ? "URL" : formatFileSize(file.size)}
-                </Typography>
+          {files
+            .filter((f) => !isImageFile(f))
+            .map((file, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  p: 1.5,
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 1,
+                  mb: 1,
+                }}
+              >
+                <InsertDriveFileOutlined sx={{ color: "#ff9800" }} />
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="body2" fontWeight={500}>
+                    {file.name}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {file.type === "url" ? "URL" : formatFileSize(file.size)}
+                  </Typography>
+                </Box>
+                <IconButton size="small" onClick={() => removeFile(index)}>
+                  <CloseOutlined fontSize="small" />
+                </IconButton>
               </Box>
-              <IconButton size="small" onClick={() => removeFile(index)}>
-                <CloseOutlined fontSize="small" />
-              </IconButton>
-            </Box>
-          ))}
+            ))}
         </Box>
       )}
     </Box>

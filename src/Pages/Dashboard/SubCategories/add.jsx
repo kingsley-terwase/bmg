@@ -28,7 +28,6 @@ import { useNavigate } from "react-router-dom";
 import { useCreateSubCategories } from "../../../Hooks/Dashboard/sub_categories";
 import { showToast } from "../../../utils/toast";
 import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
-import { fileToBase64 } from "../../../utils/functions";
 import { useLoader } from "../../../Contexts/LoaderContext";
 
 const AddSubCategoriesPage = () => {
@@ -57,8 +56,6 @@ const AddSubCategoriesPage = () => {
     showLoader("Creating Sub Category...");
 
     try {
-      // const imageToBase64 = fileToBase64(categoryImg);
-
       const payload = {
         category_id: parentCategory,
         name: categoryName,
@@ -70,7 +67,7 @@ const AddSubCategoriesPage = () => {
 
       const response = await createSubCat(payload);
       if (response) {
-        showToast.success("Category added successfully!");
+        showToast.success("SubCategory added successfully!");
         setCategoryName("");
         setCategoryImg(null);
         setCategoryDesc("");

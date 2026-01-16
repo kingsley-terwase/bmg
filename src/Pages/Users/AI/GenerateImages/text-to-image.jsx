@@ -1,3 +1,4 @@
+// TextToImageInput.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -8,12 +9,23 @@ import {
   CardContent,
   Stack,
   CircularProgress,
+  Chip,
 } from "@mui/material";
-import { Send } from "@mui/icons-material";
-import { useGenerateImage } from "../../../../Hooks/Dashboard/generate_images";
+import { Send, AutoAwesome } from "@mui/icons-material";
+import { useGenerateImage } from "../../../../Hooks/Users/generate_images";
 import { showToast } from "../../../../utils/toast";
 
-const TextToImageInput = ({ onGeneratingChange }) => {
+const PROMPT_SUGGESTIONS = [
+  "A serene mountain landscape at sunset",
+  "Futuristic city with flying cars",
+  "Portrait of a cyberpunk warrior",
+  "Underwater coral reef ecosystem",
+  "Abstract digital art with neon colors",
+  "Vintage car in autumn forest",
+  "Magical fantasy castle in clouds",
+];
+
+const TextToImageInput = ({ onGeneratingChange, onImageGenerated }) => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const generateImage = useGenerateImage();
@@ -37,33 +49,31 @@ const TextToImageInput = ({ onGeneratingChange }) => {
 
       const response = await generateImage(payload);
       if (response) {
+        // Notify parent component about the new image
+        onImageGenerated?.(response);
         setPrompt("");
+        showToast.success("Image generated successfully!");
       }
     } catch (error) {
-      showToast.error(error || "Failed to create category");
+      showToast.error(error || "Failed to generate image");
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setPrompt(suggestion);
   };
 
   return (
     <Box sx={{ mx: "auto", mb: 6 }}>
       <Card elevation={0} sx={{ border: "1px solid #e0e0e0", borderRadius: 3 }}>
         <CardContent sx={{ p: 3 }}>
-          <Typography
-            variant="subtitle2"
-            fontWeight={600}
-            color="text.secondary"
-            mb={2}
-          >
-            Describe your ideas and images for reference
-          </Typography>
-
           <Box sx={{ position: "relative" }}>
             <TextField
               fullWidth
               multiline
-              rows={5}
+              rows={3}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your ideas and images for reference"
@@ -109,6 +119,41 @@ const TextToImageInput = ({ onGeneratingChange }) => {
           </Box>
         </CardContent>
       </Card>
+
+      {/* Prompt Suggestions - Outside the main card */}
+      <Box sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+          <AutoAwesome sx={{ fontSize: 18, color: "primary.main" }} />
+          <Typography variant="caption" fontWeight={600} color="text.secondary">
+            Suggested Prompts
+          </Typography>
+        </Stack>
+
+        <Stack direction="row" flexWrap="wrap" gap={1}>
+          {PROMPT_SUGGESTIONS.map((suggestion, index) => (
+            <Chip
+              key={index}
+              label={suggestion}
+              onClick={() => handleSuggestionClick(suggestion)}
+              size="small"
+              sx={{
+                cursor: "pointer",
+                border: "1px solid",
+                borderColor: "primary.light",
+                bgcolor: "background.paper",
+                transition: "all 0.2s",
+                "&:hover": {
+                  bgcolor: "primary.main",
+                  color: "white",
+                  borderColor: "primary.main",
+                  transform: "translateY(-2px)",
+                  boxShadow: 2,
+                },
+              }}
+            />
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 };

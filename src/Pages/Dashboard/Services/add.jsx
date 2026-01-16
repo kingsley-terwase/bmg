@@ -35,7 +35,6 @@ import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
 import { useFetchSubCategories } from "../../../Hooks/Dashboard/sub_categories";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
-import { fileToBase64 } from "../../../utils/functions";
 import { useFetchServiceTypes } from "../../../Hooks/Dashboard/service_types";
 import { discountTypes } from "./data";
 
@@ -61,9 +60,8 @@ const AddServicePage = () => {
   const { subCat } = useFetchSubCategories();
   const { serviceTypes } = useFetchServiceTypes();
 
-  console.log("service types in services:", serviceTypes);
-
-  const handleAddFeature = () => {
+  const handleAddFeature = (e) => {
+    e.preventDefault();
     if (currentAttribute.trim()) {
       setAttributes([...attributes, currentAttribute.trim()]);
       setCurrentFeature("");
@@ -88,14 +86,12 @@ const AddServicePage = () => {
     showLoader("Adding Service...");
 
     try {
-      const imageToBase64 = fileToBase64(serviceImg);
-
       const payload = {
         service_name: serviceName,
-        service_image: imageToBase64,
+        service_images: serviceImg,
         category_id: categoryId,
         subcategory_id: subCatId,
-        discount_type: discountType,
+        discount_type: discountType.toLocaleLowerCase(),
         discount_value: discountValue,
         service_description: serviceDesc,
         service_attributes: attributes,
@@ -114,7 +110,8 @@ const AddServicePage = () => {
         navigate("/dashboard/admin/services");
       }
     } catch (error) {
-      showToast.error(error || "Failed to create category");
+      console.error("Error adding service:", error);
+      showToast.error("Failed to create category");
     } finally {
       setLoading(false);
       hideLoader();
@@ -147,13 +144,13 @@ const AddServicePage = () => {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
               <UploadMedia
-                mode={"single"}
+                mode={"mutiple"}
                 maxFiles={5}
                 maxSize={10}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                 onFilesChange={setServiceImg}
                 title="Service Image Upload"
-                description="Add your documents here, and you can upload up to 1 files max"
+                description="Add your documents here, and you can upload up to 5 files max"
               />
 
               <Box
@@ -290,7 +287,7 @@ const AddServicePage = () => {
                         </MenuItem>
 
                         {discountTypes.map((discount, index) => (
-                          <MenuItem key={index} value={discount.id}>
+                          <MenuItem key={index} value={discount.name}>
                             {discount.name}
                           </MenuItem>
                         ))}
@@ -377,7 +374,7 @@ const AddServicePage = () => {
                     placeholder="e.g., Unlimited storage, 24/7 support"
                     value={currentAttribute}
                     onChange={(e) => setCurrentFeature(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleAddFeature()}
+                    onKeyDown={(e) => e.key === "Enter" && handleAddFeature()}
                     sx={{
                       border: "1px solid #e0e0e0",
                       borderRadius: 1,

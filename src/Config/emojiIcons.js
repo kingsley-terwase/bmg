@@ -44,4 +44,9 @@ export const EMOJI_ICONS = {
   overview: "📈",
   music: "🎵",
   audioWave: "🎶",
+  faqs: "❓",
+  faq: "📖",
+  currency: "💲",
+  section: "📰",
+  credits: "🪙",
 };

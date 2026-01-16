@@ -45,7 +45,7 @@ export const USER_NAV = [
       },
       {
         label: "Generate Audio",
-        path: "/dashboard/user/generate-speechs",
+        path: "/dashboard/user/generate-audio",
         icon: EMOJI_ICONS.generatedSpeeches,
       },
       {

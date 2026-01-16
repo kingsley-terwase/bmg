@@ -5,28 +5,27 @@ import {
   TableCell,
   Checkbox,
   IconButton,
-  Grid
+  Grid,
+  Stack,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
 import {
   CustomTable,
   StatusChip,
   PagesHeader,
-  InfoCard
+  InfoCard,
 } from "../../../Component";
-import { orders, headers } from "./data";
-import {
-  CancelOutlined,
-  CheckCircleOutlined,
-  HourglassTopOutlined,
-  ShoppingCartOutlined,
-  VisibilityOutlined,
-  AddOutlined
-} from "@mui/icons-material";
+import { headers } from "./data";
+import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { useFetchOrders } from "../../../Hooks/Dashboard/orders";
 
 const OrdersPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const { orders, loading: ordersLoading } = useFetchOrders();
 
   return (
     <div>
@@ -41,8 +40,8 @@ const OrdersPage = () => {
           {
             label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services")
-          }
+            onClick: () => navigate("/dashboard/admin/add/services"),
+          },
         ]}
       />
 
@@ -56,7 +55,7 @@ const OrdersPage = () => {
         >
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={ShoppingCartOutlined}
+              icon={EMOJI_ICONS.shoppingCart}
               title="Orders"
               value="20"
               actionLabel="Total Orders"
@@ -66,7 +65,7 @@ const OrdersPage = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={CheckCircleOutlined}
+              icon={EMOJI_ICONS.success}
               actionLabel="Completed Orders"
               title="Orders"
               value="18"
@@ -76,7 +75,7 @@ const OrdersPage = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={HourglassTopOutlined}
+              icon={EMOJI_ICONS.pending}
               actionLabel="Pending Orders"
               title="Orders"
               value="18"
@@ -86,7 +85,7 @@ const OrdersPage = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 3 }}>
             <InfoCard
-              icon={CancelOutlined}
+              icon={EMOJI_ICONS.cancel}
               actionLabel="Cancelled Orders"
               title="Orders"
               value="18"
@@ -99,30 +98,57 @@ const OrdersPage = () => {
 
       <Box mt={3} mb={3}>
         <CustomTable title="Total Orders" headers={headers}>
-          {orders.map((row) => (
-            <TableRow hover key={row.id}>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.subject}</TableCell>
-              <TableCell>{row.image}</TableCell>
-              <TableCell>{row.description}</TableCell>
-              <TableCell>{row.dueDate}</TableCell>
-              <TableCell>{row.amount}</TableCell>
-
-              <TableCell>
-                <StatusChip status={row.status} label={row.status} />
-              </TableCell>
-
-              <TableCell>
-                <IconButton size="small">
-                  <VisibilityOutlined fontSize="medium" />
-                </IconButton>
+          {ordersLoading ? (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <CircularProgress
+                  color="secondary"
+                  sx={{ display: "block", marginX: "auto" }}
+                />
               </TableCell>
             </TableRow>
-          ))}
+          ) : orders.length > 0 ? (
+            orders.map((row, index) => (
+              <TableRow hover key={index}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
+
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.subject}</TableCell>
+                <TableCell>{row.image}</TableCell>
+                <TableCell>{row.description}</TableCell>
+                <TableCell>{row.dueDate}</TableCell>
+                <TableCell>{row.amount}</TableCell>
+
+                <TableCell>
+                  <StatusChip
+                    status={row.status === true ? "active" : "inactive"}
+                    label={row.status === true ? "Active" : "Disabled"}
+                  />
+                </TableCell>
+
+                <TableCell>
+                  <IconButton size="small">
+                    <VisibilityOutlined fontSize="medium" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Stack alignItems="center" spacing={2}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "#2C3891", fontWeight: 600 }}
+                  >
+                    No Order(s) Found.
+                  </Typography>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          )}{" "}
         </CustomTable>
       </Box>
     </div>

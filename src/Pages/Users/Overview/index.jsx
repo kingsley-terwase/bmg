@@ -3,7 +3,7 @@ import {
   MoreVertOutlined,
   TipsAndUpdatesOutlined,
   VisibilityOutlined,
-  AddOutlined
+  AddOutlined,
 } from "@mui/icons-material";
 import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -15,7 +15,7 @@ import {
   CustomTable,
   StatusChip,
   PagesHeader,
-  ProfileStatusCard
+  ProfileStatusCard,
 } from "../../../Component";
 import { headers, data } from "../../../Config/data";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 const UserOverview = () => {
   const transactionsData = {
     successful: 15000,
-    unsuccessful: 5000
+    unsuccessful: 5000,
   };
 
   const revenueData = [
@@ -39,12 +39,8 @@ const UserOverview = () => {
     { month: "Sep", value: 19, amount: "$19K" },
     { month: "Oct", value: 22, amount: "$22K" },
     { month: "Nov", value: 21, amount: "$21K" },
-    { month: "Dec", value: 24, amount: "$24K" }
+    { month: "Dec", value: 24, amount: "$24K" },
   ];
-
-  const handleProfileUpdate = () => {
-    console.log("Update profile clicked");
-  };
 
   const navigate = useNavigate();
 
@@ -61,19 +57,19 @@ const UserOverview = () => {
             {
               label: "View Orders",
               icon: <VisibilityOutlined />,
-              onClick: () => navigate("/dashboard/user/orders")
+              onClick: () => navigate("/dashboard/user/orders"),
             },
             {
               label: "Book Consultation",
               icon: <AddOutlined />,
-              onClick: () => navigate("/dashboard/user/consultations")
+              onClick: () => navigate("/dashboard/user/consultations"),
             },
             {
               label: "AI Services",
               icon: <TipsAndUpdatesOutlined />,
               onClick: () =>
-                navigate("/dashboard/users/artificial-intelligence")
-            }
+                navigate("/dashboard/users/artificial-intelligence"),
+            },
           ]}
         />
 
@@ -85,37 +81,37 @@ const UserOverview = () => {
             alignItems={"flex-start"}
             mb={4}
           >
-            <Grid size={{ xs: 12, md: 8 }}>
+            <Grid size={{ xs: 12 }}>
               <Grid
                 container
                 rowSpacing={2}
                 columnSpacing={{ xs: 1, sm: 2, md: 3 }}
               >
-                <Grid size={{ xs: 12, md: 4 }}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <InfoCard
                     icon={EMOJI_ICONS.shoppingCart}
                     title="Total Orders"
-                    value="37"
+                    value="0"
                     arrow
                     color="#61B5FF"
                     onAction={() => navigate("/dashboard/user/orders")}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <InfoCard
                     icon={EMOJI_ICONS.helpCenter}
                     title="Consulations"
-                    value="8"
+                    value="0"
                     arrow
                     color="#61B5FF"
                     onAction={() => navigate("/dashboard/user/consultations")}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <InfoCard
                     icon={EMOJI_ICONS.tips}
                     title="AI Services"
-                    value="20"
+                    value="0"
                     color="#61B5FF"
                     arrow
                     onAction={() =>
@@ -123,23 +119,17 @@ const UserOverview = () => {
                     }
                   />
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
+                <Grid size={{ xs: 12, md: 3 }}>
                   <InfoCard
                     icon={EMOJI_ICONS.creditCard}
                     title="Payments"
-                    value="18"
+                    value="0"
                     arrow
                     color="#61B5FF"
                     onAction={() => navigate("/dashboard/user/payments")}
                   />
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <ProfileStatusCard
-                percentage={55}
-                onUpdate={handleProfileUpdate}
-              />
             </Grid>
           </Grid>
         </Box>
@@ -151,7 +141,7 @@ const UserOverview = () => {
               chartData={[
                 { name: "Completed", value: 65000, color: "#4CAF50" },
                 { name: "Pending", value: 5500, color: "#FF9800" },
-                { name: "Cancelled", value: 3500, color: "#F44336" }
+                { name: "Cancelled", value: 3500, color: "#F44336" },
               ]}
             />
           </Grid>

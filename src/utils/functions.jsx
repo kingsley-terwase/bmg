@@ -42,6 +42,34 @@ const fileToBase64 = (file) => {
   });
 };
 
+const urlToBase64 = async (url) => {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch image");
+    }
+
+    const contentType = response.headers.get("content-type");
+
+    if (!contentType?.startsWith("image/")) {
+      throw new Error(`Invalid content-type: ${contentType}`);
+    }
+
+    const blob = await response.blob();
+
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("urlToBase64 failed:", error.message);
+    return null;
+  }
+};
+
 const truncateText = (text = "", maxLength = 80) => {
   if (!text) return "-";
   return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
@@ -75,6 +103,7 @@ export {
   validatePassword,
   formatDate,
   fileToBase64,
+  urlToBase64,
   truncateText,
   getTimeGreeting,
   getFormattedDate,

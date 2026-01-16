@@ -6,7 +6,7 @@ import { DashboardTab, CustomTab } from "../../../../Component";
 import { speechTabs } from "../data";
 import TextToAudioInput from "./text-to-audio";
 
-const UserGenerateSpeeches = () => {
+const UserGenerateAudio = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   function updateActiveTab(tab) {
@@ -52,4 +52,4 @@ const UserGenerateSpeeches = () => {
   );
 };
 
-export default UserGenerateSpeeches;
+export default UserGenerateAudio;

@@ -1,24 +1,13 @@
 import React from "react";
-import {
-  ShoppingBagOutlined,
-  MoreVertOutlined,
-  HelpCenterOutlined,
-  TipsAndUpdatesOutlined,
-  CreditCardOutlined
-} from "@mui/icons-material";
-import { Box, TableRow, TableCell, Checkbox, IconButton } from "@mui/material";
+
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {
-  InsightPieCard,
-  InfoCard,
-  CustomTable,
-  StatusChip,
-  HeaderBreadCrumb
-} from "../../../Component";
-import { headers, data } from "../../../Config/data";
+import { InsightPieCard, InfoCard, HeaderBreadCrumb } from "../../../Component";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { useNavigate } from "react-router-dom";
 
 const UserAIPage = () => {
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -47,30 +36,20 @@ const UserAIPage = () => {
                   <InfoCard
                     icon={EMOJI_ICONS.gridView}
                     title="Videos Generated"
-                    value="30"
+                    value="0"
                     actionLabel="Generate Video"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <InfoCard
-                    icon={EMOJI_ICONS.supportAgent}
-                    title="Edited Videos"
-                    value="8"
-                    actionLabel="Edit Video"
-                    color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/generate-images")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
                   <InfoCard
                     icon={EMOJI_ICONS.tips}
-                    title="Generated Speeches"
-                    value="20"
-                    actionLabel="Generate Speech"
+                    title="Generated Audio"
+                    value="0"
+                    actionLabel="Generate Audio"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/generate-images")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -78,9 +57,9 @@ const UserAIPage = () => {
                     icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Website"
                     title="Built Websites"
-                    value="18"
+                    value="0"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/generate-images")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -88,9 +67,9 @@ const UserAIPage = () => {
                     icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Images"
                     title="Generated Images"
-                    value="18"
+                    value="0"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/generate-images")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -98,56 +77,27 @@ const UserAIPage = () => {
                     icon={EMOJI_ICONS.creditCard}
                     actionLabel="Generate Business Strategy"
                     title="Strategies Generated"
-                    value="18"
+                    value="0"
                     color="#61B5FF"
-                    onAction={() => console.log("View Users")}
+                    onAction={() => navigate("/dashboard/user/generate-images")}
                   />
                 </Grid>
               </Grid>
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               <InsightPieCard
-                title="Services Useage"
+                title="Services Useage Overview"
                 chartData={[
-                  { name: "Videos", value: 30, color: "#4CAF50" },
-                  { name: "Images", value: 15, color: "#FF9800" },
-                  { name: "Editor", value: 8, color: "#F44336" },
-                  { name: "Strategy", value: 12, color: "#F1592A" },
-                  { name: "Websites", value: 5, color: "#13ABBC" },
-                  { name: "Speech", value: 10, color: "#0A62C7" }
+                  { name: "Videos", value: 0, color: "#4CAF50" },
+                  { name: "Images", value: 0, color: "#FF9800" },
+                  { name: "Editor", value: 0, color: "#F44336" },
+                  { name: "Strategy", value: 0, color: "#F1592A" },
+                  { name: "Websites", value: 0, color: "#13ABBC" },
+                  { name: "Speech", value: 0, color: "#0A62C7" },
                 ]}
               />
             </Grid>
           </Grid>
-        </Box>
-
-        <Box mt={3} mb={3}>
-          <CustomTable title="Recent AI Services" headers={headers}>
-            {data.map((row) => (
-              <TableRow hover key={row.id}>
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
-
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.subject}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>{row.dueDate}</TableCell>
-                <TableCell>{row.amount}</TableCell>
-                <TableCell>{row.expert}</TableCell>
-
-                <TableCell>
-                  <StatusChip status={row.status} label={row.status} />
-                </TableCell>
-
-                <TableCell>
-                  <IconButton size="small">
-                    <MoreVertOutlined fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </CustomTable>
         </Box>
       </Box>
     </div>

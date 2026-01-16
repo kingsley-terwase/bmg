@@ -24,6 +24,7 @@ import {
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
 import { useGetPayMethod } from "../../../Hooks/Dashboard/payment_methods";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
 
 const SingleMethodModal = ({ open, onClose, methodId }) => {
   const navigate = useNavigate();
@@ -36,7 +37,10 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
   }, [open, methodId]);
 
   const handleEdit = () => {
-    navigate(`/dashboard/admin/payment-methods/edit/${methodId}`);
+    navigate(`/dashboard/admin/payment-methods/edit`, {
+      state: { data: methodData },
+    });
+
     onClose();
   };
 
@@ -86,11 +90,10 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
           </Box>
         ) : methodData ? (
           <>
-            {/* HEADER */}
             <Box
               sx={{
                 position: "relative",
-                height: 350,
+                height: 300,
                 bgcolor: "grey.100",
                 display: "flex",
                 alignItems: "center",
@@ -100,12 +103,13 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
               {methodData?.logo ? (
                 <Box
                   component="img"
-                  src={methodData.logo}
+                  src={`${BASE_IMAGE_URL}/${methodData.logo}`}
                   alt={methodData.name}
+                  loading="lazy-load"
                   sx={{
                     maxHeight: 180,
-                    maxWidth: "80%",
-                    objectFit: "contain",
+                    maxWidth: "100%",
+                    objectFit: "cover",
                   }}
                 />
               ) : (
@@ -113,7 +117,6 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
               )}
             </Box>
 
-            {/* CONTENT */}
             <Box sx={{ p: 4 }}>
               <Typography variant="h4" fontWeight={700}>
                 {methodData.name}
@@ -130,7 +133,6 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
 
               <Divider sx={{ my: 3 }} />
 
-              {/* DESCRIPTION */}
               <Typography
                 variant="overline"
                 fontWeight={600}
@@ -150,8 +152,6 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
               </Typography>
 
               <Divider sx={{ my: 4 }} />
-
-              {/* TIMELINE */}
               <Typography
                 variant="overline"
                 fontWeight={600}
@@ -212,7 +212,6 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
 
               <Divider sx={{ my: 4 }} />
 
-              {/* ACTIONS */}
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button variant="outlined" onClick={onClose}>
                   Close

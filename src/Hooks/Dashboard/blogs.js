@@ -24,10 +24,6 @@ function useCreateBlogs() {
         showToast.success(result.message);
         return false;
       }
-      if (result?.error) {
-        showToast.error(result?.message);
-        return false;
-      }
     } catch (error) {
       console.error("Error:", error.response.data);
       if (error.response.data?.error) {
@@ -43,7 +39,7 @@ function useCreateBlogs() {
 const useFetchBlogs = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [methods, setMethods] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -58,7 +54,7 @@ const useFetchBlogs = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setMethods(result.result);
+        setBlogs(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -71,7 +67,7 @@ const useFetchBlogs = () => {
     fetchData();
   }, []);
 
-  return { methods, refetch: fetchData, loading };
+  return { blogs, refetch: fetchData, loading };
 };
 
 export { useCreateBlogs, useFetchBlogs };

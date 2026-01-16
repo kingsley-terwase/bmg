@@ -26,7 +26,8 @@ import {
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { categories, services } from "./data";
-import { useCreatePortfolios } from "../../../Hooks/Dashboard/portfolios";
+import { useAddPortfolio } from "../../../Hooks/Dashboard/portfolios";
+
 
 const AddPortfolios = () => {
   const [category, setCategory] = useState("");
@@ -36,7 +37,7 @@ const AddPortfolios = () => {
   const [categoryDesc, setCategoryDesc] = useState("");
 
   const [loading, setLoading] = useState(false);
-  const addPortfolio = useCreatePortfolios();
+  const addPortfolio = useAddPortfolio();
   const navigate = useNavigate();
 
   const handleFilesChange = (files) => {

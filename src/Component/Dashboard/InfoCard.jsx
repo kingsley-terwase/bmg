@@ -12,7 +12,7 @@ const InfoCard = ({
   actionLabel = "View More",
   onAction,
   color = dbColors.main.default,
-  arrow = false
+  arrow = false,
 }) => {
   return (
     <Box
@@ -21,7 +21,7 @@ const InfoCard = ({
         background: "#fff",
         borderRadius: "18px",
         boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       {/* Left colored bar */}
@@ -30,7 +30,7 @@ const InfoCard = ({
           width: "8px",
           background: dbColors.main.default,
           borderTopLeftRadius: "36px",
-          borderBottomLeftRadius: "36px"
+          borderBottomLeftRadius: "36px",
         }}
       />
 
@@ -39,7 +39,7 @@ const InfoCard = ({
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           {icon && (
@@ -53,7 +53,6 @@ const InfoCard = ({
               /> */}
 
               <EmojiIcon name={icon} style={styles.icon} size={24} />
-
             </Box>
           )}
 
@@ -61,7 +60,7 @@ const InfoCard = ({
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between"
+              justifyContent: "space-between",
             }}
           >
             <Typography
@@ -69,7 +68,9 @@ const InfoCard = ({
             >
               {title}
             </Typography>
-            <Typography sx={{ fontWeight: 700, color, fontFamily: "jost" }}>
+            <Typography
+              sx={{ fontWeight: 700, color, fontFamily: "jost", fontSize: 20 }}
+            >
               {value}
             </Typography>
           </Box>
@@ -84,7 +85,7 @@ const InfoCard = ({
               fontSize: 12,
               fontFamily: "comfortaa",
               cursor: "pointer",
-              "&:hover": { opacity: 0.7 }
+              "&:hover": { opacity: 0.7 },
             }}
           >
             {actionLabel}
@@ -93,7 +94,7 @@ const InfoCard = ({
             <ArrowForwardRounded
               sx={{
                 fontSize: { xs: 10, md: 20 },
-                color: color
+                color: color,
               }}
             />
           )}

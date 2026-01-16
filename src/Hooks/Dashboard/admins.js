@@ -26,7 +26,6 @@ function useAddAdmin() {
         showToast.error(result.message);
         return false;
       }
-
     } catch (error) {
       console.error("Error:", error.response.data);
       if (error.response.data?.code !== 0) {
@@ -73,13 +72,12 @@ const useFetchAdmins = () => {
   return { admins, refetch: fetchData, loading };
 };
 
-
 function useGetAdmin() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
   const [adminData, setAdminData] = useState(null);
 
-  const getMethod = async (adminId) => {
+  const getAdmin = async (adminId) => {
     if (!adminId) {
       console.error("No method ID provided");
       return;
@@ -90,7 +88,7 @@ function useGetAdmin() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/payment-method/${adminId}`,
+        `${BASE_SERVER_URL}/admin/get-admin/${adminId}`,
         config
       );
 
@@ -108,9 +106,7 @@ function useGetAdmin() {
     }
   };
 
-  return { adminData, loading, getMethod };
+  return { adminData, loading, getAdmin };
 }
-
-
 
 export { useAddAdmin, useFetchAdmins, useGetAdmin };

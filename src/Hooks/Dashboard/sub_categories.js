@@ -21,7 +21,7 @@ function useCreateSubCategories() {
         return true;
       }
       if (result?.code !== 0) {
-        showToast.success(result.message);
+        showToast.error(result.message);
         return false;
       }
     } catch (error) {
@@ -29,7 +29,7 @@ function useCreateSubCategories() {
       if (error.response.data?.code !== 0) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while adding Admin.");
+        showToast.error("An error occurred while creating subcategory.");
       }
       return false;
     }
@@ -51,8 +51,6 @@ const useFetchSubCategories = () => {
 
       const result = response.data;
 
-      console.log("Fetching category with ID:", result);
-
       if (result.code === 0) {
         setSubCat(result.result);
       }
@@ -71,9 +69,9 @@ const useFetchSubCategories = () => {
 };
 
 function useGetSubCategory() {
-  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [subCategoryData, setSubCategoryData] = useState(null); // Changed to null
+  const [subCategoryData, setSubCategoryData] = useState(null);
 
   const getCategory = async (subCatId) => {
     if (!subCatId) {

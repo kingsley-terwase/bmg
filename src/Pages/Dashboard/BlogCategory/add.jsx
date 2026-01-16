@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Grid, Box, Input, Stack, Switch, Typography } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Input,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+  FormControl,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { toast } from "react-toastify";
 import {
   AddOutlined,
@@ -7,40 +18,61 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
 } from "@mui/icons-material";
-import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
+import {
+  InputLabel,
+  CustomButton,
+  PagesHeader,
+  UploadMedia,
+} from "../../../Component";
 import { styles } from "../../../styles/dashboard";
+import { useCreateBlogs } from "../../../Hooks/Dashboard/blogs";
 import { useNavigate } from "react-router-dom";
-import { useAddColors } from "../../../Hooks/Dashboard/colors";
 
-const AddColors = () => {
+const AddBlogCategory = () => {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
+  const [blogImg, setBlogImg] = useState("");
+  const [required, setRequired] = useState([]);
   const [categoryStatus, setCategoryStatus] = useState(true);
+  const [categoryDesc, setCategoryDesc] = useState("");
+  const [options, setOptions] = useState([]);
 
   const [loading, setLoading] = useState(false);
-  const addColor = useAddColors();
+  const postBlog = useCreateBlogs();
   const navigate = useNavigate();
 
   const formData = {
     title,
     category,
+    blogImg,
+    options,
+    categoryStatus,
+    categoryDesc,
+    required,
+  };
+
+  const handleFilesChange = (files) => {
+    setBlogImg(files);
   };
 
   const handleSubmitAdmin = async () => {
-    if (!title.trim() || !category.trim()) {
+    if (!title.trim() || !category.trim() || !categoryDesc) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await addColor(formData);
+      const response = await postBlog(formData);
 
       if (response) {
         toast.success("Category added successfully!");
         setTitle("");
         setCategory("");
+        setOptions([]);
         setCategoryStatus(true);
+        setCategoryDesc("");
+        setRequired([]);
       }
     } catch (error) {
       toast.error(error);
@@ -52,25 +84,25 @@ const AddColors = () => {
   return (
     <>
       <PagesHeader
-        label="Add Colors"
-        desc="Add colors for the web, users select these colors when placing an order. Go to view colors to manage."
+        label="Add Blog"
+        desc="Add blog posts for the web. Go to view blogs to manage blogs"
         searchEnabled={false}
-        placeholder={"Search colors..."}
+        placeholder={"Search blogs..."}
         actions={[
           {
-            label: "View Colors",
+            label: "View Blogs",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/colors"),
+            onClick: () => navigate("/dashboard/admin/blogs"),
           },
           {
-            label: "View Services",
+            label: "View Categories",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/services"),
+            onClick: () => navigate("/dashboard/admin/categories"),
           },
           {
-            label: "Add Resource",
+            label: "Add Service",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/resources"),
+            onClick: () => navigate("/dashboard/admin/add/services"),
           },
         ]}
       />
@@ -93,11 +125,11 @@ const AddColors = () => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Color Name" />
+                    <InputLabel text="Title" />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter color name"
+                      placeholder="Enter requirement title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       sx={{
@@ -109,11 +141,24 @@ const AddColors = () => {
                       }}
                     />
                   </Grid>
-                </Grid>
-              </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Blog Slug" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter slug"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Grid>
 
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 12 }}>
                     <Box
                       sx={{
@@ -125,7 +170,7 @@ const AddColors = () => {
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Status
+                        Blog Status
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography variant="body2" fontWeight={500}>
@@ -141,6 +186,34 @@ const AddColors = () => {
                     </Box>
                   </Grid>
                 </Grid>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12 }}>
+                    <UploadMedia
+                      maxFiles={5}
+                      maxSize={10}
+                      acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
+                      onFilesChange={handleFilesChange}
+                      title="Media Upload"
+                      description="Add your documents here, and you can upload up to 5 files max"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid size={{ xs: 12, md: 12 }}>
+                <InputLabel text="Blog Content " />
+                <TextField
+                  id="content"
+                  multiline
+                  rows={7}
+                  disableUnderline
+                  fullWidth
+                  placeholder="Enter content here..."
+                  value={categoryDesc}
+                  onChange={(e) => setCategoryDesc(e.target.value)}
+                />
               </Grid>
             </Grid>
           </Box>
@@ -188,4 +261,4 @@ const AddColors = () => {
   );
 };
 
-export default AddColors;
+export default AddBlogCategory;

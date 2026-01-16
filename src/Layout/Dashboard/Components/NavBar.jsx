@@ -17,6 +17,7 @@ import { dbColors } from "../../../Config/color";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../../Contexts";
 import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
+import CreditBox from "./CreditBox";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -102,6 +103,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
       </Stack>
 
       <Stack direction="row" alignItems="center" gap={{ xs: 2, md: 4 }}>
+        {userInfo.role === 3 && <CreditBox />}
         <Box onClick={handleNotificationsClick}>
           <MenuBox icon={<Notifications />} count={3} />
         </Box>

@@ -26,7 +26,7 @@ const ExpertsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
 
-  const { refetch, experts, loading: expertsLoading } = useFetchExperts();
+  const { experts, loading: expertsLoading } = useFetchExperts();
 
   return (
     <div>
@@ -100,8 +100,8 @@ const ExpertsPage = () => {
 
                 <TableCell>
                   <StatusChip
-                    status={row.status === true ? "active" : "inactive"}
-                    label={row.status === true ? "Active" : "Disabled"}
+                    status={row.status === 1 ? "active" : "inactive"}
+                    label={row.status === 1 ? "Active" : "Disabled"}
                   />
                 </TableCell>
 

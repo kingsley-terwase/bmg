@@ -14,18 +14,16 @@ function useCreateGitfts() {
         data,
         config
       );
+
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error === 2) {
-        showToast.success(result.message);
-        return false;
-      }
-      if (result?.error) {
-        showToast.error(result?.message);
+      if (result?.code !== 0) {
+        showToast.error(result.message);
         return false;
       }
     } catch (error) {
@@ -43,13 +41,13 @@ function useCreateGitfts() {
 const useFetchGifts = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [methods, setMethods] = useState([]);
+  const [gifts, setGifts] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/payment-methods`,
+        `${BASE_SERVER_URL}/admin/gift-cards`,
         config
       );
 
@@ -58,7 +56,7 @@ const useFetchGifts = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setMethods(result.result);
+        setGifts(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -71,7 +69,7 @@ const useFetchGifts = () => {
     fetchData();
   }, []);
 
-  return { methods, refetch: fetchData, loading };
+  return { gifts, refetch: fetchData, loading };
 };
 
 export { useCreateGitfts, useFetchGifts };

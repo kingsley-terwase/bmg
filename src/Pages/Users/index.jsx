@@ -12,7 +12,7 @@ export { default as UserSupportPage } from "./Support";
 export { default as UserGenerateImages } from "./AI/GenerateImages";
 export { default as UserGenerateVideos } from "./AI/GenerateVideos";
 export { default as UserGenerateWebsites } from "./AI/generate-websites";
-export { default as UserGenerateSpeeches } from "./AI/GenerateSpeeches";
+export { default as UserGenerateAudio } from "./AI/GenerateAudios";
 export { default as ImageToImageInput } from "./AI/GenerateImages/image-to-image";
 export { default as TextToImageInput } from "./AI/GenerateImages/text-to-image";
 export { default as TextToVideoInput } from "./AI/GenerateVideos/text-to-video";

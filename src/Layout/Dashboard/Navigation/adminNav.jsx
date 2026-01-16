@@ -72,6 +72,12 @@ export const ADMIN_NAV = [
     ],
   },
   {
+    label: "Category FAQs",
+    path: "/dashboard/admin/category-faqs",
+    icon: EMOJI_ICONS.faqs,
+    children: [],
+  },
+  {
     label: "Services",
     path: "#",
     icon: EMOJI_ICONS.shoppingBasket,
@@ -86,7 +92,12 @@ export const ADMIN_NAV = [
     icon: EMOJI_ICONS.types,
     children: [],
   },
-
+  {
+    label: "Services FAQs",
+    path: "/dashboard/admin/services-faqs",
+    icon: EMOJI_ICONS.faqs,
+    children: [],
+  },
   {
     label: "Payment Methods",
     path: "/dashboard/manage/payment-methods",
@@ -103,6 +114,18 @@ export const ADMIN_NAV = [
     label: "Payments",
     path: "/dashboard/admin/payments",
     icon: EMOJI_ICONS.creditCard,
+    children: [],
+  },
+  {
+    label: " FAQs",
+    path: "/dashboard/admin/faqs",
+    icon: EMOJI_ICONS.faq,
+    children: [],
+  },
+  {
+    label: " User Credits",
+    path: "/dashboard/admin/user-credits",
+    icon: EMOJI_ICONS.credits,
     children: [],
   },
   {
@@ -124,6 +147,12 @@ export const ADMIN_NAV = [
     children: [],
   },
   {
+    label: "Blog Category",
+    path: "/dashboard/admin/blog-categories",
+    icon: EMOJI_ICONS.section,
+    children: [],
+  },
+  {
     label: "Gifts",
     path: "/dashboard/admin/gifts",
     icon: EMOJI_ICONS.cardGift,
@@ -133,6 +162,12 @@ export const ADMIN_NAV = [
     label: "Coupons",
     path: "/dashboard/admin/coupons",
     icon: EMOJI_ICONS.localActivity,
+    children: [],
+  },
+  {
+    label: "Vouchers",
+    path: "/dashboard/admin/vouchers",
+    icon: EMOJI_ICONS.category,
     children: [],
   },
   {
@@ -172,14 +207,8 @@ export const ADMIN_NAV = [
     children: [],
   },
   {
-    label: "Industry",
-    path: "/dashboard/admin/industries",
-    icon: <FactoryRounded />,
-    children: [],
-  },
-  {
-    label: "Resources",
-    path: "/dashboard/admin/resources",
+    label: "Ebooks",
+    path: "/dashboard/admin/ebooks",
     icon: EMOJI_ICONS.layers,
     children: [],
   },
@@ -190,9 +219,9 @@ export const ADMIN_NAV = [
     children: [],
   },
   {
-    label: "Colors",
-    path: "/dashboard/admin/colors",
-    icon: EMOJI_ICONS.colorLens,
+    label: "Currencies",
+    path: "/dashboard/admin/currencies",
+    icon: EMOJI_ICONS.currency,
     children: [],
   },
   {

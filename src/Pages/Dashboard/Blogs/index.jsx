@@ -5,27 +5,28 @@ import {
   TableCell,
   Checkbox,
   IconButton,
-  Grid
+  Grid,
+  Stack,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
 import {
   CustomTable,
   StatusChip,
   PagesHeader,
-  InfoCard
+  InfoCard,
 } from "../../../Component";
-import { blogs, headers } from "./data";
-import {
-  VisibilityOutlined,
-  AddOutlined,
-  RssFeedOutlined,
-  PeopleOutlined
-} from "@mui/icons-material";
+import { headers } from "./data";
+import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
+import { useFetchBlogs } from "../../../Hooks/Dashboard/blogs";
+import { formatDate, truncateText } from "../../../utils/functions";
 
 const BlogsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const { blogs, loading: blogsLoading } = useFetchBlogs();
 
   return (
     <div>
@@ -40,18 +41,18 @@ const BlogsPage = () => {
           {
             label: "Add Blogs",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/blogs")
+            onClick: () => navigate("/dashboard/admin/add/blogs"),
           },
           {
             label: "View Categories",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/categories")
+            onClick: () => navigate("/dashboard/admin/categories"),
           },
           {
             label: "Add Portfolio",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/portfolios")
-          }
+            onClick: () => navigate("/dashboard/admin/add/portfolios"),
+          },
         ]}
       />
 
@@ -88,30 +89,69 @@ const BlogsPage = () => {
 
       <Box mt={3} mb={3}>
         <CustomTable title="Total Blogs" headers={headers}>
-          {blogs.map((row) => (
-            <TableRow hover key={row.id}>
-              <TableCell>
-                <Checkbox />
-              </TableCell>
-
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.subject}</TableCell>
-              <TableCell>{row.image}</TableCell>
-              <TableCell>{row.description}</TableCell>
-              <TableCell>{row.dueDate}</TableCell>
-              <TableCell>{row.amount}</TableCell>
-
-              <TableCell>
-                <StatusChip status={row.status} label={row.status} />
-              </TableCell>
-
-              <TableCell>
-                <IconButton size="small">
-                  <VisibilityOutlined fontSize="medium" />
-                </IconButton>
+          {blogsLoading ? (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <CircularProgress
+                  color="secondary"
+                  sx={{ display: "block", marginX: "auto" }}
+                />
               </TableCell>
             </TableRow>
-          ))}
+          ) : blogs.length > 0 ? (
+            blogs.map((row, index) => (
+              <TableRow hover key={index}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
+                <TableCell>
+                  {row.author_first_name}
+                  {""}
+                  {row.author_last_name}
+                </TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.title}</TableCell>
+                <TableCell>{formatDate(row.created_at)}</TableCell>
+                <TableCell
+                  sx={{
+                    maxWidth: 400,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <Typography variant="body2" title={row.answer}>
+                    {truncateText(row.content, 80)}
+                  </Typography>
+                </TableCell>{" "}
+                <TableCell>{formatDate(row.updated_at)}</TableCell>
+                <TableCell>
+                  <StatusChip
+                    status={row.status === true ? "active" : "inactive"}
+                    label={row.status === true ? "Active" : "Disabled"}
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton size="small">
+                    <VisibilityOutlined fontSize="medium" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Stack alignItems="center" spacing={2}>
+                  <Typography
+                    variant="body1"
+                    sx={{ color: "#2C3891", fontWeight: 600 }}
+                  >
+                    No Blog(s) Found.
+                  </Typography>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          )}
         </CustomTable>
       </Box>
     </div>

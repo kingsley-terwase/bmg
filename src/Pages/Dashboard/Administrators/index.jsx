@@ -112,7 +112,7 @@ const Administrators = () => {
         </CustomTable>
       </Box>
 
-      <SingleAdminModal open={open} onClose={handleClose} catId={selectedId} />
+      <SingleAdminModal open={open} onClose={handleClose} userId={selectedId} />
     </div>
   );
 };

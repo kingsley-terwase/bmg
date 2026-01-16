@@ -8,7 +8,6 @@ import {
   Switch,
   Typography,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
@@ -46,7 +45,7 @@ const AddPaymentMethods = () => {
     code,
   };
 
-  const handleSubmitAdmin = async () => {
+  const handleSubmit = async () => {
     if (!name.trim() || !description.trim() || !code) {
       showToast.warning("Please fill in all required fields.");
       return;
@@ -240,7 +239,7 @@ const AddPaymentMethods = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>
