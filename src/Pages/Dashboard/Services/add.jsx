@@ -46,7 +46,6 @@ const AddServicePage = () => {
   const [serviceType, setServiceType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
   const [servicePrice, setServicePrice] = useState("");
-  const [serviceImg, setServiceImg] = useState("");
   const [serviceStatus, setServiceStatus] = useState(true);
   const [serviceDesc, setServiceDesc] = useState("");
   const [attributes, setAttributes] = useState([]);
@@ -75,9 +74,9 @@ const AddServicePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!serviceName.trim() || !serviceDesc.trim() || !serviceImg) {
+    if (!serviceName.trim() || !serviceDesc.trim() || !servicePrice) {
       showToast.warning(
-        "Please fill in all required fields and add atleast three service features."
+        "Please fill in all required fields and add atleast three service features.",
       );
       return;
     }
@@ -88,7 +87,6 @@ const AddServicePage = () => {
     try {
       const payload = {
         service_name: serviceName,
-        service_images: serviceImg,
         category_id: categoryId,
         subcategory_id: subCatId,
         discount_type: discountType.toLocaleLowerCase(),
@@ -104,7 +102,6 @@ const AddServicePage = () => {
       if (response) {
         showToast.success("Category added successfully!");
         setServiceName("");
-        setServiceImg(null);
         setServiceDesc("");
         setAttributes([]);
         navigate("/dashboard/admin/services");
@@ -143,43 +140,6 @@ const AddServicePage = () => {
         <Box component="form" mt={3}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
-              <UploadMedia
-                mode={"mutiple"}
-                maxFiles={5}
-                maxSize={10}
-                acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                onFilesChange={setServiceImg}
-                title="Service Image Upload"
-                description="Add your documents here, and you can upload up to 5 files max"
-              />
-
-              <Box
-                sx={{
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 2,
-                  p: 3,
-                  bgcolor: "white",
-                  mt: 3,
-                }}
-              >
-                <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                  Service Status
-                </Typography>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Typography variant="body2" fontWeight={500}>
-                    {serviceStatus ? "Active" : "Inactive"}
-                  </Typography>
-                  <Switch
-                    checked={serviceStatus}
-                    onChange={(e) => setServiceStatus(e.target.checked)}
-                    disabled={loading}
-                    color="warning"
-                  />
-                </Stack>
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 7 }}>
               <Box
                 sx={{
                   border: "1px solid #e0e0e0",
@@ -336,83 +296,109 @@ const AddServicePage = () => {
                 </Grid>
               </Box>
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <InputLabel text="Service Description " />
-              <TextField
-                id="outlined-textarea"
-                multiline
-                rows={5}
-                disableUnderline
-                fullWidth
-                placeholder="Long description here"
-                value={serviceDesc}
-                onChange={(e) => setServiceDesc(e.target.value)}
-              />
+
+            <Grid size={{ xs: 12, md: 7 }}>
+              <Grid size={{ xs: 12 }}>
+                <InputLabel text="Service Description " />
+                <TextField
+                  id="outlined-textarea"
+                  multiline
+                  rows={5}
+                  disableUnderline
+                  fullWidth
+                  placeholder="Long description here"
+                  value={serviceDesc}
+                  onChange={(e) => setServiceDesc(e.target.value)}
+                />
+              </Grid>
+
+              <Typography variant="h4" fontWeight={600} mt={3} mb={1}>
+                Service Attributes
+              </Typography>
+
+              <Box
+                sx={{
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 2,
+                  p: 3,
+                  bgcolor: "white",
+                  mt: 2,
+                }}
+              >
+                <Grid size={{ xs: 12 }}>
+                  <InputLabel text="Add Features *" />
+                  <Stack direction="row" spacing={2}>
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="e.g., Unlimited storage, 24/7 support"
+                      value={currentAttribute}
+                      onChange={(e) => setCurrentFeature(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleAddFeature()}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                    <IconButton
+                      onClick={handleAddFeature}
+                      sx={{
+                        bgcolor: "#1976d2",
+                        color: "white",
+                        "&:hover": { bgcolor: "#1565c0" },
+                      }}
+                    >
+                      <AddOutlined />
+                    </IconButton>
+                  </Stack>
+
+                  {attributes.length > 0 && (
+                    <Box mt={2}>
+                      <Stack direction="row" flexWrap="wrap" gap={1}>
+                        {attributes.map((feature, index) => (
+                          <Chip
+                            key={index}
+                            label={feature}
+                            onDelete={() => handleRemoveFeature(index)}
+                            deleteIcon={<CloseOutlined />}
+                            sx={{ bgcolor: "#e3f2fd" }}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
+                </Grid>
+              </Box>
+
+              <Box
+                sx={{
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 2,
+                  p: 3,
+                  bgcolor: "white",
+                  mt: 3,
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                  Service Status
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Typography variant="body2" fontWeight={500}>
+                    {serviceStatus ? "Active" : "Inactive"}
+                  </Typography>
+                  <Switch
+                    checked={serviceStatus}
+                    onChange={(e) => setServiceStatus(e.target.checked)}
+                    disabled={loading}
+                    color="warning"
+                  />
+                </Stack>
+              </Box>
             </Grid>
           </Grid>
-
-          <Typography variant="h4" fontWeight={600} mt={3} mb={1}>
-            Service Attributes
-          </Typography>
-
-          <Box
-            sx={{
-              border: "1px solid #e0e0e0",
-              borderRadius: 2,
-              p: 3,
-              bgcolor: "white",
-              mt: 2,
-            }}
-          >
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12 }}>
-                <InputLabel text="Add Features *" />
-                <Stack direction="row" spacing={2}>
-                  <Input
-                    disableUnderline
-                    fullWidth
-                    placeholder="e.g., Unlimited storage, 24/7 support"
-                    value={currentAttribute}
-                    onChange={(e) => setCurrentFeature(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleAddFeature()}
-                    sx={{
-                      border: "1px solid #e0e0e0",
-                      borderRadius: 1,
-                      px: 2,
-                      py: 1.5,
-                      fontSize: "14px",
-                    }}
-                  />
-                  <IconButton
-                    onClick={handleAddFeature}
-                    sx={{
-                      bgcolor: "#1976d2",
-                      color: "white",
-                      "&:hover": { bgcolor: "#1565c0" },
-                    }}
-                  >
-                    <AddOutlined />
-                  </IconButton>
-                </Stack>
-
-                {attributes.length > 0 && (
-                  <Box mt={2}>
-                    <Stack direction="row" flexWrap="wrap" gap={1}>
-                      {attributes.map((feature, index) => (
-                        <Chip
-                          key={index}
-                          label={feature}
-                          onDelete={() => handleRemoveFeature(index)}
-                          deleteIcon={<CloseOutlined />}
-                          sx={{ bgcolor: "#e3f2fd" }}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                )}
-              </Grid>
-            </Grid>
-          </Box>
 
           <Grid container spacing={2} mt={5}>
             <Grid size={{ xs: 12 }}>

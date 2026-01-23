@@ -58,3 +58,4 @@ export { default as VouchersPage } from "./Vouchers";
 export { default as AddBlogCategory } from "./BlogCategory/add";
 export { default as BlogCategoryPage } from "./BlogCategory";
 export { default as UserCreditsPage } from "./UserCredits";
+export { default as AddEbooks } from "./Ebooks/add";

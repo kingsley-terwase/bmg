@@ -24,42 +24,45 @@ import {
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
-import { categories, services } from "./data";
 import { useAddPortfolio } from "../../../Hooks/Dashboard/portfolios";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
+import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
 
 const AddPortfolios = () => {
-  const [category, setCategory] = useState("");
-  const [service, setService] = useState("");
-  const [categoryImg, setCategoryImg] = useState("");
-  const [categoryStatus, setCategoryStatus] = useState(true);
-  const [categoryDesc, setCategoryDesc] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [serviceId, setServiceId] = useState("");
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState(true);
+  const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
   const addPortfolio = useAddPortfolio();
   const navigate = useNavigate();
   const { hideLoader, showLoader } = useLoader();
+  const { services } = useFetchServices();
+  const { categories } = useFetchCategories();
 
   const formData = {
-    service,
-    category,
-    categoryImg,
-    categoryStatus,
-    categoryDesc,
+    service_id: serviceId,
+    cat_id: categoryId,
+    image,
+    status,
+    description,
   };
 
-  const handleSubmitAdmin = async (e) => {
+  const handleFilesChange = (files) => {
+    setImage(files);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !service.trim() ||
-      !category.trim() ||
-      categoryImg.length === 0 ||
-      !categoryDesc
-    ) {
+    if (!serviceId || !categoryId || !image || !description) {
       showToast.warning("Please fill in all required fields.");
       return;
     }
+    console.log("payload:", formData);
 
     setLoading(true);
     showLoader("Adding Portfolio");
@@ -67,12 +70,13 @@ const AddPortfolios = () => {
       const response = await addPortfolio(formData);
 
       if (response) {
-        showToast.success("Category added successfully!");
-        setService("");
-        setCategory("");
-        setCategoryImg([]);
-        setCategoryStatus(true);
-        setCategoryDesc("");
+        showToast.success("Portfolio added successfully!");
+        setServiceId("");
+        setCategoryId("");
+        setImage(null);
+        setStatus(true);
+        setDescription("");
+        navigate("/dashboard/admin/portfolios");
       }
     } catch (error) {
       showToast.error(error);
@@ -86,7 +90,7 @@ const AddPortfolios = () => {
     <>
       <PagesHeader
         label="Add Porfolio"
-        desc="Add portfolios for services, categories and blogs. Go to view portfolios to manage portfolios"
+        desc="Add portfolios for serviceIds, categories and blogs. Go to view portfolios to manage portfolios"
         searchEnabled={false}
         placeholder={"Search categories..."}
         actions={[
@@ -96,9 +100,9 @@ const AddPortfolios = () => {
             onClick: () => navigate("/dashboard/admin/portfolios"),
           },
           {
-            label: "Add Service",
+            label: "Add serviceId",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services"),
+            onClick: () => navigate("/dashboard/admin/add/serviceIds"),
           },
         ]}
       />
@@ -112,7 +116,7 @@ const AddPortfolios = () => {
                 maxFiles={1}
                 maxSize={2}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                onFilesChange={setCategoryImg}
+                onFilesChange={handleFilesChange}
                 title="Media Upload"
                 description="Add your documents here, and you can upload up to 5 files max"
               />
@@ -132,8 +136,8 @@ const AddPortfolios = () => {
                     <InputLabel text="Category" />
                     <FormControl fullWidth>
                       <Select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
                         disableUnderline
                         displayEmpty
                       >
@@ -142,30 +146,30 @@ const AddPortfolios = () => {
                         </MenuItem>
 
                         {categories.map((cat, i) => (
-                          <MenuItem key={i} value={cat.category}>
-                            {cat.category}
+                          <MenuItem key={i} value={cat.id}>
+                            {cat.name}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service" />
+                    <InputLabel text="Select Service" />
 
                     <FormControl fullWidth>
                       <Select
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
+                        value={serviceId}
+                        onChange={(e) => setServiceId(e.target.value)}
                         disableUnderline
                         displayEmpty
                       >
                         <MenuItem value="" disabled>
-                          <InputLabel text="Select Service" />
+                          <InputLabel text="Select service" />
                         </MenuItem>
 
-                        {services.map((cat, i) => (
-                          <MenuItem key={i} value={cat.category}>
-                            {cat.category}
+                        {services.map((service, i) => (
+                          <MenuItem key={i} value={service.id}>
+                            {service.service_name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -182,20 +186,33 @@ const AddPortfolios = () => {
                       }}
                     >
                       <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Category Status
+                        Portfolio Status
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography variant="body2" fontWeight={500}>
-                          {categoryStatus ? "Active" : "Inactive"}
+                          {status ? "Active" : "Inactive"}
                         </Typography>
                         <Switch
-                          checked={categoryStatus}
-                          onChange={(e) => setCategoryStatus(e.target.checked)}
+                          checked={status}
+                          onChange={(e) => setStatus(e.target.checked)}
                           disabled={loading}
                           color="warning"
                         />
                       </Stack>
                     </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 12 }}>
+                    <InputLabel text="Description" />
+                    <TextField
+                      id="content"
+                      multiline
+                      rows={5}
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter portfolio description here..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
                   </Grid>
                 </Grid>
               </Box>
@@ -232,7 +249,7 @@ const AddPortfolios = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

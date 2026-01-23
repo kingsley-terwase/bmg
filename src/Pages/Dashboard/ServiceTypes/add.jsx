@@ -28,8 +28,8 @@ import { useNavigate } from "react-router-dom";
 import { useLoader } from "../../../Contexts/LoaderContext";
 import { showToast } from "../../../utils/toast";
 import { fileToBase64 } from "../../../utils/functions";
-import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
-import { useCreateServiceTypes } from "../../../Hooks/Dashboard/service_types";
+ import { useCreateServiceTypes } from "../../../Hooks/Dashboard/service_types";
+import { useFetchServices } from "../../../Hooks/Dashboard/services";
 
 const AddServiceTypePage = () => {
   const [typeName, setTypeName] = useState("");
@@ -41,8 +41,10 @@ const AddServiceTypePage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
-  const { categories } = useFetchCategories();
+  const { services } = useFetchServices();
   const addServiceType = useCreateServiceTypes();
+
+  console.log("Services:", services);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,7 +149,7 @@ const AddServiceTypePage = () => {
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     <FormControl fullWidth>
-                      <InputLabel text="Service Type Category" />
+                      <InputLabel text="Service for Service Type" />
                       <Select
                         value={typeCategory}
                         onChange={(e) => setTypeCategory(e.target.value)}
@@ -155,12 +157,12 @@ const AddServiceTypePage = () => {
                         displayEmpty
                       >
                         <MenuItem value="" disabled>
-                          <InputLabel text="Select service type Category" />
+                          <InputLabel text="Select service for service type" />
                         </MenuItem>
 
-                        {categories.map((cat, index) => (
-                          <MenuItem key={index} value={cat.id}>
-                            {cat.name}
+                        {services.map((service, index) => (
+                          <MenuItem key={index} value={service.id}>
+                            {service.service_name}
                           </MenuItem>
                         ))}
                       </Select>

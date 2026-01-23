@@ -16,7 +16,8 @@ import {
 import {
   AddOutlined,
   VisibilityOutlined,
-  DeleteOutlined,
+  DisabledByDefaultOutlined,
+  DoneOutlined,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
@@ -154,9 +155,9 @@ const AdminRoles = () => {
                       }
                       color="danger"
                       variant="filled"
-                      startIcon={<DeleteOutlined />}
+                      startIcon={<DisabledByDefaultOutlined />}
                       sx={{ textTransform: "none", px: 2 }}
-                      onClick={handleDisableType(row.id, "0")}
+                      onClick={handleDisableType(row.id, false)}
                       disabled={disableLoading && loadingId === row.id}
                     />
                   ) : (
@@ -168,10 +169,11 @@ const AdminRoles = () => {
                           "Enable"
                         )
                       }
+                      startIcon={<DoneOutlined />}
                       color="success"
                       variant="filled"
                       sx={{ textTransform: "none", px: 2 }}
-                      onClick={handleDisableType(row.id, "1")}
+                      onClick={handleDisableType(row.id, true)}
                       disabled={disableLoading && loadingId === row.id}
                     />
                   )}

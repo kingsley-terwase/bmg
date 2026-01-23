@@ -68,7 +68,7 @@ const BlogsPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.rss}
               title="Posts"
-              value="20"
+              value={blogs.length}
               actionLabel="Total Posts"
               color="#61B5FF"
               onAction={() => console.log("View Users")}
@@ -79,7 +79,7 @@ const BlogsPage = () => {
               icon={EMOJI_ICONS.people}
               actionLabel="Total Views"
               title="Views"
-              value="18"
+              value="0"
               color="#61B5FF"
               onAction={() => console.log("View Users")}
             />

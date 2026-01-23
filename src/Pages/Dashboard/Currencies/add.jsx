@@ -6,61 +6,75 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
 } from "@mui/icons-material";
-import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
+import {
+  InputLabel,
+  CustomButton,
+  PagesHeader,
+  UploadMedia,
+} from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useAddCurrency } from "../../../Hooks/Dashboard/currencies";
 import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
 
 const AddCurrency = () => {
-  const [category, setCategory] = useState("");
-  const [title, setTitle] = useState("");
-  const [categoryStatus, setCategoryStatus] = useState(true);
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [status, setStatus] = useState(true);
+  const [flag, setFlag] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const addCurrency = useAddCurrency();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
 
   const formData = {
-    title,
-    category,
+    code,
+    name,
+    image: flag,
+    status,
+  };
+
+  const handleFilesChange = (files) => {
+    setFlag(files);
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || !category.trim()) {
+    if (!code.trim() || !name.trim()) {
       showToast.error("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
+    showLoader("Adding Currency...");
     try {
       const response = await addCurrency(formData);
 
       if (response) {
-        showToast.success("Category added successfully!");
-        setTitle("");
-        setCategory("");
-        setCategoryStatus(true);
+        showToast.success("Currency added successfully!");
+        setCode("");
+        setName("");
+        setStatus(true);
       }
     } catch (error) {
       showToast.error(error);
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
   return (
     <>
       <PagesHeader
-        label="Add Colors"
-        desc="Add colors for the web, users select these colors when placing an order. Go to view colors to manage."
-        searchEnabled={false}
-        placeholder={"Search colors..."}
+        label="Add Currency"
+        desc="Add currencies, services and gigs and returned in selected currencies, users can also select these currencies when placing an order. Go to view currencies to manage."
         actions={[
           {
-            label: "View Colors",
+            label: "View Currencies",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/admin/colors"),
+            onClick: () => navigate("/dashboard/admin/currencies"),
           },
           {
             label: "View Services",
@@ -93,13 +107,13 @@ const AddCurrency = () => {
               <Grid size={{ xs: 12, md: 6 }}>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Color Name" />
+                    <InputLabel text="Currency Name" />
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter color name"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter currency name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
@@ -109,12 +123,24 @@ const AddCurrency = () => {
                       }}
                     />
                   </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, md: 12 }}>
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Currency Code" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter currency code"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
                     <Box
                       sx={{
                         border: "1px solid #e0e0e0",
@@ -129,11 +155,11 @@ const AddCurrency = () => {
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography variant="body2" fontWeight={500}>
-                          {categoryStatus ? "Active" : "Inactive"}
+                          {status ? "Active" : "Inactive"}
                         </Typography>
                         <Switch
-                          checked={categoryStatus}
-                          onChange={(e) => setCategoryStatus(e.target.checked)}
+                          checked={status}
+                          onChange={(e) => setStatus(e.target.checked)}
                           disabled={loading}
                           color="warning"
                         />
@@ -141,6 +167,18 @@ const AddCurrency = () => {
                     </Box>
                   </Grid>
                 </Grid>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <UploadMedia
+                  mode="single"
+                  maxFiles={1}
+                  maxSize={2}
+                  acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
+                  onFilesChange={handleFilesChange}
+                  title="Upload Currency Flag"
+                  description="Add your documents here, and you can upload up to 5 files max"
+                />
               </Grid>
             </Grid>
           </Box>

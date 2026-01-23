@@ -5,14 +5,14 @@ import { useUserContext } from "../../Contexts";
 import { showToast } from "../../utils/toast";
 import { useState, useEffect } from "react";
 
-function useCreateContentPrice() {
+function useCreateContentQuality() {
   const { config } = useUserContext();
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/content-prices`,
+        `${BASE_SERVER_URL}/admin/create/content-quality`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -29,31 +29,31 @@ function useCreateContentPrice() {
       if (error.response.data?.code !== 0) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while creating content price.");
+        showToast.error("An error occurred while creating content type.");
       }
       return false;
     }
   };
 }
 
-const useFetchContentPrices = () => {
+const useFetchContentQualtity = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [prices, setPrices] = useState([]);
+  const [qualities, setQualities] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/content-prices`,
-        config
+        `${BASE_SERVER_URL}/admin/content-qualities`,
+        config,
       );
 
       const result = response.data;
-      console.log("Fetching ID:", result);
+      console.log("Fetching:", result);
 
       if (result.code === 0) {
-        setPrices(result.result);
+        setQualities(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -66,16 +66,16 @@ const useFetchContentPrices = () => {
     fetchData();
   }, []);
 
-  return { prices, refetch: fetchData, loading };
+  return { qualities, refetch: fetchData, loading };
 };
 
-function useGetContentPrice() {
+function useGetContentQuality() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [priceData, setPriceData] = useState(null);
+  const [qualityData, setQualityData] = useState(null);
 
-  const getPrice = async (priceId) => {
-    if (!priceId) {
+  const getContentQuality = async (qualityId) => {
+    if (!qualityId) {
       console.error("No ID provided");
       return;
     }
@@ -84,35 +84,65 @@ function useGetContentPrice() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/content-price/${priceId}`,
-        config
+        `${BASE_SERVER_URL}/admin/content-quality/${qualityId}`,
+        config,
       );
 
       const result = response.data;
 
       if (result?.code === 0) {
-        setPriceData(result?.result);
+        setQualityData(result?.result);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setPriceData(null);
+      setQualityData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  return { priceData, loading, getPrice };
+  return { qualityData, loading, getContentQuality };
 }
 
-function useDeleteContentPrice() {
+const useUpdateContentQuality = () => {
+  return async (data, id) => {
+    console.error("Invalid content quality ID:", id);
+
+    if (!id || typeof id === "object") {
+      console.error("Invalid content quality ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/content-quality/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating content type.",
+      );
+    }
+  };
+};
+
+function useDeleteContentQuality() {
   const { config } = useUserContext();
 
   return async (id) => {
     try {
       const response = await axios.delete(
-        `${BASE_SERVER_URL}/admin/delete/content-price${id}`,
+        `${BASE_SERVER_URL}/admin/delete/content-quality/${id}`,
         {},
-        config
+        config,
       );
       showToast.success(response.data.message);
       return response.data;
@@ -128,8 +158,9 @@ function useDeleteContentPrice() {
 }
 
 export {
-  useCreateContentPrice,
-  useFetchContentPrices,
-  useGetContentPrice,
-  useDeleteContentPrice,
+  useCreateContentQuality,
+  useFetchContentQualtity,
+  useGetContentQuality,
+  useDeleteContentQuality,
+  useUpdateContentQuality,
 };

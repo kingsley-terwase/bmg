@@ -5,14 +5,14 @@ import { useUserContext } from "../../Contexts";
 import { showToast } from "../../utils/toast";
 import { useState, useEffect } from "react";
 
-function useCreateContentQuality() {
+function useCreatePackage() {
   const { config } = useUserContext();
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/content-quality`,
+        `${BASE_SERVER_URL}/admin/create/credit-package`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -29,31 +29,31 @@ function useCreateContentQuality() {
       if (error.response.data?.code !== 0) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while creating content type.");
+        showToast.error("An error occurred while creating package.");
       }
       return false;
     }
   };
 }
 
-const useFetchContentQualtity = () => {
+const useFetchPackages = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [qualities, setQualities] = useState([]);
+  const [packages, setPackages] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/content-qualities`,
-        config
+        `${BASE_SERVER_URL}/admin/credit-packages`,
+        config,
       );
 
       const result = response.data;
-      console.log("Fetching:", result);
+      console.log("Fetching ID:", result);
 
       if (result.code === 0) {
-        setQualities(result.result);
+        setPackages(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -66,16 +66,16 @@ const useFetchContentQualtity = () => {
     fetchData();
   }, []);
 
-  return { qualities, refetch: fetchData, loading };
+  return { packages, refetch: fetchData, loading };
 };
 
-function useGetContentQuality() {
+function useGetPackage() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [qualityData, setQualityData] = useState(null);
+  const [packageData, setPackageData] = useState(null);
 
-  const getContentQuality = async (qualityId) => {
-    if (!qualityId) {
+  const getPackage = async (packageId) => {
+    if (!packageId) {
       console.error("No ID provided");
       return;
     }
@@ -84,35 +84,35 @@ function useGetContentQuality() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/content-quality/${qualityId}`,
-        config
+        `${BASE_SERVER_URL}/admin/credit-package/${packageId}`,
+        config,
       );
 
       const result = response.data;
 
       if (result?.code === 0) {
-        setQualityData(result?.result);
+        setPackageData(result?.result);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setQualityData(null);
+      setPackageData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  return { qualityData, loading, getContentQuality };
+  return { packageData, loading, getPackage };
 }
 
-function useDeleteContentQuality() {
+function useDeletePackage() {
   const { config } = useUserContext();
 
   return async (id) => {
     try {
       const response = await axios.delete(
-        `${BASE_SERVER_URL}/admin/delete/content-quality/${id}`,
+        `${BASE_SERVER_URL}/admin/delete/credit-package/${id}`,
         {},
-        config
+        config,
       );
       showToast.success(response.data.message);
       return response.data;
@@ -127,9 +127,40 @@ function useDeleteContentQuality() {
   };
 }
 
+const useUpdatePackage = () => {
+  return async (data, id) => {
+          console.error("Invalid package ID:", id);
+
+    if (!id || typeof id === "object") {
+      console.error("Invalid package ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/credit-package/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating credit package.",
+      );
+    }
+  };
+};
+
 export {
-  useCreateContentQuality,
-  useFetchContentQualtity,
-  useGetContentQuality,
-  useDeleteContentQuality,
+  useCreatePackage,
+  useFetchPackages,
+  useGetPackage,
+  useDeletePackage,
+  useUpdatePackage,
 };

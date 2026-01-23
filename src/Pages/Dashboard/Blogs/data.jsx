@@ -9,11 +9,3 @@ export const headers = [
   { key: "status", label: "Status" },
   { key: "actions", label: "Action" },
 ];
-
-export const categories = [
-  { id: 1, category: "Merching" },
-  { id: 5, category: "Branding" },
-  { id: 3, category: "Logo" },
-  { id: 4, category: "Website" },
-  { id: 5, category: "Mock Up" },
-];

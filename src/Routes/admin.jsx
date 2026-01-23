@@ -61,6 +61,7 @@ import {
   CurrenciesPage,
   AddCurrency,
   UserCreditsPage,
+  AddEbooks,
 } from "../Pages/Dashboard";
 
 const AdminRoutes = () => {
@@ -110,6 +111,7 @@ const AdminRoutes = () => {
       <Route path="admin/support" element={<SupportPage />} />
       <Route path="admin/settings" element={<SettingsPage />} />
       <Route path="admin/ebooks" element={<EbooksPage />} />
+      <Route path="admin/add/ebook" element={<AddEbooks />} />
       <Route path="admin/currencies" element={<CurrenciesPage />} />
       <Route path="admin/subscriptions" element={<SubscriptionsPage />} />
       <Route path="admin/add/currency" element={<AddCurrency />} />

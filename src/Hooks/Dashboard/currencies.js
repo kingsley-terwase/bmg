@@ -10,7 +10,7 @@ function useAddCurrency() {
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/gift-card`,
+        `${BASE_SERVER_URL}/admin/create/currency`,
         data,
         config
       );

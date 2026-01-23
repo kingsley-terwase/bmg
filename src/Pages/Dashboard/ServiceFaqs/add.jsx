@@ -28,8 +28,7 @@ import { useFetchServices } from "../../../Hooks/Dashboard/services";
 const AddServiceFaqs = () => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [status, setStatus] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [serviceId, setServiceId] = useState("");
 
   const [loading, setLoading] = useState(false);
   const addServiceFaqs = useAddServiceFaq();
@@ -39,12 +38,11 @@ const AddServiceFaqs = () => {
   const formData = {
     question,
     answer,
-    categoryId,
-    status,
+    service_id: serviceId,
   };
 
   const handleSubmit = async () => {
-    if (!question.trim() || !answer.trim() || !categoryId) {
+    if (!question.trim() || !answer.trim() || !serviceId) {
       showToast.warning("Please fill in all required fields.");
       return;
     }
@@ -59,8 +57,8 @@ const AddServiceFaqs = () => {
         setAnswer("");
         setQuestion("");
         setAnswer("");
-        setCategoryId("");
-        navigate("/dashboard/category-faqs");
+        setServiceId("");
+        navigate("/dashboard/admin/services-faqs");
       }
     } catch (error) {
       showToast.error(error);
@@ -79,19 +77,19 @@ const AddServiceFaqs = () => {
         placeholder={"Search faqs..."}
         actions={[
           {
+            label: "View Service Faqs",
+            icon: <AddOutlined />,
+            onClick: () => navigate("/dashboard/admin/services-faqs"),
+          },
+          {
             label: "View category Faqs",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/category-faqs"),
+            onClick: () => navigate("/dashboard/admin/category-faqs"),
           },
           {
             label: "View Service Types",
             icon: <VisibilityOutlined />,
             onClick: () => navigate("/dashboard/admin/service-types"),
-          },
-          {
-            label: "Add Service Faqs",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/add/service-faqs"),
           },
         ]}
       />
@@ -118,7 +116,7 @@ const AddServiceFaqs = () => {
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter Category FAQ question"
+                      placeholder="Enter service FAQ question"
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       sx={{
@@ -152,8 +150,8 @@ const AddServiceFaqs = () => {
                     <FormControl fullWidth>
                       <InputLabel text="Select Service" />
                       <Select
-                        value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
+                        value={serviceId}
+                        onChange={(e) => setServiceId(e.target.value)}
                         disableUnderline
                         displayEmpty
                       >
@@ -163,37 +161,11 @@ const AddServiceFaqs = () => {
 
                         {services.map((service, index) => (
                           <MenuItem key={index} value={service.id}>
-                            {service.name}
+                            {service.service_name}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <Box
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 2,
-                        p: 3,
-                        bgcolor: "white",
-                        mt: 2,
-                      }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Category FAQ Status
-                      </Typography>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="body2" fontWeight={500}>
-                          {status ? "Active" : "Inactive"}
-                        </Typography>
-                        <Switch
-                          checked={status}
-                          onChange={(e) => setStatus(e.target.checked)}
-                          disabled={loading}
-                          color="warning"
-                        />
-                      </Stack>
-                    </Box>
                   </Grid>
                 </Grid>
               </Grid>

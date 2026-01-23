@@ -11,7 +11,6 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { toast } from "react-toastify";
 import {
   AddOutlined,
   DeleteOutlined,
@@ -27,58 +26,65 @@ import {
 import { styles } from "../../../styles/dashboard";
 import { useCreateBlogs } from "../../../Hooks/Dashboard/blogs";
 import { useNavigate } from "react-router-dom";
-import { categories } from "./data";
+import { showToast } from "../../../utils/toast";
+import { useLoader } from "../../../Contexts/LoaderContext";
+import { useFetchBlogCategory } from "../../../Hooks/Dashboard/blog_categories";
 
 const AddBlogs = () => {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
-  const [blogImg, setBlogImg] = useState("");
-  const [required, setRequired] = useState([]);
-  const [categoryStatus, setCategoryStatus] = useState(true);
-  const [categoryDesc, setCategoryDesc] = useState("");
-  const [options, setOptions] = useState([]);
+  const [slug, setSlug] = useState("");
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState(true);
+  const [content, setContent] = useState("");
 
   const [loading, setLoading] = useState(false);
   const postBlog = useCreateBlogs();
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
+  const { blogCategories } = useFetchBlogCategory();
 
   const formData = {
     title,
+    slug,
     category,
-    blogImg,
-    options,
-    categoryStatus,
-    categoryDesc,
-    required,
+    image,
+    status,
+    content,
   };
 
   const handleFilesChange = (files) => {
-    setBlogImg(files);
+    setImage(files);
   };
 
-  const handleSubmitAdmin = async () => {
-    if (!title.trim() || !category.trim() || !categoryDesc) {
-      toast.error("Please fill in all required fields.");
+  const handleSubmitAdmin = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !slug.trim() || !content) {
+      showToast.warning("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
+    showLoader("Adding Blog...");
     try {
       const response = await postBlog(formData);
 
       if (response) {
-        toast.success("Category added successfully!");
+        showToast.success("Blog added successfully!");
         setTitle("");
+        setSlug("");
         setCategory("");
-        setOptions([]);
-        setCategoryStatus(true);
-        setCategoryDesc("");
-        setRequired([]);
+        setImage(null);
+        setStatus(true);
+        setContent("");
+        navigate("/da");
       }
     } catch (error) {
-      toast.error(error);
+      console.error(error);
+      showToast.error(error);
     } finally {
       setLoading(false);
+      hideLoader();
     }
   };
 
@@ -130,7 +136,7 @@ const AddBlogs = () => {
                     <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Enter requirement title"
+                      placeholder="Enter title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       sx={{
@@ -148,8 +154,8 @@ const AddBlogs = () => {
                       disableUnderline
                       fullWidth
                       placeholder="Enter slug"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
                         borderRadius: 1,
@@ -172,9 +178,9 @@ const AddBlogs = () => {
                           <InputLabel text="Select Category" />
                         </MenuItem>
 
-                        {categories.map((cat, i) => (
-                          <MenuItem key={i} value={cat.category}>
-                            {cat.category}
+                        {blogCategories.map((cat, i) => (
+                          <MenuItem key={i} value={cat.id}>
+                            {cat.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -196,11 +202,11 @@ const AddBlogs = () => {
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography variant="body2" fontWeight={500}>
-                          {categoryStatus ? "Active" : "Inactive"}
+                          {status ? "Active" : "Inactive"}
                         </Typography>
                         <Switch
-                          checked={categoryStatus}
-                          onChange={(e) => setCategoryStatus(e.target.checked)}
+                          checked={status}
+                          onChange={(e) => setStatus(e.target.checked)}
                           disabled={loading}
                           color="warning"
                         />
@@ -214,8 +220,9 @@ const AddBlogs = () => {
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
                     <UploadMedia
-                      maxFiles={5}
-                      maxSize={10}
+                      mode="single"
+                      maxFiles={1}
+                      maxSize={2}
                       acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                       onFilesChange={handleFilesChange}
                       title="Media Upload"
@@ -233,8 +240,8 @@ const AddBlogs = () => {
                   disableUnderline
                   fullWidth
                   placeholder="Enter content here..."
-                  value={categoryDesc}
-                  onChange={(e) => setCategoryDesc(e.target.value)}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </Grid>
             </Grid>

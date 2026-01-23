@@ -12,7 +12,7 @@ function useAddExpert() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/expert`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -46,7 +46,7 @@ const useFetchExperts = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/get/experts`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -86,8 +86,8 @@ function useGetExpert() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/get-admin/${expertId}`,
-        config
+        `${BASE_SERVER_URL}/admin/expert/${expertId}`,
+        config,
       );
 
       const result = response.data;
@@ -117,7 +117,7 @@ const useUpdateExpertStatus = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/expert/status/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -128,7 +128,7 @@ const useUpdateExpertStatus = () => {
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
-        error?.response?.data?.message || "Error occurred while updating."
+        error?.response?.data?.message || "Error occurred while updating.",
       );
     }
   };

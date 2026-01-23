@@ -21,6 +21,7 @@ import {
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
 import { useGetServiceFaq } from "../../../Hooks/Dashboard/service_faqs";
+import { InputLabel } from "../../../Component";
 
 const SingleServiceFaqModal = ({ open, onClose, serviceId }) => {
   const navigate = useNavigate();
@@ -86,9 +87,12 @@ const SingleServiceFaqModal = ({ open, onClose, serviceId }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 4 }}>
+        <InputLabel text="Question" size="10px" />
         <Typography variant="h5" fontWeight={700} mb={2}>
           {faqData.question}
         </Typography>
+
+        <InputLabel text="Answer" size="10px" />
 
         <Typography sx={{ lineHeight: 1.8, color: "text.secondary" }} mb={3}>
           {faqData.answer}

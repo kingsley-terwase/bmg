@@ -9,20 +9,28 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader } from "../../../../Component";
+import { CustomTable, PagesHeader } from "../../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/functions";
-import { useFetchContentPrices } from "../../../../Hooks/Users/content_price";
 import EditContentPriceModal from "./edit";
+import AddContentPrice from "./add";
+import { useFetchContentPrices } from "../../../../Hooks/Dashboard/content_price";
+import ViewContentPriceModal from "./view";
 
 const ContentPricePage = () => {
   const navigate = useNavigate();
   const { prices, loading: pricesLoading, refetch } = useFetchContentPrices();
-
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -35,6 +43,26 @@ const ContentPricePage = () => {
     setSelectedId(null);
   };
 
+  const handleOpenModal = () => {
+    setOpenCreate(true);
+  };
+
+  const handleCloseModal = async () => {
+    setOpenCreate(false);
+    await refetch();
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedPrice(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedPrice(null);
+  };
+
   return (
     <div>
       <PagesHeader
@@ -44,7 +72,7 @@ const ContentPricePage = () => {
           {
             label: "Add Content Price",
             icon: <AddOutlined />,
-            onClick: () => navigate(() => {}),
+            onClick: handleOpenModal,
           },
           {
             label: "View Subscription Plans",
@@ -80,9 +108,18 @@ const ContentPricePage = () => {
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack direction="row" spacing={1} mt={1}>
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -104,9 +141,17 @@ const ContentPricePage = () => {
       </Box>
 
       <EditContentPriceModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        priceId={selectedPrice}
+      />
+
+      <AddContentPrice open={openCreate} onClose={handleCloseModal} />
+
+      <ViewContentPriceModal
         open={open}
         onClose={handleClose}
-        PriceId={selectedId}
+        priceId={selectedId}
       />
     </div>
   );

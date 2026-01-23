@@ -69,6 +69,20 @@ const AudioToTextInput = ({ onGeneratingChange, onTextGenerated }) => {
     }
   };
 
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        const base64 = reader.result.split(",")[1]; // strip data:audio/*
+        resolve(base64);
+      };
+
+      reader.onerror = reject;
+    });
+  };
+
   const handleRemoveAudio = () => {
     setAudioFile(null);
     if (audioPreview) {
@@ -88,27 +102,31 @@ const AudioToTextInput = ({ onGeneratingChange, onTextGenerated }) => {
     setIsGenerating(true);
 
     try {
-      const formData = new FormData();
-      formData.append("audio", audioFile);
-      formData.append("language", language);
+      const base64Audio = await fileToBase64(audioFile);
 
-      console.log("Audio-to-Text Payload:", {
-        audioFile: audioFile.name,
+      const payload = {
+        input: base64Audio,
         language,
-      });
+        model: "gpt-4o-mini-transcribe",
+        response_format: "json",
+        temperature: 0,
+        stream: false,
+        timestamp_granularities: ["segment"],
+      };
 
-      console.log("Text-to-Audio Payload:", formData);
+      console.log("Audio-to-Text Payload:", payload);
 
-      const response = await transcribeAudio(formData);
+      const response = await transcribeAudio(payload);
+
       if (response) {
-        // Notify parent component about the new image
         onTextGenerated?.(response);
         handleRemoveAudio();
-        showToast.success("audio generated successfully!");
-        setIsGenerating(false);
+        showToast.success("Audio transcribed successfully!");
       }
     } catch (error) {
-      showToast.error(error || "Failed to transcribe audio");
+      console.error(error);
+      showToast.error(error?.message || "Failed to transcribe audio");
+    } finally {
       setIsGenerating(false);
     }
   };

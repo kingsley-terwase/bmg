@@ -12,7 +12,7 @@ function useCreateContentType() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/content-type`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -46,7 +46,7 @@ const useFetchContentTypes = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/content-types`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -85,7 +85,7 @@ function useGetContentType() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/content-type/${typeId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -104,6 +104,36 @@ function useGetContentType() {
   return { typeData, loading, getContentType };
 }
 
+const useUpdateContentType = () => {
+  return async (data, id) => {
+    console.error("Invalid content type ID:", id);
+
+    if (!id || typeof id === "object") {
+      console.error("Invalid content type ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/content-type/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating content type.",
+      );
+    }
+  };
+};
+
 function useDeleteContentType() {
   const { config } = useUserContext();
 
@@ -112,7 +142,7 @@ function useDeleteContentType() {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete/content-type/${id}`,
         {},
-        config
+        config,
       );
       showToast.success(response.data.message);
       return response.data;
@@ -132,4 +162,5 @@ export {
   useFetchContentTypes,
   useGetContentType,
   useDeleteContentType,
+  useUpdateContentType,
 };

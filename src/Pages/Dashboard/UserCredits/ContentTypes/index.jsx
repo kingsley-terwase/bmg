@@ -9,18 +9,19 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  CustomTable,
-  StatusChip,
-  PagesHeader,
-  CategoryOverviewCard,
-} from "../../../../Component";
+import { CustomTable, StatusChip, PagesHeader } from "../../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/functions";
-import { useFetchContentTypes } from "../../../../Hooks/Users/content_type";
 import EditContentTypeModal from "./edit";
+import AddContentTypeModal from "./add";
+import { useFetchContentTypes } from "../../../../Hooks/Dashboard/content_type";
+import ViewContentTypeModal from "./view";
 
 const ContentTypeSection = () => {
   const navigate = useNavigate();
@@ -28,6 +29,9 @@ const ContentTypeSection = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedType, setSelectedType] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -40,6 +44,26 @@ const ContentTypeSection = () => {
     setSelectedId(null);
   };
 
+  const handleOpenModal = () => {
+    setOpenCreate(true);
+  };
+
+  const handleCloseModal = async () => {
+    setOpenCreate(false);
+    await refetch();
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedType(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedType(null);
+  };
+
   return (
     <div>
       <PagesHeader
@@ -49,7 +73,7 @@ const ContentTypeSection = () => {
           {
             label: "Add Content Type",
             icon: <AddOutlined />,
-            onClick: () => navigate(() => {}),
+            onClick: handleOpenModal,
           },
           {
             label: "Add Subscription Plan",
@@ -90,9 +114,18 @@ const ContentTypeSection = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack direction="row" spacing={1} mt={1}>
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -114,6 +147,13 @@ const ContentTypeSection = () => {
       </Box>
 
       <EditContentTypeModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        typeId={selectedType}
+      />
+      <AddContentTypeModal open={openCreate} onClose={handleCloseModal} />
+
+      <ViewContentTypeModal
         open={open}
         onClose={handleClose}
         typeId={selectedId}

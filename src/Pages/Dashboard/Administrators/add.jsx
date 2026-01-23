@@ -59,6 +59,7 @@ const AddAdminPage = () => {
       return;
     }
 
+    console.log("payload", adminFormData)
     setLoading(true);
     showLoader();
     try {

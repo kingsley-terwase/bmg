@@ -48,7 +48,7 @@ const AddVoucherPage = () => {
     status,
   };
 
-  const handleSubmitAdmin = async () => {
+  const handleSubmit = async () => {
     if (!tag.trim() || !price.trim() || image.length === 0 || !description) {
       toast.error("Please fill in all required fields.");
       return;
@@ -225,7 +225,7 @@ const AddVoucherPage = () => {
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleSubmitAdmin}
+                    onClick={handleSubmit}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                 </Stack>

@@ -9,25 +9,28 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  CustomTable,
-  StatusChip,
-  PagesHeader,
-  CategoryOverviewCard,
-} from "../../../../Component";
+import { CustomTable, StatusChip, PagesHeader } from "../../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/functions";
-import { useFetchPackages } from "../../../../Hooks/Users/credit_packages";
+import ViewCreditPackageModal from "./view";
+import AddCreditPackageModal from "./add";
+import { useFetchPackages } from "../../../../Hooks/Dashboard/credit_packages";
 import EditCreditPackageModal from "./edit";
 
 const CreditPackageSection = () => {
   const navigate = useNavigate();
   const { packages, loading: packagesLoading, refetch } = useFetchPackages();
-
   const [open, setOpen] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -40,6 +43,26 @@ const CreditPackageSection = () => {
     setSelectedId(null);
   };
 
+  const handleOpenModal = () => {
+    setOpenCreate(true);
+  };
+
+  const handleCloseModal = async () => {
+    setOpenCreate(false);
+    await refetch();
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedPackage(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedPackage(null);
+  };
+
   return (
     <div>
       <PagesHeader
@@ -49,7 +72,7 @@ const CreditPackageSection = () => {
           {
             label: "Add Package",
             icon: <AddOutlined />,
-            onClick: () => navigate(() => {}),
+            onClick: handleOpenModal,
           },
           {
             label: "Add Subscription Plans",
@@ -90,15 +113,24 @@ const CreditPackageSection = () => {
 
                 <TableCell>
                   <StatusChip
-                    status={row.status === true ? "active" : "inactive"}
-                    label={row.status === true ? "Active" : "Disabled"}
+                    status={row.is_active === true ? "active" : "inactive"}
+                    label={row.is_active === true ? "Active" : "Disabled"}
                   />
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack direction="row" spacing={1} mt={1}>
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -119,10 +151,18 @@ const CreditPackageSection = () => {
         </CustomTable>
       </Box>
 
-      <EditCreditPackageModal
+      <ViewCreditPackageModal
         open={open}
         onClose={handleClose}
         packageId={selectedId}
+      />
+
+      <AddCreditPackageModal open={openCreate} onClose={handleCloseModal} />
+
+      <EditCreditPackageModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        packageId={selectedPackage}
       />
     </div>
   );

@@ -79,7 +79,7 @@ function useUpdateAdminType() {
   const updateStatus = async (id, data) => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/admin-type/${id}`,
         data
       );
@@ -92,7 +92,7 @@ function useUpdateAdminType() {
       }
     } catch (error) {
       console.error("Error:", error.response.data);
-      if (error?.response?.data?.error) {
+      if (error?.response?.data?.code !== 0) {
         showToast.error(error.response.data.message);
       } else {
         showToast.error("An error occurred while updating Admin Type!");

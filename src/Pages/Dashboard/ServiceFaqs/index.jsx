@@ -20,7 +20,6 @@ import SingleServiceFaqModal from "./single";
 const ServiceFaqsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 

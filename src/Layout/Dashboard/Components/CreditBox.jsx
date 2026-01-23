@@ -6,7 +6,7 @@ const CreditBox = ({ balance = "0.00" }) => {
       sx={{
         height: "40px",
         width: "80px",
-        backgroundColor: "#454545ff",
+        backgroundColor: "#764ba2",
         borderRadius: "6px",
         display: "flex",
         flexDirection: "column",
@@ -16,8 +16,8 @@ const CreditBox = ({ balance = "0.00" }) => {
         transition: "all 0.2s ease",
         color: "#ffffffff",
         "&:hover": {
-          backgroundColor: "#696868ff",
-          color: "#bdbbbbff",
+          backgroundColor: "#2C3891",
+          color: "#ffffff",
           transform: "scale(1.05)",
         },
       }}
@@ -27,9 +27,7 @@ const CreditBox = ({ balance = "0.00" }) => {
       >
         Credit Balance
       </Typography>
-      <Typography
-        sx={{ fontWeight: 600, fontSize: 18, fontFamily: "jost" }}
-      >
+      <Typography sx={{ fontWeight: 600, fontSize: 18, fontFamily: "jost" }}>
         {balance}
       </Typography>
     </Box>

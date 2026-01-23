@@ -75,7 +75,7 @@ function useGetPortfolio() {
   const { config } = useUserContext();
   const [data, setData] = useState(null);
 
-  const getMethod = async (id) => {
+  const getPortfolio = async (id) => {
     if (!id) {
       console.error("No ID provided");
       return;
@@ -103,7 +103,7 @@ function useGetPortfolio() {
     }
   };
 
-  return { data, loading, getMethod };
+  return { data, loading, getPortfolio };
 }
 
 const useUpdatePortfolio = () => {

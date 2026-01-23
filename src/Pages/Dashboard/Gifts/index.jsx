@@ -68,7 +68,7 @@ const GiftsPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.cardGift}
               title="Total Gifts"
-              value="70"
+              value={gifts.length}
               onAction={() => console.log("View Users")}
             />
           </Grid>
@@ -76,7 +76,7 @@ const GiftsPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.category}
               title="Gifts Sold"
-              value="50"
+              value="0"
               onAction={() => console.log("View Users")}
             />
           </Grid>

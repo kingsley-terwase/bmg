@@ -24,6 +24,7 @@ import {
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
 import { useGetCategory } from "../../../Hooks/Dashboard/categories";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
 
 const SingleCategoryModal = ({ open, onClose, catId }) => {
   const navigate = useNavigate();
@@ -107,7 +108,7 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
               {categoryData?.image ? (
                 <Box
                   component="img"
-                  src={categoryData.image}
+                  src={`${BASE_IMAGE_URL}/${categoryData.image}`}
                   alt={categoryData.name}
                   sx={{
                     width: "100%",

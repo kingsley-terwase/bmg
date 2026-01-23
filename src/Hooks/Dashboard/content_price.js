@@ -5,14 +5,14 @@ import { useUserContext } from "../../Contexts";
 import { showToast } from "../../utils/toast";
 import { useState, useEffect } from "react";
 
-function useCreatePackage() {
+function useCreateContentPrice() {
   const { config } = useUserContext();
   return async (data) => {
     try {
       const response = await axios.post(
-        `${BASE_SERVER_URL}/admin/create/credit-package`,
+        `${BASE_SERVER_URL}/admin/create/content-price`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -29,31 +29,31 @@ function useCreatePackage() {
       if (error.response.data?.code !== 0) {
         showToast.error(error.response.data.message);
       } else {
-        showToast.error("An error occurred while creating package.");
+        showToast.error("An error occurred while creating content price.");
       }
       return false;
     }
   };
 }
 
-const useFetchPackages = () => {
+const useFetchContentPrices = () => {
   const { config } = useUserContext();
   const [loading, setLoading] = useState(false);
-  const [packages, setPackages] = useState([]);
+  const [prices, setPrices] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/credit-packages`,
-        config
+        `${BASE_SERVER_URL}/admin/content-prices`,
+        config,
       );
 
       const result = response.data;
       console.log("Fetching ID:", result);
 
       if (result.code === 0) {
-        setPackages(result.result);
+        setPrices(result.result);
       }
       setLoading(false);
     } catch (error) {
@@ -66,16 +66,16 @@ const useFetchPackages = () => {
     fetchData();
   }, []);
 
-  return { packages, refetch: fetchData, loading };
+  return { prices, refetch: fetchData, loading };
 };
 
-function useGetPackage() {
+function useGetContentPrice() {
   const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [packageData, setPackageData] = useState(null);
+  const [priceData, setPriceData] = useState(null);
 
-  const getPackage = async (packageId) => {
-    if (!packageId) {
+  const getPrice = async (priceId) => {
+    if (!priceId) {
       console.error("No ID provided");
       return;
     }
@@ -84,35 +84,35 @@ function useGetPackage() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/credit-package/${packageId}`,
-        config
+        `${BASE_SERVER_URL}/admin/content-price/${priceId}`,
+        config,
       );
 
       const result = response.data;
 
       if (result?.code === 0) {
-        setPackageData(result?.result);
+        setPriceData(result?.result);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setPackageData(null);
+      setPriceData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  return { packageData, loading, getPackage };
+  return { priceData, loading, getPrice };
 }
 
-function useDeletePackage() {
+function useDeleteContentPrice() {
   const { config } = useUserContext();
 
   return async (id) => {
     try {
       const response = await axios.delete(
-        `${BASE_SERVER_URL}/admin/delete/credit-package/${id}`,
+        `${BASE_SERVER_URL}/admin/delete/content-price${id}`,
         {},
-        config
+        config,
       );
       showToast.success(response.data.message);
       return response.data;
@@ -127,4 +127,40 @@ function useDeletePackage() {
   };
 }
 
-export { useCreatePackage, useFetchPackages, useGetPackage, useDeletePackage };
+const useUpdateContentPrice = () => {
+  return async (data, id) => {
+    console.error("Invalid price ID:", id);
+
+    if (!id || typeof id === "object") {
+      console.error("Invalid price ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/content-price/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating content price.",
+      );
+    }
+  };
+};
+
+export {
+  useCreateContentPrice,
+  useFetchContentPrices,
+  useGetContentPrice,
+  useDeleteContentPrice,
+  useUpdateContentPrice,
+};

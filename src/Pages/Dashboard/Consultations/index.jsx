@@ -15,11 +15,26 @@ import { useNavigate } from "react-router-dom";
 import { headers } from "./data";
 import { useFetchConsultations } from "../../../Hooks/Dashboard/consultations";
 import { formatDate } from "../../../utils/functions";
+import SingleConsultationModal from "./single"
 
 const ConsultationsPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const { consultations, loading } = useFetchConsultations();
+  const { consultations, loading, refetch } = useFetchConsultations();
+
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -78,7 +93,7 @@ const ConsultationsPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -100,6 +115,12 @@ const ConsultationsPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SingleConsultationModal
+        open={open}
+        onClose={handleClose}
+        consultId={selectedId}
+      />
     </div>
   );
 };

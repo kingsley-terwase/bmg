@@ -16,11 +16,26 @@ import { useNavigate } from "react-router-dom";
 import { useFetchPortfolios } from "../../../Hooks/Dashboard/portfolios";
 import { formatDate } from "../../../utils/functions";
 import { BASE_IMAGE_URL } from "../../../Config/paths";
+import SinglePortfolioModal from "./single";
 
 const PortfoliosPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const { portfolios, loading } = useFetchPortfolios();
+  const { portfolios, loading, refetch } = useFetchPortfolios();
+
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpen = (id) => {
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = async () => {
+    setOpen(false);
+    await refetch();
+    setSelectedId(null);
+  };
 
   return (
     <div>
@@ -88,7 +103,7 @@ const PortfoliosPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="medium" />
                   </IconButton>
                 </TableCell>
@@ -110,6 +125,12 @@ const PortfoliosPage = () => {
           )}
         </CustomTable>
       </Box>
+
+      <SinglePortfolioModal
+        open={open}
+        onClose={handleClose}
+        portfolioId={selectedId}
+      />
     </div>
   );
 };

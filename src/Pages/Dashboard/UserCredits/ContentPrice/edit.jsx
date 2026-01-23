@@ -1,34 +1,24 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  Box,
   Typography,
   IconButton,
   Button,
   Stack,
-  Chip,
-  Divider,
-  Avatar,
-  Skeleton,
+  TextField,
 } from "@mui/material";
+import { CloseOutlined } from "@mui/icons-material";
+import { showToast } from "../../../../utils/toast";
 import {
-  CloseOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  CalendarTodayOutlined,
-  UpdateOutlined,
-  ImageOutlined,
-} from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { useGetContentPrice } from "../../../../Hooks/Users/content_price";
-import { formatDate } from "../../../../utils/functions";
+  useGetContentPrice,
+  useUpdateContentPrice,
+} from "../../../../Hooks/Dashboard/content_price";
 
-const EditContentPriceModal = ({ open, onClose, priceId }) => {
-  const navigate = useNavigate();
-  const { priceData, loading, getPrice } = useGetContentPrice();
-  console.log(" ID:", priceId);
+const EditContentPriceModal = ({ open, onClose, loading, priceId }) => {
+  const updatePackage = useUpdateContentPrice();
+  const { priceData, getPrice } = useGetContentPrice();
 
   useEffect(() => {
     if (open && priceId) {
@@ -36,343 +26,148 @@ const EditContentPriceModal = ({ open, onClose, priceId }) => {
     }
   }, [open, priceId]);
 
-  const handleEdit = () => {
-    console.log("Edit category:", priceId);
-    navigate(`/dashboard/admin/edit/sub-categories/${priceId}`);
-    onClose();
+  const [form, setForm] = useState({
+    content_type_id: "",
+    content_quality_id: "",
+    cost: "",
+    length_seconds: "",
+  });
+
+  useEffect(() => {
+    if (priceData) {
+      setForm({
+        content_type_id: priceData.content_type_id,
+        content_quality_id: priceData.content_quality_id,
+        cost: priceData.cost,
+        length_seconds: priceData.length_seconds,
+      });
+    }
+  }, [priceData]);
+
+  const handleChange = (field) => (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: e.target.value,
+    }));
   };
 
-  const handleDelete = () => {
-    if (
-      window.confirm(`Are you sure you want to delete "${priceData?.name}"?`)
-    ) {
-      console.log("Delete category:", priceId);
-      onClose();
+  const handleSubmit = async () => {
+    if (!form.cost || !form.length_seconds) {
+      showToast.warning("Cost and duration are required");
+      return;
+    }
+
+    const Payload = {
+      cost: Number(form.cost),
+      length_seconds: Number(form.length_seconds),
+    };
+
+    try {
+      const res = await updatePackage(Payload, priceId);
+      if (res) {
+        showToast.success("Content price updated successfully");
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error updating content price:", error);
+      showToast.error("Failed to update content price");
     }
   };
+
+  if (!priceData) return null;
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          maxHeight: "90vh",
-        },
-      }}
+      PaperProps={{ sx: { borderRadius: 3 } }}
     >
       <IconButton
         onClick={onClose}
-        sx={{
-          position: "absolute",
-          right: 16,
-          top: 16,
-          zIndex: 1,
-          bgcolor: "rgba(255, 255, 255, 0.9)",
-          boxShadow: 2,
-          "&:hover": {
-            bgcolor: "rgba(255, 255, 255, 1)",
-          },
-        }}
+        sx={{ position: "absolute", right: 16, top: 16 }}
       >
         <CloseOutlined />
       </IconButton>
+      {loading ? (
+        <Stack spacing={2}>
+          <Skeleton height={40} width="60%" />
+          <Skeleton height={20} width="40%" />
+          <Skeleton height={80} />
+          <Skeleton height={60} />
+        </Stack>
+      ) : priceData ? (
+        <>
+          <DialogContent sx={{ p: 4 }}>
+            <Typography variant="h5" fontWeight={700} mb={1}>
+              Edit Content Price
+            </Typography>
 
-      <DialogContent sx={{ p: 0, overflow: "auto" }}>
-        {loading ? (
-          <Box>
-            <Skeleton variant="rectangular" height={400} />
-            <Box sx={{ p: 4 }}>
-              <Skeleton variant="text" width="60%" height={40} />
-              <Skeleton variant="text" width="40%" height={30} sx={{ mt: 2 }} />
-              <Skeleton variant="rectangular" height={100} sx={{ mt: 3 }} />
-              <Skeleton variant="rectangular" height={60} sx={{ mt: 3 }} />
-            </Box>
-          </Box>
-        ) : priceData ? (
-          <>
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                height: 400,
-                overflow: "hidden",
-                bgcolor: "grey.100",
-              }}
-            >
-              {priceData?.image ? (
-                <Box
-                  component="img"
-                  src={priceData.image}
-                  alt={priceData.name}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                  }}
-                />
-              ) : (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "grey.200",
-                  }}
-                >
-                  <ImageOutlined sx={{ fontSize: 80, color: "grey.400" }} />
-                </Box>
-              )}
+            <Typography variant="body2" color="text.secondary" mb={3}>
+              Update pricing for this content configuration.
+            </Typography>
 
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: "50%",
-                  background:
-                    "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
-                }}
+            <Stack spacing={3}>
+              <TextField
+                label="Content Type ID"
+                value={form.content_type_id}
+                disabled
+                fullWidth
               />
 
-              {priceData?.is_featured && (
-                <Chip
-                  label="Featured"
-                  color="warning"
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    left: 20,
-                    fontWeight: 700,
-                    boxShadow: 2,
-                  }}
-                />
-              )}
+              <TextField
+                label="Content Quality ID"
+                value={form.content_quality_id}
+                disabled
+                fullWidth
+              />
 
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 30,
-                  left: 30,
-                  right: 30,
-                }}
+              <TextField
+                label="Cost"
+                type="number"
+                value={form.cost}
+                onChange={handleChange("cost")}
+                required
+                fullWidth
+              />
+
+              <TextField
+                label="Length (seconds)"
+                type="number"
+                value={form.length_seconds}
+                onChange={handleChange("length_seconds")}
+                required
+                fullWidth
+              />
+            </Stack>
+
+            <Stack direction="row" spacing={2} justifyContent="flex-end" mt={4}>
+              <Button
+                variant="outlined"
+                onClick={onClose}
+                disabled={loading}
+                sx={{ textTransform: "none" }}
               >
-                <Typography
-                  variant="h4"
-                  fontWeight={700}
-                  color="white"
-                  sx={{
-                    textShadow: "2px 2px 8px rgba(0,0,0,0.8)",
-                    mb: 1,
-                  }}
-                >
-                  {priceData?.name}
-                </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip
-                    label={priceData?.status ? "Active" : "Inactive"}
-                    size="small"
-                    color={priceData?.status ? "success" : "default"}
-                    sx={{ fontWeight: 600 }}
-                  />
-                  {priceData?.total_services && (
-                    <Chip
-                      label={`${priceData?.total_services} Services`}
-                      size="small"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.2)",
-                        color: "white",
-                        fontWeight: 600,
-                        backdropFilter: "blur(10px)",
-                      }}
-                    />
-                  )}
-                </Stack>
-              </Box>
-            </Box>
+                Cancel
+              </Button>
 
-            <Box sx={{ p: 4 }}>
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="overline"
-                  color="text.secondary"
-                  fontWeight={600}
-                  sx={{ letterSpacing: 1.2 }}
-                >
-                  Category Information
-                </Typography>
-                <Divider sx={{ mt: 1, mb: 2 }} />
-
-                {priceData?.category_name && (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={600}
-                    >
-                      Parent Category
-                    </Typography>
-                    <Typography variant="body1" sx={{ mt: 0.5 }}>
-                      {priceData?.category_name}
-                    </Typography>
-                  </Box>
-                )}
-
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    fontWeight={600}
-                  >
-                    Description
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{
-                      mt: 1,
-                      lineHeight: 1.8,
-                      textAlign: "justify",
-                    }}
-                  >
-                    {priceData?.description || "No description available."}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="overline"
-                  color="text.secondary"
-                  fontWeight={600}
-                  sx={{ letterSpacing: 1.2 }}
-                >
-                  Timeline
-                </Typography>
-                <Divider sx={{ mt: 1, mb: 2 }} />
-
-                <Stack spacing={2}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      p: 2,
-                      bgcolor: "grey.50",
-                      borderRadius: 2,
-                      border: "1px solid",
-                      borderColor: "grey.200",
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: "primary.main",
-                        width: 40,
-                        height: 40,
-                        mr: 2,
-                      }}
-                    >
-                      <CalendarTodayOutlined sx={{ fontSize: 20 }} />
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        fontWeight={600}
-                      >
-                        Created At
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {formatDate(priceData?.created_at)}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      p: 2,
-                      bgcolor: "grey.50",
-                      borderRadius: 2,
-                      border: "1px solid",
-                      borderColor: "grey.200",
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: "success.main",
-                        width: 40,
-                        height: 40,
-                        mr: 2,
-                      }}
-                    >
-                      <UpdateOutlined sx={{ fontSize: 20 }} />
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        fontWeight={600}
-                      >
-                        Last Updated
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {formatDate(priceData?.updated_at)}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Stack>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  onClick={onClose}
-                  sx={{ textTransform: "none", px: 3 }}
-                >
-                  Close
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
-                  sx={{ textTransform: "none", px: 3 }}
-                >
-                  Delete
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<EditOutlined />}
-                  onClick={handleEdit}
-                  sx={{ textTransform: "none", px: 3 }}
-                >
-                  Edit Category
-                </Button>
-              </Stack>
-            </Box>
-          </>
-        ) : (
-          <Box sx={{ p: 4, textAlign: "center" }}>
-            <Typography variant="h6" color="text.secondary">
-              No sub category data found
-            </Typography>
-          </Box>
-        )}
-      </DialogContent>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading}
+                sx={{ textTransform: "none" }}
+              >
+                {loading ? "Updating..." : "Update"}
+              </Button>
+            </Stack>
+          </DialogContent>
+        </>
+      ) : (
+        <Typography align="center" color="text.secondary">
+          No credit package data found with selected ID
+        </Typography>
+      )}
     </Dialog>
   );
 };

@@ -77,7 +77,7 @@ const SingleUserModal = ({ open, onClose, user }) => {
 
   const handleDelete = async () => {
     if (!user?.id) {
-      showToast.error("Invalid administrator ID");
+      showToast.error("Invalid User ID");
       return;
     }
 
@@ -88,11 +88,11 @@ const SingleUserModal = ({ open, onClose, user }) => {
         setOpenDelete(false);
         onClose();
         await refetch();
-        showToast.success("Administrator deleted successfully.");
+        showToast.success("User deleted successfully.");
       }
     } catch (error) {
       console.error(error);
-      showToast.error("Failed to delete Administrator.");
+      showToast.error("Failed to delete User.");
     } finally {
       setLoading(false);
     }
@@ -511,7 +511,7 @@ const SingleUserModal = ({ open, onClose, user }) => {
 
       <ConfirmDeleteModal
         open={openDelete}
-        title="Delete Administrator"
+        title="Delete Customer"
         itemName={`${user?.first_name} ${user?.last_name}`}
         loading={loading}
         onClose={() => setOpenDelete(false)}

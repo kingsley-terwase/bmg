@@ -16,10 +16,12 @@ import { CustomButton } from "../../../Component";
 import { showToast } from "../../../utils/toast";
 import { styles } from "../../../styles/dashboard";
 import { InputLabel } from "../../../Component";
+import { useGetAdminTypes } from "../../../Hooks/Dashboard/admin_types";
 
 const AdminRoleEditModal = ({ open, onClose, role, onUpdate, loading }) => {
   const [status, setStatus] = useState(false);
   const [name, setName] = useState("");
+  const { refetch } = useGetAdminTypes();
 
   useEffect(() => {
     if (!role) return;
@@ -28,7 +30,8 @@ const AdminRoleEditModal = ({ open, onClose, role, onUpdate, loading }) => {
     setStatus(Boolean(role.status));
   }, [role]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const payload = {
       name: name.trim(),
       status,
@@ -38,6 +41,7 @@ const AdminRoleEditModal = ({ open, onClose, role, onUpdate, loading }) => {
       if (result) {
         showToast.success("Admin type updated successfully");
         onClose();
+        refetch();
       }
     } catch (error) {
       console.error(error);

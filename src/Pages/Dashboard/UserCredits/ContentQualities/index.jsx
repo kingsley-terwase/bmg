@@ -9,18 +9,19 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  CustomTable,
-  StatusChip,
-  PagesHeader,
-  CategoryOverviewCard,
-} from "../../../../Component";
+import { CustomTable, PagesHeader } from "../../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  EditOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/functions";
-import { useFetchContentQualtity } from "../../../../Hooks/Users/content_qualities";
 import EditContentQualityModal from "./edit";
+import AddContentQualities from "./add";
+import { useFetchContentQualtity } from "../../../../Hooks/Dashboard/content_qualities";
+import ViewContentQualityModal from "./view";
 
 const ContentQualitySection = () => {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ const ContentQualitySection = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedQuality, setSelectedQuality] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -44,6 +48,26 @@ const ContentQualitySection = () => {
     setSelectedId(null);
   };
 
+  const handleOpenModal = () => {
+    setOpenCreate(true);
+  };
+
+  const handleCloseModal = async () => {
+    setOpenCreate(false);
+    await refetch();
+  };
+
+  const handleOpenEdit = (id) => {
+    setSelectedQuality(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedQuality(null);
+  };
+
   return (
     <div>
       <PagesHeader
@@ -53,7 +77,7 @@ const ContentQualitySection = () => {
           {
             label: "Add Content Quality",
             icon: <AddOutlined />,
-            onClick: () => navigate(() => {}),
+            onClick: handleOpenModal,
           },
           {
             label: "View Subscription Plans",
@@ -86,9 +110,18 @@ const ContentQualitySection = () => {
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack direction="row" spacing={1} mt={1}>
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -109,10 +142,18 @@ const ContentQualitySection = () => {
         </CustomTable>
       </Box>
 
-      <EditContentQualityModal
+      <ViewContentQualityModal
         open={open}
         onClose={handleClose}
         qualityId={selectedId}
+      />
+
+      <AddContentQualities open={openCreate} onClose={handleCloseModal} />
+
+      <EditContentQualityModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        qualityId={selectedQuality}
       />
     </div>
   );

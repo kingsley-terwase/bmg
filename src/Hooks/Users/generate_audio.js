@@ -49,39 +49,48 @@ function useGenerateTextToAudio() {
   return generateAudio;
 }
 
+/**
+ * Hook: Transcribes audio to text
+ * Returns base64 audio data on success
+ */
 function useGenerateAudioToText() {
   const { config } = useUserContext();
 
-  return async (data) => {
+  const generateAudio = async (payload) => {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/ai/audio-to-text`,
-        data,
+        payload,
         config
       );
 
-      const result = response.data;
-      console.log("generated image:", result);
+      const { success, message, result, code } = response.data;
+      console.log("Audio response:", response.data);
 
-      if (result?.strategy || result?.message || result?.status === true) {
-        return result;
+      if (success === true && code === 0 && result?.audio) {
+        return {
+          audioBase64: result.audio,
+          format: result.format || "mp3",
+          model: result.model,
+          message,
+        };
       }
 
-      if (result?.error || result?.message) {
-        const msg = result?.message || result?.error;
-        showToast.error(msg);
-        return false;
-      }
+      showToast.error(message || "Failed to transcribe audio");
+      return null;
     } catch (error) {
-      console.error("Error:", error.response.data);
-      if (error.response.data?.code !== 0) {
-        showToast.error(error.response.data.message);
-      } else {
-        showToast.error("Unexpected error occurred. Please try again.");
-      }
-      return false;
+      console.error("Transcription error:", error);
+
+      const apiMessage =
+        error?.response?.data?.message ||
+        "Unexpected error occurred. Please try again.";
+
+      showToast.error(apiMessage);
+      return null;
     }
   };
+
+  return generateAudio;
 }
 
 const useFetchGeneratedAudios = () => {

@@ -12,7 +12,7 @@ function useCreateCategories() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/category`,
         data,
-        config
+        config,
       );
       const result = response.data;
 
@@ -50,7 +50,7 @@ const useFetchCategories = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/categories`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -74,9 +74,9 @@ const useFetchCategories = () => {
 };
 
 function useGetCategory() {
-  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [categoryData, setCategoryData] = useState(null); // Changed to null
+  const [categoryData, setCategoryData] = useState(null);
 
   const getCategory = async (catId) => {
     if (!catId) {
@@ -89,8 +89,8 @@ function useGetCategory() {
 
     try {
       const response = await axios.get(
-        `${BASE_SERVER_URL}/admin/subcategory/${catId}`,
-        config
+        `${BASE_SERVER_URL}/admin/category/${catId}`,
+        config,
       );
 
       const result = response.data;

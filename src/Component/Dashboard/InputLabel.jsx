@@ -1,14 +1,13 @@
 import React from "react";
 import { Typography } from "@mui/material";
 
-const InputLabel = ({ text = "" }) => {
+const InputLabel = ({ text = "", size = "14px" }) => {
   return (
     <Typography
-      fontSize="14px"
+      fontSize={size}
       fontFamily="Comfortaa"
       fontWeight={600}
       color="#363853"
-      mb={1}
     >
       {text}
     </Typography>

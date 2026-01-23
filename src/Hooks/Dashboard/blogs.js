@@ -16,17 +16,17 @@ function useCreateBlogs() {
       );
       const result = response.data;
       console.log(result);
-      if (result?.error === 0) {
+      if (result?.code === 0) {
         showToast.success(result.message);
         return true;
       }
-      if (result?.error === 2) {
-        showToast.success(result.message);
+      if (result?.code !== 0) {
+        showToast.error(result.message);
         return false;
       }
     } catch (error) {
-      console.error("Error:", error.response.data);
-      if (error.response.data?.error) {
+      console.error("Error:", error.response);
+      if (error.response.data?.code) {
         showToast.error(error.response.data.message);
       } else {
         showToast.error("An error occurred while creating blogs.");
