@@ -2,9 +2,8 @@ import React from 'react'
 import { Box } from '@mui/material'
 import { BreadcrumbBar, AIServicesShowcase, ConsultantForm, CategoryBanner, ServicesGrid, BlogSection, HeroMarketingSection, FAQSection, CategoryTabs, CategoryServices, } from '../../../Component'
 import { Home24Regular } from '@fluentui/react-icons'
-import { ServicesData } from './data'
 
-const ServicePage = () => {
+const ServicesPage = () => {
     return (
         <>
             <Box sx={{ pt: 8 }}>
@@ -34,4 +33,4 @@ const ServicePage = () => {
     )
 }
 
-export default ServicePage
+export default ServicesPage

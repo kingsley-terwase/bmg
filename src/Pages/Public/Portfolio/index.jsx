@@ -1,129 +1,121 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Container,
     Typography,
     Card,
-    CardMedia,
-    CardContent,
-    Grid,
     Chip,
-    Button,
     Tabs,
     Tab,
-    IconButton,
+    CircularProgress,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
-    Eye24Regular,
-    ArrowRight24Regular,
-    Filter24Regular,
-    Globe24Regular,
+    Search24Regular,
 } from '@fluentui/react-icons';
+import { useGetAllPortfolio, useGetCategories } from '../../../Hooks/general';
+import StatsSection from '../../../Component/StatsSection';
+import ProjectSection from '../../../Component/ProjectsSection';
 
 const PortfolioPage = () => {
     const theme = useTheme();
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const observerTarget = useRef(null);
 
-    const categories = ['All', 'E-commerce', 'Corporate', 'Portfolio', 'Blog', 'Landing Page'];
+    const { data: categories, loading: categoriesLoading } = useGetCategories();
 
-    const projects = [
-        {
-            id: 1,
-            title: 'Modern E-commerce Store',
-            category: 'E-commerce',
-            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-            description: 'Full-featured online store with AI-powered product recommendations',
-            tags: ['E-commerce', 'AI', 'Responsive'],
-            stats: { views: '2.5K', likes: '342' },
-        },
-        {
-            id: 2,
-            title: 'Tech Startup Landing',
-            category: 'Landing Page',
-            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-            description: 'Bold and dynamic landing page for SaaS platform',
-            tags: ['SaaS', 'Modern', 'Animation'],
-            stats: { views: '3.2K', likes: '456' },
-        },
-        {
-            id: 3,
-            title: 'Creative Portfolio',
-            category: 'Portfolio',
-            image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop',
-            description: 'Stunning portfolio showcase for a digital artist',
-            tags: ['Creative', 'Visual', 'Interactive'],
-            stats: { views: '1.8K', likes: '289' },
-        },
-        {
-            id: 4,
-            title: 'Corporate Website',
-            category: 'Corporate',
-            image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
-            description: 'Professional website for a Fortune 500 company',
-            tags: ['Corporate', 'Enterprise', 'Professional'],
-            stats: { views: '4.1K', likes: '523' },
-        },
-        {
-            id: 5,
-            title: 'Fashion Blog',
-            category: 'Blog',
-            image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&h=600&fit=crop',
-            description: 'Elegant blog platform for fashion influencers',
-            tags: ['Blog', 'Fashion', 'Lifestyle'],
-            stats: { views: '5.6K', likes: '678' },
-        },
-        {
-            id: 6,
-            title: 'Restaurant Website',
-            category: 'Landing Page',
-            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
-            description: 'Appetizing website with online ordering system',
-            tags: ['Restaurant', 'Booking', 'Menu'],
-            stats: { views: '2.9K', likes: '412' },
-        },
-        {
-            id: 7,
-            title: 'Fitness App Landing',
-            category: 'Landing Page',
-            image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop',
-            description: 'Energetic landing page for fitness application',
-            tags: ['Fitness', 'Mobile App', 'Health'],
-            stats: { views: '3.7K', likes: '501' },
-        },
-        {
-            id: 8,
-            title: 'Real Estate Platform',
-            category: 'E-commerce',
-            image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop',
-            description: 'Comprehensive real estate listing platform',
-            tags: ['Real Estate', 'Search', 'Maps'],
-            stats: { views: '4.8K', likes: '602' },
-        },
-        {
-            id: 9,
-            title: 'Photography Portfolio',
-            category: 'Portfolio',
-            image: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=600&fit=crop',
-            description: 'Minimalist portfolio for professional photographer',
-            tags: ['Photography', 'Gallery', 'Minimalist'],
-            stats: { views: '6.2K', likes: '789' },
-        },
+    const {
+        data: portfolio,
+        loading: portfolioLoading,
+        hasMore,
+        loadMore,
+    } = useGetAllPortfolio({
+        limit: 20,
+        category: selectedCategory,
+        search: debouncedSearch,
+        status: true,
+        sort: 'created_at',
+        order: 'desc',
+    });
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Intersection Observer for infinite scroll
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !portfolioLoading) {
+                    loadMore();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        const currentTarget = observerTarget.current;
+        if (currentTarget) {
+            observer.observe(currentTarget);
+        }
+
+        return () => {
+            if (currentTarget) {
+                observer.unobserve(currentTarget);
+            }
+        };
+    }, [hasMore, portfolioLoading, loadMore]);
+
+    const handleCategoryChange = (e, newValue) => {
+        setSelectedCategory(newValue === 'all' ? null : newValue);
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    // Prepare categories for tabs
+    const tabCategories = [
+        { id: 'all', name: 'All' },
+        ...(categories || []).map(cat => ({
+            id: cat.id || cat,
+            name: cat.name || cat
+        }))
     ];
 
-    const filteredProjects = selectedCategory === 'all' 
-        ? projects 
-        : projects.filter(p => p.category.toLowerCase() === selectedCategory.toLowerCase());
+    // Initial loading state
+    if (categoriesLoading && portfolio.length === 0) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh'
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
-        <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100vh', mt:2 }}>
-
+        <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100vh', mt: 2 }}>
+            {/* Hero Section */}
             <Box
                 sx={{
                     position: 'relative',
                     overflow: 'hidden',
                     background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                    py: { xs: 10, md:9 },
+                    py: { xs: 10, md: 9 },
                     '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -193,7 +185,7 @@ const PortfolioPage = () => {
                 </Container>
             </Box>
 
-            {/* Filter Tabs */}
+            {/* Filter Section */}
             <Container maxWidth="lg" sx={{ mt: -4, position: 'relative', zIndex: 2, mb: 8 }}>
                 <Card
                     sx={{
@@ -204,9 +196,32 @@ const PortfolioPage = () => {
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                     }}
                 >
+                    {/* Search Bar */}
+                    <Box sx={{ mb: 2 }}>
+                        <TextField
+                            fullWidth
+                            placeholder="Search portfolios..."
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search24Regular />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+                    </Box>
+
+                    {/* Category Tabs */}
                     <Tabs
-                        value={selectedCategory}
-                        onChange={(e, newValue) => setSelectedCategory(newValue)}
+                        value={selectedCategory || 'all'}
+                        onChange={handleCategoryChange}
                         variant="scrollable"
                         scrollButtons="auto"
                         sx={{
@@ -222,211 +237,21 @@ const PortfolioPage = () => {
                             },
                         }}
                     >
-                        {categories.map((category) => (
+                        {tabCategories.map((category) => (
                             <Tab
-                                key={category}
-                                label={category}
-                                value={category.toLowerCase()}
+                                key={category.id}
+                                label={category.name}
+                                value={category.id}
                             />
                         ))}
                     </Tabs>
                 </Card>
             </Container>
 
-            {/* Projects Grid */}
-            <Container maxWidth="lg" sx={{ py: 8 }}>
-                <Grid container spacing={4}>
-                    {filteredProjects.map((project) => (
-                        <Grid size={{ xs:12, sm:6, md:4 }} key={project.id}>
-                            <Card
-                                sx={{
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    borderRadius: 3,
-                                    overflow: 'hidden',
-                                    bgcolor: theme.palette.background.paper,
-                                    border: `1px solid ${theme.palette.divider}`,
-                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    cursor: 'pointer',
-                                    '&:hover': {
-                                        transform: 'translateY(-12px)',
-                                        boxShadow: `0 20px 60px ${theme.palette.primary.main}20`,
-                                        '& .project-image': {
-                                            transform: 'scale(1.1)',
-                                        },
-                                        '& .overlay': {
-                                            opacity: 1,
-                                        },
-                                    },
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        height: 250,
-                                    }}
-                                >
-                                    <CardMedia
-                                        component="img"
-                                        image={project.image}
-                                        alt={project.title}
-                                        className="project-image"
-                                        sx={{
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            transition: 'transform 0.6s ease',
-                                        }}
-                                    />
-                                    <Box
-                                        className="overlay"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            background: `linear-gradient(to bottom, transparent 0%, ${theme.palette.primary.main}90 100%)`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            opacity: 0,
-                                            transition: 'opacity 0.3s ease',
-                                        }}
-                                    >
-                                        <IconButton
-                                            sx={{
-                                                bgcolor: '#fff',
-                                                width: 64,
-                                                height: 64,
-                                                '&:hover': {
-                                                    bgcolor: '#fff',
-                                                    transform: 'scale(1.1)',
-                                                },
-                                            }}
-                                        >
-                                            <Eye24Regular style={{ fontSize: 28, color: theme.palette.primary.main }} />
-                                        </IconButton>
-                                    </Box>
-                                    <Chip
-                                        label={project.category}
-                                        size="small"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 16,
-                                            right: 16,
-                                            bgcolor: theme.palette.primary.main,
-                                            color: theme.palette.primary.contrastText,
-                                            fontWeight: 700,
-                                            backdropFilter: 'blur(10px)',
-                                        }}
-                                    />
-                                </Box>
-                                <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            fontWeight: 700,
-                                            color: theme.palette.text.heading,
-                                            mb: 1,
-                                        }}
-                                    >
-                                        {project.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color: theme.palette.text.secondary,
-                                            mb: 2,
-                                            lineHeight: 1.7,
-                                        }}
-                                    >
-                                        {project.description}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                                        {project.tags.map((tag, idx) => (
-                                            <Chip
-                                                key={idx}
-                                                label={tag}
-                                                size="small"
-                                                variant="outlined"
-                                                sx={{
-                                                    fontSize: '0.7rem',
-                                                    borderColor: theme.palette.divider,
-                                                }}
-                                            />
-                                        ))}
-                                    </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Box sx={{ display: 'flex', gap: 2 }}>
-                                            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                                                👁️ {project.stats.views}
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                                                ❤️ {project.stats.likes}
-                                            </Typography>
-                                        </Box>
-                                        <Button
-                                            size="small"
-                                            endIcon={<Globe24Regular />}
-                                            sx={{
-                                                color: theme.palette.primary.main,
-                                                textTransform: 'none',
-                                                fontWeight: 600,
-                                            }}
-                                        >
-                                            View
-                                        </Button>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Container>
+            <ProjectSection portfolio={portfolio} portfolioLoading={portfolioLoading} searchQuery={searchQuery} observerTarget={observerTarget} hasMore={hasMore} />
 
-            <Box
-                sx={{
-                    bgcolor: theme.palette.background.paper,
-                    py: 8,
-                    borderTop: `1px solid ${theme.palette.divider}`,
-                    borderBottom: `1px solid ${theme.palette.divider}`,
-                }}
-            >
-                <Container maxWidth="lg">
-                    <Grid container spacing={4} sx={{ textAlign: 'center' }}>
-                        {[
-                            { number: '500+', label: 'Projects Completed' },
-                            { number: '50K+', label: 'Happy Clients' },
-                            { number: '98%', label: 'Satisfaction Rate' },
-                            { number: '24/7', label: 'Support Available' },
-                        ].map((stat, index) => (
-                            <Grid size={{ xs:6, md:3 }} key={index}>
-                                <Typography
-                                    variant="h2"
-                                    sx={{
-                                        fontWeight: 900,
-                                        color: theme.palette.primary.main,
-                                        mb: 1,
-                                    }}
-                                >
-                                    {stat.number}
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    sx={{
-                                        color: theme.palette.text.secondary,
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    {stat.label}
-                                </Typography>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </Box>
+            <StatsSection />
+
         </Box>
     );
 };

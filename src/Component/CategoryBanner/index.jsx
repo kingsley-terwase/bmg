@@ -4,10 +4,12 @@ import {
     ArrowRight20Regular,
     Sparkle24Regular
 } from "@fluentui/react-icons";
+import { useNavigate } from "react-router-dom";
 
-const CategoryBanner = ({title, subtitle}) => {
+const CategoryBanner = ({ title, subtitle }) => {
+    const navigate = useNavigate()
     return (
-        <Container maxWidth="lg" sx={{ mb:8 }}>
+        <Container maxWidth="lg" sx={{ mb: 8 }}>
             <Box
                 sx={{
                     width: "100%",
@@ -62,7 +64,7 @@ const CategoryBanner = ({title, subtitle}) => {
                             fontSize: { xs: "2rem", md: "2.5rem" },
                         }}
                     >
-                       {title}
+                        {title}
                     </Typography>
 
                     <Typography
@@ -73,7 +75,7 @@ const CategoryBanner = ({title, subtitle}) => {
                             fontWeight: 500,
                         }}
                     >
-                       {subtitle}
+                        {subtitle}
                     </Typography>
 
                     {/* Button */}
@@ -95,6 +97,7 @@ const CategoryBanner = ({title, subtitle}) => {
                             },
                             transition: "all .3s ease",
                         }}
+                        onClick={() => navigate('/how-it-works')}
                     >
                         How it works
                         <ArrowRight20Regular style={{ marginLeft: "8px" }} />

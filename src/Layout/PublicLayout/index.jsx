@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import {Header, Footer} from '../../Component'
+import { Header, Footer } from '../../Component'
+import ScrollToTop from '../../Component/ScrollToTop';
 
 function PublicLayout({ children }) {
   const location = useLocation();
@@ -9,7 +10,8 @@ function PublicLayout({ children }) {
   const hideLayout = noLayoutRoutes.includes(location.pathname);
   return (
     <>
-     {!hideLayout && <Header />}
+      <ScrollToTop />
+      {!hideLayout && <Header />}
       {children}
       {!hideLayout && <Footer />}
     </>

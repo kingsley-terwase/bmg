@@ -50,7 +50,7 @@ export default function TrendingService() {
     const theme = useTheme();
     const navigate = useNavigate();
     const handleViewMore = () => {
-        navigate('/service');
+        navigate('/services');
     }
 
     return (
@@ -110,7 +110,7 @@ export default function TrendingService() {
                             py: 1.5,
                             borderRadius: 2,
                             fontWeight: "bold",
-                            textTransform: "none",                            
+                            textTransform: "none",
                             boxShadow: 3,
                             "&:hover": {
                                 background: `linear-gradient(to right, 

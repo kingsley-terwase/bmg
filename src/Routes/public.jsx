@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { CategoryPage, AboutUsPage, HomePage, ServicePage, AISuitesPage, ServiceDetailPage, TrackOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage, CheckoutPage, BlogPage, BlogDetailPage, AIWebGeneratorPage, PrivacyPolicyPage, TermsConditionsPage, ContactUsPage, GiftVoucherPage, ResourcesPage, PricingPage, HowItWorksPage, PortfolioPage } from "../Pages/Public";
+import { CategoriesPage, AboutUsPage, HomePage, ServicesPage, AISuitesPage, ServiceDetailPage, ProcessOrderPage, LoginPage, RegisterPage, VerifyEmailPage, OtpVerificationPage, ForgotPasswordPage, ResetPasswordPage, PasswordResetSuccessPage, CheckoutPage, BlogPage, BlogDetailPage, AIWebGeneratorPage, PrivacyPolicyPage, TermsConditionsPage, ContactUsPage, GiftVoucherPage, ResourcesPage, PricingPage, HowItWorksPage, PortfolioPage } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
 import AIVideoEditor from "../Pages/Public/AIVideoEditor";
@@ -12,11 +12,11 @@ const PublicRoutes = () => {
             <Routes>
                 <Route path="/">
                     <Route index element={<HomePage />} />
-                    <Route path="/category" element={<CategoryPage />} />
-                    <Route path="/category/:categoryId" element={<CategoryServices />} />
-                    <Route path="/service" element={<ServicePage />} />
-                    <Route path="/service/:id" element={<ServiceDetailPage />} />
-                    <Route path="/track-order" element={<TrackOrderPage />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
+                    <Route path="/category/:categoryId/:catName" element={<CategoryServices />} />
+                    <Route path="/services" element={<ServicesPage />} />
+                    <Route path="/service/:id/:serviceName" element={<ServiceDetailPage />} />
+                    <Route path="/process-order/:id/:serviceName" element={<ProcessOrderPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/verify-email" element={<VerifyEmailPage />} />

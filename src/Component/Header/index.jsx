@@ -738,39 +738,39 @@ const Header = () => {
             icon: <Briefcase24Regular />,
             description: 'Comprehensive business solutions',
             items: [
-                { title: 'CRM Solutions', description: 'Customer relationship management', path: '/service' },
-                { title: 'Project Management', description: 'Manage projects efficiently', path: '/service' },
-                { title: 'Consulting', description: 'Expert business consulting', path: '/service' },
-                { title: 'Analytics', description: 'Business intelligence and analytics', path: '/service' },
+                { title: 'CRM Solutions', description: 'Customer relationship management', path: '/services' },
+                { title: 'Project Management', description: 'Manage projects efficiently', path: '/services' },
+                { title: 'Consulting', description: 'Expert business consulting', path: '/services' },
+                { title: 'Analytics', description: 'Business intelligence and analytics', path: '/services' },
             ],
             cta: 'View All Services',
-            ctaPath: '/service'
+            ctaPath: '/services'
         },
         {
             category: 'Digital Services',
             icon: <Code24Regular />,
             description: 'Digital transformation services',
             items: [
-                { title: 'Web Development', description: 'Custom website solutions', path: '/service' },
-                { title: 'App Development', description: 'Mobile and web applications', path: '/service' },
-                { title: 'Cloud Services', description: 'Cloud infrastructure and migration', path: '/service' },
-                { title: 'API Integration', description: 'Third-party integrations', path: '/service' },
+                { title: 'Web Development', description: 'Custom website solutions', path: '/services' },
+                { title: 'App Development', description: 'Mobile and web applications', path: '/services' },
+                { title: 'Cloud Services', description: 'Cloud infrastructure and migration', path: '/services' },
+                { title: 'API Integration', description: 'Third-party integrations', path: '/services' },
             ],
             cta: 'Explore Digital Services',
-            ctaPath: '/service'
+            ctaPath: '/services'
         },
         {
             category: 'Marketing Services',
             icon: <Megaphone24Regular />,
             description: 'Digital marketing solutions',
             items: [
-                { title: 'SEO Services', description: 'Search engine optimization', path: '/service' },
-                { title: 'Social Media', description: 'Social media management', path: '/service' },
-                { title: 'Content Marketing', description: 'Content strategy and creation', path: '/service' },
-                { title: 'Email Marketing', description: 'Email campaign management', path: '/service' },
+                { title: 'SEO Services', description: 'Search engine optimization', path: '/services' },
+                { title: 'Social Media', description: 'Social media management', path: '/services' },
+                { title: 'Content Marketing', description: 'Content strategy and creation', path: '/services' },
+                { title: 'Email Marketing', description: 'Email campaign management', path: '/services' },
             ],
             cta: 'Marketing Solutions',
-            ctaPath: '/service'
+            ctaPath: '/services'
         },
         {
             category: 'AI Services',
@@ -779,8 +779,8 @@ const Header = () => {
             items: [
                 { title: 'AI Suites', description: 'Complete AI toolset', path: '/ai-suites' },
                 { title: 'AI Web Generator', description: 'Generate websites with AI', path: '/ai-web' },
-                { title: 'Automation', description: 'Business process automation', path: '/service' },
-                { title: 'Machine Learning', description: 'ML model development', path: '/service' },
+                { title: 'Automation', description: 'Business process automation', path: '/services' },
+                { title: 'Machine Learning', description: 'ML model development', path: '/services' },
             ],
             cta: 'Discover AI Services',
             ctaPath: '/ai-suites'
@@ -805,7 +805,7 @@ const Header = () => {
             icon: <People24Regular />,
             description: 'Help and support center',
             items: [
-                { title: 'Track Order', description: 'Track your order status', path: '/track-order' },
+                { title: 'Track Order', description: 'Track your order status', path: '/process-order' },
                 { title: 'Resources', description: 'Helpful resources and guides', path: '/resources' },
                 { title: 'AI Suites', description: 'Explore our AI tools', path: '/ai-suites' },
                 { title: 'AI Web Generator', description: 'Generate websites with AI', path: '/ai-web' },
@@ -843,7 +843,7 @@ const Header = () => {
             dropdownData: [], // Will use categories from API
             isGigs: true // Flag to identify Gigs dropdown
         },
-        { label: 'Services', path: '/service', hasDropdown: true, dropdownData: servicesData },
+        { label: 'Services', path: '/services', hasDropdown: true, dropdownData: servicesData },
         { label: 'Portfolio', path: '/portfolio' },
         { label: 'Gift Voucher', path: '/gift-voucher' },
         { label: 'Others', path: '#', hasDropdown: true, dropdownData: othersData }

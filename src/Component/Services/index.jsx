@@ -29,7 +29,7 @@ export default function ServiceSlider() {
     const navigate = useNavigate();
 
     const handleDiscoverMore = () => {
-        navigate('/service');
+        navigate('/services');
     };
 
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));

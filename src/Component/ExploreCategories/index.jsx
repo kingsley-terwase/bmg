@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Box,
     Container,
@@ -14,84 +14,16 @@ import {
 
 import {
     ChevronRight20Regular,
-    BrainCircuit24Regular,
-    DesignIdeas24Regular,
-    VideoClip24Regular,
-    Code24Regular,
-    Megaphone24Regular,
-    DocumentText24Regular,
-    GlobeVideo28Regular,
-    Speaker224Regular
+    Briefcase20Filled,
 } from '@fluentui/react-icons';
 import { useNavigate } from 'react-router-dom';
+import { encodeServiceId, resolveAwsImage } from '../../utils/functions';
 
-const services = [
-    {
-        id: 1,
-        title: "MARTECH SETUP",
-        description: "Marketing technology solutions",
-        icon: BrainCircuit24Regular,
-        image: "/Images/cat_1.png"
-    },
-    {
-        id: 2,
-        title: "GRAPHIC DESIGN",
-        description: "Creative visual solutions",
-        icon: DesignIdeas24Regular,
-        image: "/Images/cat_2.jpg"
-    },
-    {
-        id: 3,
-        title: "ANIMATION",
-        description: "Motion graphics & an5imation",
-        icon: VideoClip24Regular,
-        image: "/Images/cat_3.jpg"
-    },
-    {
-        id: 4,
-        title: "PROGRAMMING",
-        description: "Software development",
-        icon: Code24Regular,
-        image: "/Images/cat_4.png"
-    },
-    {
-        id: 5,
-        title: "DIGITAL MARKETING",
-        description: "Online marketing strategies",
-        icon: Megaphone24Regular,
-        image: "/Images/cat_5.png"
-    },
-    {
-        id: 6,
-        title: "CONTENT DEVELOPMENT",
-        description: "Content creation & strategy",
-        icon: DocumentText24Regular,
-        image: "/Images/cat_6.png"
-    },
-    {
-        id: 7,
-        title: "VIDEO PRODUCTION",
-        description: "Professional video services",
-        icon: GlobeVideo28Regular,
-        image: "/Images/cat_7.png"
-    },
-    {
-        id: 8,
-        title: "PAID ADS",
-        description: "Advertising campaigns",
-        icon: Speaker224Regular,
-        image: "/Images/cat_8.png"
-    }
-];
 
-export default function ServiceCategoryExplorer() {
-    const [page, setPage] = useState(1);
+export default function ServiceCategoryExplorer({ categories, page, setPage, totalPages }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
-    const itemsPerPage = 8;
-    const totalPages = Math.ceil(services.length / itemsPerPage);
-    const displayed = services.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     return (
         <Box
@@ -129,10 +61,9 @@ export default function ServiceCategoryExplorer() {
 
                 {/* GRID */}
                 <Grid container spacing={3}>
-                    {displayed.map((service) => {
-                        const Icon = service.icon;
+                    {categories.map((category) => {
                         return (
-                            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={service.id}>
+                            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={category.id}>
                                 <Card
                                     sx={{
                                         height: "100%",
@@ -153,7 +84,7 @@ export default function ServiceCategoryExplorer() {
                                         sx={{
                                             position: "relative",
                                             height: 180,
-                                            backgroundImage: `url(${service.image})`,
+                                            backgroundImage: `url(${resolveAwsImage(category?.image)})`,
                                             backgroundSize: "cover",
                                             backgroundPosition: "center",
                                             borderTopLeftRadius: 12,
@@ -176,7 +107,7 @@ export default function ServiceCategoryExplorer() {
                                                 boxShadow: theme.shadows[4]
                                             }}
                                         >
-                                            <Icon style={{ fontSize: 24, color: theme.palette.primary.main }} />
+                                            <Briefcase20Filled style={{ fontSize: 24, color: theme.palette.primary.main }} />
                                         </Box>
                                     </Box>
 
@@ -190,23 +121,28 @@ export default function ServiceCategoryExplorer() {
                                                 color: theme.palette.text.primary
                                             }}
                                         >
-                                            {service.title}
+                                            {category.name}
                                         </Typography>
 
                                         <Typography
                                             variant="body2"
                                             sx={{
                                                 color: theme.palette.text.secondary,
-                                                mb: 2
+                                                mb: 2,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
                                             }}
                                         >
-                                            {service.description}
+                                            {category.description}
                                         </Typography>
 
                                         <Button
                                             variant="contained"
                                             fullWidth
-                                            onClick={() => navigate('/service')}
+                                            onClick={() => navigate(`/category/${encodeServiceId(category.id)}/${category?.name}`)}
                                             endIcon={<ChevronRight20Regular />}
                                             sx={{
                                                 py: 1.4,
@@ -219,7 +155,7 @@ export default function ServiceCategoryExplorer() {
                                                 }
                                             }}
                                         >
-                                            Explore Service
+                                            Explore Services
                                         </Button>
                                     </CardContent>
 
@@ -230,23 +166,25 @@ export default function ServiceCategoryExplorer() {
                 </Grid>
 
                 {/* PAGINATION */}
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                    <Pagination
-                        count={totalPages}
-                        page={page}
-                        onChange={(e, val) => setPage(val)}
-                        size={isMobile ? "medium" : "large"}
-                        sx={{
-                            "& .MuiPaginationItem-root": {
-                                fontWeight: 600,
-                                "&.Mui-selected": {
-                                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                                    color: theme.palette.primary.contrastText
+                {totalPages > 1 && (
+                    <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                        <Pagination
+                            count={totalPages}
+                            page={page}
+                            onChange={(e, val) => setPage(val)}
+                            size={isMobile ? "medium" : "large"}
+                            sx={{
+                                "& .MuiPaginationItem-root": {
+                                    fontWeight: 600,
+                                    "&.Mui-selected": {
+                                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                                        color: theme.palette.primary.contrastText
+                                    }
                                 }
-                            }
-                        }}
-                    />
-                </Box>
+                            }}
+                        />
+                    </Box>
+                )}
 
             </Container>
         </Box>

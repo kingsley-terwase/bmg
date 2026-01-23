@@ -1,5 +1,5 @@
-// CategoryServices.jsx
-import React, { useState, useEffect, useMemo } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
     CheckmarkCircle24Filled,
 } from "@fluentui/react-icons";
@@ -20,129 +20,218 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    Pagination,
     useTheme,
     CircularProgress,
-    Alert,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCategory } from "../../Hooks/web_categories";
-import { useServices } from "../../Hooks/web_services";
-import CategoryTabs from "../CategoryTab";
+import { decodeServiceId, encodeServiceId, resolveAwsImage } from "../../utils/functions";
 import { formatGHS } from "../../utils/currency";
-
-const ITEMS_PER_PAGE = 8;
-
-// 🔹 Hash function to encode service ID
-const encodeServiceId = (id) => {
-    try {
-        const hashString = `service_${id}_${Date.now() % 10000}`;
-        let encoded = btoa(hashString);
-        encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        return encoded;
-    } catch (err) {
-        console.error("Failed to encode service ID:", err);
-        return id;
-    }
-};
+import { calculateServicePrice } from "../../Hooks/services";
+import { useGetCategoryServices } from "../../Hooks/general";
+import BrandLoader from "../BrandLoader";
+import FAQSection from "../FAQ";
 
 export default function CategoryServices() {
     const theme = useTheme();
     const navigate = useNavigate();
     const { categoryId } = useParams();
 
-    // 🔹 Decode the base64 encoded category ID
-    const decodedCategoryId = useMemo(() => {
-        try {
-            return Number(atob(categoryId));
-        } catch {
-            return null;
-        }
-    }, [categoryId]);
+    // Decode the base64 encoded category ID
+    const decodedCategoryId = decodeServiceId(categoryId);
 
     const [page, setPage] = useState(1);
+    const [allServices, setAllServices] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
 
-    // 🔹 Hooks
+    // Ref for intersection observer
+    const observerTarget = useRef(null);
+
+    // Hooks
     const {
-        category,
+        data: categoryServices,
         loading: categoryLoading,
-        error: categoryError,
-    } = useCategory(decodedCategoryId);
+        total
+    } = useGetCategoryServices({ id: decodedCategoryId, page, limit: 8 });
 
-    const {
-        services,
-        loading: servicesLoading,
-        error: servicesError,
-    } = useServices();
+    const category = categoryServices?.category;
+    const services = categoryServices?.category_services || [];
+    const faqs = categoryServices?.category?.faqs;
 
-    // 🔹 Helper function to resolve AWS images
-    const resolveAwsImage = (image) => {
-        if (!image) return null;
+    // Load more services when new data arrives
+    useEffect(() => {
+        if (services.length > 0) {
+            setAllServices(prev => {
+                // Avoid duplicates by checking IDs
+                const newServices = services.filter(
+                    service => !prev.some(existing => existing.id === service.id)
+                );
+                const updatedServices = [...prev, ...newServices];
 
-        // If already a full URL (AWS, CloudFront, etc.)
-        if (image.startsWith('http')) return image;
+                // Check if there are more services to load
+                // Stop if we received fewer services than requested or reached total
+                if (services.length < 8 || updatedServices.length >= total) {
+                    setHasMore(false);
+                }
 
-        // Otherwise assume it's a key from AWS bucket
-        return `${import.meta.env.VITE_AWS_BUCKET_URL}/${image}`;
-    };
+                return updatedServices;
+            });
+        } else if (services.length === 0 && page > 1) {
+            // No services returned for this page, stop loading
+            setHasMore(false);
+        }
+    }, [services, total, page]);
 
-    // 🔹 Reset pagination when category changes
+    // Intersection Observer callback
+    const handleObserver = useCallback((entries) => {
+        const [target] = entries;
+        if (target.isIntersecting && hasMore && !categoryLoading) {
+            setPage(prev => prev + 1);
+        }
+    }, [hasMore, categoryLoading]);
+
+    // Set up Intersection Observer
+    useEffect(() => {
+        const element = observerTarget.current;
+        const option = {
+            root: null,
+            rootMargin: "100px", // Load before user reaches the bottom
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver(handleObserver, option);
+        if (element) observer.observe(element);
+
+        return () => {
+            if (element) observer.unobserve(element);
+        };
+    }, [handleObserver]);
+
+    // Reset when category changes
     useEffect(() => {
         setPage(1);
+        setAllServices([]);
+        setHasMore(true);
     }, [decodedCategoryId]);
 
-    // 🔹 Filter services by category (using DECODED ID)
-    const categoryServices = useMemo(() => {
-        if (!services || !decodedCategoryId) return [];
-        return services.filter(
-            (service) => service.category_id === decodedCategoryId
-        );
-    }, [services, decodedCategoryId]);
+    const renderServiceCard = (service) => {
+        const { finalPrice, discountLabel, hasDiscount, originalPrice } = calculateServicePrice(service);
+        const service_type = service?.service_types?.[0];
+        const features = service.service_attributes
+            ? Object.values(service.service_attributes).filter(Boolean)
+            : [];
 
-    // 🔹 Pagination
-    const startIndex = (page - 1) * ITEMS_PER_PAGE;
-    const paginatedServices = categoryServices.slice(
-        startIndex,
-        startIndex + ITEMS_PER_PAGE
-    );
-    const totalPages = Math.ceil(categoryServices.length / ITEMS_PER_PAGE);
-
-    // =============================
-    // ⛔ BLOCK ONLY ON CATEGORY LOAD
-    // =============================
-    if (categoryLoading) {
         return (
-            <Box
-                sx={{
-                    width: "100%",
-                    minHeight: "60vh",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <CircularProgress size={50} />
-            </Box>
-        );
-    }
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={service.id}>
+                <Card
+                    sx={{
+                        height: "100%",
+                        borderRadius: 4,
+                        transition: "0.3s",
+                        "&:hover": {
+                            transform: "translateY(-6px)",
+                        },
+                    }}
+                >
+                    <CardMedia
+                        component="img"
+                        height="160"
+                        src={resolveAwsImage(service_type?.service_type_image)}
+                        onError={(e) => {
+                            e.currentTarget.src = "/placeholder-service.png";
+                        }}
+                    />
 
-    // ❌ Category error or invalid ID
-    if (categoryError || !decodedCategoryId) {
-        return (
-            <Container maxWidth="lg" sx={{ py: 8 }}>
-                <Alert severity="error">
-                    {categoryError || "Invalid category ID"}
-                </Alert>
-            </Container>
+                    {discountLabel && (
+                        <Chip
+                            label={discountLabel}
+                            size="small"
+                            sx={{
+                                position: "absolute",
+                                top: 10,
+                                left: 10,
+                                bgcolor: "error.main",
+                                color: "#fff",
+                            }}
+                        />
+                    )}
+
+                    <CardContent>
+                        <Typography fontWeight={800}>
+                            {service?.service_name}
+                        </Typography>
+
+                        <Typography variant="caption" color="text.secondary">
+                            {service_type?.description?.slice(0, 60)}...
+                        </Typography>
+
+                        <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            mt={2}
+                        >
+                            <Typography fontWeight={800} color="success.main">
+                                {formatGHS(finalPrice)}
+                            </Typography>
+
+                            {hasDiscount && (
+                                <Typography variant="caption" sx={{ textDecoration: "line-through" }}>
+                                    {formatGHS(originalPrice)}
+                                </Typography>
+                            )}
+                        </Stack>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <List dense disablePadding>
+                            {(features.length ? features : [
+                                "Fast delivery",
+                                "Professional quality",
+                                "24/7 Support",
+                            ])
+                                .slice(0, 3)
+                                .map((feature, i) => (
+                                    <ListItem key={i} disablePadding>
+                                        <ListItemIcon sx={{ minWidth: 30 }}>
+                                            <CheckmarkCircle24Filled
+                                                style={{ color: theme.palette.success.main }}
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={
+                                                <Typography variant="body2">
+                                                    {feature}
+                                                </Typography>
+                                            }
+                                        />
+                                    </ListItem>
+                                ))}
+                        </List>
+                    </CardContent>
+
+                    <CardActions sx={{ px: 3, mb: 2 }}>
+                        <Button
+                            sx={{ borderRadius: 2 }}
+                            fullWidth
+                            variant="contained"
+                            onClick={() =>
+                                navigate(`/service/${encodeServiceId(service.id)}/${service?.service_name}`)
+                            }
+                        >
+                            Start Now
+                        </Button>
+                    </CardActions>
+                </Card>
+            </Grid>
         );
+    };
+
+    if (page === 1 && categoryLoading) {
+        return <BrandLoader />;
     }
 
     return (
         <Box sx={{ width: "100%", py: 8, background: theme.palette.background.default }}>
-            {/* <CategoryTabs/> */}
             <Container maxWidth="lg">
-
-                {/* ================= CATEGORY HEADER ================= */}
                 {category && (
                     <Box sx={{ mb: 5, mt: 4 }}>
                         {category.image && (
@@ -160,7 +249,7 @@ export default function CategoryServices() {
                                     src={resolveAwsImage(category.image)}
                                     alt={category.name}
                                     onError={(e) => {
-                                        e.currentTarget.src = "/placeholder-image.png";
+                                        e.currentTarget.src = "/placeholder-image.jpg";
                                     }}
                                     style={{
                                         width: "100%",
@@ -179,12 +268,12 @@ export default function CategoryServices() {
                         </Typography>
 
                         <Typography color="text.secondary">
-                            {category.description}
+                            {category?.description}
                         </Typography>
 
-                        {category.short_descriptions && (
+                        {category.short_description && (
                             <Grid container spacing={2} sx={{ mt: 3 }}>
-                                {Object.values(category.short_descriptions)
+                                {Object.values(category.short_description)
                                     .filter(Boolean)
                                     .slice(0, 3)
                                     .map((desc, idx) => (
@@ -208,21 +297,7 @@ export default function CategoryServices() {
                     </Box>
                 )}
 
-                {/* ================= SERVICES ================= */}
-                {servicesError && (
-                    <Alert severity="error" sx={{ mb: 4 }}>
-                        {servicesError}
-                    </Alert>
-                )}
-
-                {servicesLoading ? (
-                    <Box sx={{ textAlign: "center", py: 8 }}>
-                        <CircularProgress size={40} />
-                        <Typography sx={{ mt: 2 }}>
-                            Loading services...
-                        </Typography>
-                    </Box>
-                ) : categoryServices.length === 0 ? (
+                {allServices.length === 0 && !categoryLoading ? (
                     <Box sx={{ textAlign: "center", py: 8 }}>
                         <Typography variant="h5" sx={{ fontWeight: 700 }}>
                             No Services Available
@@ -232,7 +307,7 @@ export default function CategoryServices() {
                         </Typography>
                         <Button
                             variant="contained"
-                            onClick={() => navigate("/category")}
+                            onClick={() => navigate("/categories")}
                         >
                             Browse Other Categories
                         </Button>
@@ -240,154 +315,47 @@ export default function CategoryServices() {
                 ) : (
                     <>
                         <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
-                            Available Services ({categoryServices.length})
+                            Available Services ({total || allServices.length})
                         </Typography>
 
                         <Grid container spacing={3}>
-                            {paginatedServices.map((service) => {
-                                const hasDiscount =
-                                    service.discount_value &&
-                                    Number(service.discount_value) > 0;
-
-                                let finalPrice = service.service_price;
-                                let discountLabel = null;
-
-                                if (hasDiscount) {
-                                    if (service.discount_type === "fixed") {
-                                        finalPrice -= Number(service.discount_value);
-                                        discountLabel = `₦${service.discount_value} OFF`;
-                                    } else {
-                                        const discount =
-                                            (service.service_price *
-                                                Number(service.discount_value)) /
-                                            100;
-                                        finalPrice -= discount;
-                                        discountLabel = `${service.discount_value}% OFF`;
-                                    }
-                                }
-
-                                const features = service.service_attributes
-                                    ? Object.values(service.service_attributes).filter(Boolean)
-                                    : [];
-
-                                return (
-                                    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={service.id}>
-                                        <Card
-                                            sx={{
-                                                height: "100%",
-                                                borderRadius: 4,
-                                                transition: "0.3s",
-                                                "&:hover": {
-                                                    transform: "translateY(-6px)",
-                                                },
-                                            }}
-                                        >
-                                            <CardMedia
-                                                component="img"
-                                                height="160"
-                                                src={resolveAwsImage(service.service_image)}
-                                                onError={(e) => {
-                                                    e.currentTarget.src = "/placeholder-service.png";
-                                                }}
-                                            />
-
-                                            {discountLabel && (
-                                                <Chip
-                                                    label={discountLabel}
-                                                    size="small"
-                                                    sx={{
-                                                        position: "absolute",
-                                                        top: 10,
-                                                        left: 10,
-                                                        bgcolor: "error.main",
-                                                        color: "#fff",
-                                                    }}
-                                                />
-                                            )}
-
-                                            <CardContent>
-                                                <Typography fontWeight={800}>
-                                                    {service.service_name}
-                                                </Typography>
-
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {service.service_description?.slice(0, 60)}...
-                                                </Typography>
-
-                                                <Stack
-                                                    direction="row"
-                                                    justifyContent="space-between"
-                                                    mt={2}
-                                                >
-                                                    <Typography fontWeight={800} color="success.main">
-                                                        {formatGHS(finalPrice)}
-                                                    </Typography>
-
-                                                    {hasDiscount && (
-                                                        <Typography variant="caption" sx={{ textDecoration: "line-through" }}>
-                                                            {formatGHS(service.service_price)}
-                                                        </Typography>
-                                                    )}
-                                                </Stack>
-
-                                                <Divider sx={{ my: 2 }} />
-
-                                                <List dense disablePadding>
-                                                    {(features.length ? features : [
-                                                        "Fast delivery",
-                                                        "Professional quality",
-                                                        "24/7 Support",
-                                                    ])
-                                                        .slice(0, 3)
-                                                        .map((feature, i) => (
-                                                            <ListItem key={i} disablePadding>
-                                                                <ListItemIcon sx={{ minWidth: 30 }}>
-                                                                    <CheckmarkCircle24Filled
-                                                                        style={{ color: theme.palette.success.main }}
-                                                                    />
-                                                                </ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={
-                                                                        <Typography variant="body2">
-                                                                            {feature}
-                                                                        </Typography>
-                                                                    }
-                                                                />
-                                                            </ListItem>
-                                                        ))}
-                                                </List>
-                                            </CardContent>
-
-                                            <CardActions sx={{ px: 3, mb: 2 }}>
-                                                <Button
-                                                    sx={{ borderRadius: 2 }}
-                                                    fullWidth
-                                                    variant="contained"
-                                                    onClick={() =>
-                                                        navigate(`/service/${encodeServiceId(service.id)}`)
-                                                    }
-                                                >
-                                                    Start Now
-                                                </Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Grid>
-                                );
-                            })}
+                            {allServices.map(renderServiceCard)}
                         </Grid>
 
-                        {totalPages > 1 && (
-                            <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-                                <Pagination
-                                    count={totalPages}
-                                    page={page}
-                                    onChange={(e, val) => setPage(val)}
-                                />
+                        {/* Loading indicator for subsequent pages */}
+                        {categoryLoading && page > 1 && (
+                            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                                <CircularProgress />
+                            </Box>
+                        )}
+
+                        {/* Intersection observer target */}
+                        {hasMore && (
+                            <Box
+                                ref={observerTarget}
+                                sx={{
+                                    height: 20,
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    py: 2
+                                }}
+                            />
+                        )}
+
+                        {/* End of results message */}
+                        {!hasMore && allServices.length > 0 && (
+                            <Box sx={{ textAlign: "center", py: 4 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                    You've reached the end of the list
+                                </Typography>
                             </Box>
                         )}
                     </>
                 )}
+
+                <FAQSection data={faqs} loading={categoryLoading} label={`${category?.name} Services`} />
             </Container>
         </Box>
     );
 }
+

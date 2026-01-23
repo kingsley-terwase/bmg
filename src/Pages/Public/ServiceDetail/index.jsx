@@ -5,10 +5,8 @@ import { useParams } from 'react-router-dom';
 import {
     BreadcrumbBar,
     LogoTypeSelector,
-    AIServicesShowcase,
     ConsultantForm,
     ServicesGrid,
-    BlogSection,
     HeroMarketingSection,
     FAQSection,
     CategoryTabs,
@@ -23,26 +21,36 @@ import {
     Home24Regular,
     ShapeSubtract24Regular,
     TextCaseTitle24Regular,
-    TextItalic24Regular,    
+    TextItalic24Regular,
+    Video24Regular, // Added this import
 } from '@fluentui/react-icons';
 
 import { ServicesData } from '../Services/data';
+import { decodeServiceId } from '../../../utils/functions';
+import { useGetService } from '../../../Hooks/services';
 
 const ServiceDetailPage = () => {
-    const { title } = useParams();
-    const decodedTitle = decodeURIComponent(title);
-    const [selectedType, setSelectedType] = useState("modern");
+    const { id: hashedId, serviceName } = useParams();
+    const serviceId = decodeServiceId(hashedId);
+    const { service, loading, error } = useGetService(serviceId);
+    const serviceTypes = service?.service_types || [];
+
+    const [selectedServiceType, setSelectedServiceType] = useState('');
+
+    const serviceTypeOptions = serviceTypes.map(serviceType => ({
+        value: serviceType.id.toString(),
+        label: serviceType.service_type_name,
+        icon: <Cube24Regular />
+    }));
 
     return (
         <Box sx={{ pt: 8 }}>
-
             <CategoryTabs />
-
             <BreadcrumbBar
                 breadcrumbs={[
                     { label: "Home", href: "/", icon: <Home24Regular /> },
                     { label: "Category", href: "#" },
-                    { label: decodedTitle, href: "#" },
+                    { label: serviceName, href: "#" },
                 ]}
                 suggestions={[
                     "AI Logo Maker",
@@ -53,20 +61,17 @@ const ServiceDetailPage = () => {
                 onSearch={(value) => console.log("Search Input:", value)}
             />
 
-            <LogoTypeSelector
-                label="Logo Type"
-                options={[
-                    { value: "modern", label: "Modern", icon: <ShapeSubtract24Regular /> },
-                    { value: "3d", label: "3D", icon: <Cube24Regular /> },
-                    { value: "script", label: "Script", icon: <TextItalic24Regular /> },
-                    { value: "basic", label: "Basic", icon: <TextCaseTitle24Regular /> },
-                ]}
-                value={selectedType}
-                onChange={setSelectedType}
-            />
+            {serviceTypes.length > 0 && (
+                <LogoTypeSelector
+                    label="Service Types"
+                    options={serviceTypeOptions}
+                    value={selectedServiceType}
+                    onChange={setSelectedServiceType}
+                />
+            )}
 
             <HeroMarketingSection />
-            <ServiceDetailSlider />
+            <ServiceDetailSlider service={service} loading={loading} error={error} hashedId={hashedId} />
             <Gallery />
             <ServiceOutline />
             <TestimonialsSection />

@@ -47,16 +47,16 @@ const Footer = () => {
       { name: "Portfolio", path: "/portfolio" }
     ],
     "Popular Services": [
-      { name: "All Services", path: "/service" },
+      { name: "All Services", path: "/services" },
       { name: "AI Suites", path: "/ai-suites" },
       { name: "AI Web Generator", path: "/ai-web" },
-      { name: "Gigs", path: "/category" },
+      { name: "Gigs", path: "/categories" },
       { name: "Gift Voucher", path: "/gift-voucher" }
     ],
     "Get Started": [
       { name: "Account Login", path: "/login" },
       { name: "Register", path: "/register" },
-      // { name: "Track Order", path: "/track-order" },
+      // { name: "Track Order", path: "/process-order" },
       // { name: "Checkout", path: "/checkout" },
       { name: "Resources", path: "/resources" }
     ],

@@ -8,327 +8,365 @@ import {
     Grid,
     Avatar,
     useTheme,
+    Checkbox,
+    FormControlLabel,
+    FormGroup,
+    Chip,
 } from "@mui/material";
-import LinkIcon from "@mui/icons-material/Link";
-import ImageIcon from "@mui/icons-material/Image";
-import DescriptionIcon from "@mui/icons-material/Description";
-import PhoneIcon from "@mui/icons-material/Phone";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import InventoryIcon from "@mui/icons-material/Inventory";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useNavigate } from "react-router-dom";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-const steps = [
-    { id: 1, title: "Link to your website", icon: <LinkIcon /> },
-    { id: 2, title: "Logo", icon: <ImageIcon /> },
-    { id: 3, title: "Description", icon: <DescriptionIcon /> },
-    { id: 4, title: "Contact Info", icon: <PhoneIcon /> },
-    { id: 5, title: "Confirm Details", icon: <CheckCircleIcon /> },
-    { id: 6, title: "Checkout", icon: <InventoryIcon /> },
-];
+// No dummy data - all data comes from service prop
 
-export default function OrderTracker() {
-    const theme = useTheme();
-    const navigate = useNavigate();
-
-    const [currentStep, setCurrentStep] = useState(1);
-    const [formData, setFormData] = useState({
-        websiteLink: "",
-        logoFile: null,
-        description: "",
-        brandName: "",
-        email: "",
-        phone: "",
-        socialMedia: "",
-    });
-
-    const handleNext = () =>
-        currentStep < steps.length && setCurrentStep((s) => s + 1);
-
-    const handlePrev = () =>
-        currentStep > 1 && setCurrentStep((s) => s - 1);
-
-    const handleInputChange = (e) =>
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) setFormData({ ...formData, logoFile: file });
+// Icon mapping for input types
+const getInputIcon = (inputType) => {
+    const iconMap = {
+        text: <TextFieldsIcon />,
+        checkbox: <CheckBoxIcon />,
+        radio: <RadioButtonCheckedIcon />,
+        select: <ArrowDropDownCircleIcon />,
+        file: <AttachFileIcon />,
     };
+    return iconMap[inputType] || <TextFieldsIcon />;
+};
 
-    const renderStepContent = () => {
-        switch (currentStep) {
-            case 1:
-                return (
-                    <Box>
-                        <Box textAlign="center" mb={{ xs: 3, md: 4 }}>
-                            <Typography variant="h4" fontWeight="bold">
-                                Link to your website & Socials
-                            </Typography>
-                            <Typography color="text.secondary">
-                                Provide URLs to your website for reference
-                            </Typography>
-                        </Box>
+export default function OrderTracker({ service }) {
+    const theme = useTheme();
+    const [currentStep, setCurrentStep] = useState(1);
+    const [formData, setFormData] = useState({});
+    const [errors, setErrors] = useState({});
 
-                        <TextField
-                            fullWidth
-                            name="websiteLink"
-                            label="Website Link"
-                            value={formData.websiteLink}
-                            onChange={handleInputChange}
-                            placeholder="https://yourwebsite.com"
-                            sx={{ mb: 3 }}
-                        />
+    // Ensure service is provided
+    if (!service) {
+        return (
+            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Typography variant="h5" color="error">
+                    No service data provided
+                </Typography>
+            </Box>
+        );
+    }
 
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                border: `2px dashed ${theme.palette.divider}`,
-                                p: { xs: 3, md: 5 },
-                                borderRadius: 2,
-                                textAlign: "center",
-                                bgcolor: "transparent",
-                            }}
-                        >
-                            <label style={{ cursor: "pointer" }}>
-                                <input type="file" hidden onChange={handleFileUpload} />
-                                <Avatar
-                                    sx={{
-                                        bgcolor: theme.palette.grey[200],
-                                        width: 64,
-                                        height: 64,
-                                        mx: "auto",
-                                        mb: 2,
-                                    }}
-                                >
-                                    <ImageIcon sx={{ color: theme.palette.primary.main }} />
-                                </Avatar>
-                                <Typography fontWeight={600}>Upload File</Typography>
-                                <Typography fontSize={13} color="text.secondary">
-                                    Optional screenshots
-                                </Typography>
-                            </label>
-                        </Paper>
-                    </Box>
-                );
+    // Generate steps from requirements + review step
+    const steps = [
+        ...service.requirements.map((req, idx) => ({
+            id: idx + 1,
+            title: req.requirement.name,
+            icon: getInputIcon(req.requirement.input_type),
+            inputType: req.requirement.input_type,
+            required: req.required,
+            min: req.min,
+            max: req.max,
+            options: req.requirement.options || [], // Get options from requirement or empty array
+        })),
+        {
+            id: service.requirements.length + 1,
+            title: "Review & Checkout",
+            icon: <ShoppingCartIcon />,
+            inputType: "review",
+        }
+    ];
 
-            case 2:
-                return (
-                    <Box>
-                        <Box textAlign="center" mb={4}>
-                            <Typography variant="h4" fontWeight="bold">
-                                Provide your Brand Logo
-                            </Typography>
-                            <Typography color="text.secondary">
-                                Upload your logo or inspiration
-                            </Typography>
-                        </Box>
-
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                border: `2px dashed ${theme.palette.divider}`,
-                                p: { xs: 4, md: 8 },
-                                borderRadius: 2,
-                                textAlign: "center",
-                            }}
-                        >
-                            <label style={{ cursor: "pointer" }}>
-                                <input type="file" hidden onChange={handleFileUpload} />
-                                <Avatar
-                                    sx={{
-                                        bgcolor: theme.palette.grey[200],
-                                        width: 90,
-                                        height: 90,
-                                        mx: "auto",
-                                        mb: 2,
-                                    }}
-                                >
-                                    <ImageIcon
-                                        sx={{
-                                            fontSize: 40,
-                                            color: theme.palette.primary.main,
-                                        }}
-                                    />
-                                </Avatar>
-
-                                <Typography fontWeight={600}>Drop logo here</Typography>
-                                <Typography fontSize={13} color="text.secondary">
-                                    JPG, PNG, PDF
-                                </Typography>
-
-                                {formData.logoFile && (
-                                    <Typography
-                                        mt={2}
-                                        color={theme.palette.success.main}
-                                    >
-                                        ✓ {formData.logoFile.name}
-                                    </Typography>
-                                )}
-                            </label>
-                        </Paper>
-                    </Box>
-                );
-
-            case 3:
-                return (
-                    <Box>
-                        <Box textAlign="center" mb={4}>
-                            <Typography variant="h4" fontWeight="bold">
-                                Describe Your Vision
-                            </Typography>
-                            <Typography color="text.secondary">
-                                Colors, style, features
-                            </Typography>
-                        </Box>
-
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={6}
-                            name="description"
-                            label="Design Details"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                        />
-                    </Box>
-                );
-
-            case 4:
-                return (
-                    <Box>
-                        <Box textAlign="center" mb={4}>
-                            <Typography variant="h4" fontWeight="bold">
-                                Contact Information
-                            </Typography>
-                            <Typography color="text.secondary">
-                                We’ll contact you for updates
-                            </Typography>
-                        </Box>
-
-                        <Grid container spacing={3}>
-                            {[
-                                { label: "Brand Name", name: "brandName" },
-                                { label: "Email", name: "email" },
-                                { label: "Phone", name: "phone" },
-                                { label: "Social Media", name: "socialMedia" },
-                            ].map((field) => (
-                                <Grid item xs={12} md={6} key={field.name}>
-                                    <TextField
-                                        fullWidth
-                                        label={field.label}
-                                        name={field.name}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Box>
-                );
-
-            case 5:
-                return (
-                    <Box>
-                        <Box textAlign="center" mb={4}>
-                            <Typography variant="h4" fontWeight="bold">
-                                Review Your Details
-                            </Typography>
-                            <Typography color="text.secondary">
-                                Confirm everything
-                            </Typography>
-                        </Box>
-
-                        <Grid container spacing={2}>
-                            {Object.entries(formData).map(([key, value]) => (
-                                <Grid item xs={12} md={6} key={key}>
-                                    <Paper
-                                        elevation={0}
-                                        sx={{
-                                            p: 2,
-                                            border: `1px solid ${theme.palette.divider}`,
-                                            borderRadius: 2,
-                                        }}
-                                    >
-                                        <Typography fontWeight={600}>
-                                            {key}
-                                        </Typography>
-                                        <Typography>
-                                            {value?.name || value || "—"}
-                                        </Typography>
-                                    </Paper>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Box>
-                );
-
-            case 6:
-                return (
-                    <Box textAlign="center">
-                        <Avatar
-                            sx={{
-                                bgcolor: theme.palette.success.light,
-                                width: 100,
-                                height: 100,
-                                mx: "auto",
-                                mb: 3,
-                            }}
-                        >
-                            <CheckCircleIcon
-                                sx={{
-                                    fontSize: 60,
-                                    color: theme.palette.success.main,
-                                }}
-                            />
-                        </Avatar>
-
-                        <Typography variant="h4" fontWeight="bold">
-                            Checkout 🎉
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            size="large"
-                            sx={{ mt: 4 }}
-                            onClick={() => navigate("/checkout")}
-                        >
-                            Go to Checkout
-                        </Button>
-                    </Box>
-                );
-
-            default:
-                return null;
+    const handleNext = () => {
+        if (validateCurrentStep()) {
+            currentStep < steps.length && setCurrentStep((s) => s + 1);
         }
     };
 
-    return (
-        <Box sx={{ minHeight: "100vh", py: 4, px: 2 }}>
-            <Box maxWidth={900} mx="auto">
+    const handlePrev = () => {
+        currentStep > 1 && setCurrentStep((s) => s - 1);
+    };
 
-                {/* ===== TRACKER WITH LINE ===== */}
-                <Paper elevation={0} sx={{ p: 3, mb: 4 }}>
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+        setErrors({ ...errors, [name]: "" });
+    };
+
+    const handleCheckboxChange = (name, value) => {
+        const currentValues = formData[name] || [];
+        const newValues = currentValues.includes(value)
+            ? currentValues.filter(v => v !== value)
+            : [...currentValues, value];
+
+        setFormData({ ...formData, [name]: newValues });
+        setErrors({ ...errors, [name]: "" });
+    };
+
+    const validateCurrentStep = () => {
+        const step = steps[currentStep - 1];
+        if (step.inputType === "review") return true;
+
+        const value = formData[step.title];
+        const newErrors = {};
+
+        if (step.required && (!value || (Array.isArray(value) && value.length === 0))) {
+            newErrors[step.title] = "This field is required";
+        }
+
+        if (step.min && value && value.length < step.min) {
+            newErrors[step.title] = `Minimum ${step.min} characters required`;
+        }
+
+        if (step.max && value && value.length > step.max) {
+            newErrors[step.title] = `Maximum ${step.max} characters allowed`;
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const renderStepContent = () => {
+        const step = steps[currentStep - 1];
+
+        if (step.inputType === "review") {
+            return (
+                <Box>
+                    <Box textAlign="center" mb={4}>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            Review Your Information
+                        </Typography>
+                        <Typography color="text.secondary">
+                            Please confirm all details before proceeding to checkout
+                        </Typography>
+                    </Box>
+
+                    <Grid container spacing={3}>
+                        {steps.slice(0, -1).map((reviewStep, idx) => (
+                            <Grid item xs={12} md={6} key={idx}>
+                                <Paper
+                                    elevation={0}
+                                    sx={{
+                                        p: 3,
+                                        border: `1px solid ${theme.palette.divider}`,
+                                        borderRadius: 2,
+                                        height: "100%",
+                                    }}
+                                >
+                                    <Box display="flex" alignItems="center" mb={1.5}>
+                                        <Avatar
+                                            sx={{
+                                                bgcolor: theme.palette.primary.light,
+                                                width: 32,
+                                                height: 32,
+                                                mr: 1.5,
+                                            }}
+                                        >
+                                            {React.cloneElement(reviewStep.icon, {
+                                                sx: { fontSize: 18, color: theme.palette.primary.main }
+                                            })}
+                                        </Avatar>
+                                        <Typography fontWeight={600} color="text.secondary" fontSize={13}>
+                                            {reviewStep.title}
+                                            {reviewStep.required && (
+                                                <Chip
+                                                    label="Required"
+                                                    size="small"
+                                                    sx={{ ml: 1, height: 18, fontSize: 10 }}
+                                                    color="primary"
+                                                />
+                                            )}
+                                        </Typography>
+                                    </Box>
+                                    <Typography variant="body1" fontWeight={500}>
+                                        {Array.isArray(formData[reviewStep.title])
+                                            ? formData[reviewStep.title].length > 0
+                                                ? formData[reviewStep.title].join(", ")
+                                                : "—"
+                                            : formData[reviewStep.title] || "—"}
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        ))}
+                    </Grid>
+
+                    <Box mt={4} textAlign="center">
+                        <Button
+                            variant="contained"
+                            size="large"
+                            startIcon={<ShoppingCartIcon />}
+                            sx={{
+                                px: 5,
+                                py: 1.5,
+                                fontSize: 16,
+                                textTransform: "none",
+                                fontWeight: 600,
+                            }}
+                        >
+                            Proceed to Checkout
+                        </Button>
+                    </Box>
+                </Box>
+            );
+        }
+
+        return (
+            <Box>
+                <Box textAlign="center" mb={4}>
+                    <Typography variant="h4" fontWeight="bold" gutterBottom>
+                        {step.title}
+                        {step.required && (
+                            <Chip
+                                label="Required"
+                                size="small"
+                                sx={{ ml: 2 }}
+                                color="error"
+                            />
+                        )}
+                    </Typography>
+                    <Typography color="text.secondary">
+                        Step {currentStep} of {steps.length}
+                    </Typography>
+                </Box>
+
+                {step.inputType === "text" && (
+                    <TextField
+                        fullWidth
+                        name={step.title}
+                        label={step.title}
+                        value={formData[step.title] || ""}
+                        onChange={handleInputChange}
+                        error={!!errors[step.title]}
+                        helperText={
+                            errors[step.title] ||
+                            (step.min && step.max
+                                ? `${step.min}-${step.max} characters`
+                                : step.min
+                                    ? `Minimum ${step.min} characters`
+                                    : step.max
+                                        ? `Maximum ${step.max} characters`
+                                        : "")
+                        }
+                        variant="outlined"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                fontSize: 16,
+                            }
+                        }}
+                    />
+                )}
+
+                {step.inputType === "checkbox" && (
+                    <Box>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                border: `1px solid ${errors[step.title] ? theme.palette.error.main : theme.palette.divider}`,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <FormGroup>
+                                <Grid container spacing={2}>
+                                    {step.options.map((option) => (
+                                        <Grid item xs={12} sm={6} key={option}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={(formData[step.title] || []).includes(option)}
+                                                        onChange={() => handleCheckboxChange(step.title, option)}
+                                                    />
+                                                }
+                                                label={option}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </FormGroup>
+                        </Paper>
+                        {errors[step.title] && (
+                            <Typography color="error" fontSize={12} mt={1} ml={2}>
+                                {errors[step.title]}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
+
+                {step.inputType === "radio" && (
+                    <Box>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                border: `1px solid ${errors[step.title] ? theme.palette.error.main : theme.palette.divider}`,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <FormGroup>
+                                <Grid container spacing={2}>
+                                    {step.options.map((option) => (
+                                        <Grid item xs={12} sm={6} key={option}>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={formData[step.title] === option}
+                                                        onChange={() => setFormData({ ...formData, [step.title]: option })}
+                                                    />
+                                                }
+                                                label={option}
+                                            />
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </FormGroup>
+                        </Paper>
+                        {errors[step.title] && (
+                            <Typography color="error" fontSize={12} mt={1} ml={2}>
+                                {errors[step.title]}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
+            </Box>
+        );
+    };
+
+    return (
+        <Box sx={{ minHeight: "100vh", bgcolor: "#f8f9fa", py: 5, px: 2 }}>
+            <Box maxWidth={1000} mx="auto">
+                {/* Service Header */}
+                <Box textAlign="center" mb={4}>
+                    <Typography variant="h3" fontWeight="bold" gutterBottom>
+                        {service.service_name} Service
+                    </Typography>
+                    <Typography color="text.secondary" fontSize={18}>
+                        Complete the form to get started with your order
+                    </Typography>
+                </Box>
+
+                {/* Progress Tracker */}
+                <Paper elevation={1} sx={{ p: { xs: 2, md: 3 }, mb: 4, borderRadius: 3 }}>
                     <Box position="relative" display="flex" alignItems="center">
+                        {/* Background line */}
                         <Box
                             sx={{
                                 position: "absolute",
                                 top: 30,
-                                left: 0,
-                                right: 0,
-                                height: 2,
-                                bgcolor: theme.palette.divider,
+                                left: { xs: "5%", md: "10%" },
+                                right: { xs: "5%", md: "10%" },
+                                height: 3,
+                                bgcolor: theme.palette.grey[200],
+                                borderRadius: 2,
                             }}
                         />
+                        {/* Progress line */}
                         <Box
                             sx={{
                                 position: "absolute",
                                 top: 30,
-                                left: 0,
-                                height: 2,
-                                width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+                                left: { xs: "5%", md: "10%" },
+                                height: 3,
+                                width: `${((currentStep - 1) / (steps.length - 1)) * (steps.length === 1 ? 0 : 80)}%`,
                                 bgcolor: theme.palette.primary.main,
-                                transition: "width .4s ease",
+                                transition: "width 0.4s ease",
+                                borderRadius: 2,
                             }}
                         />
 
@@ -341,20 +379,35 @@ export default function OrderTracker() {
                                     <Avatar
                                         sx={{
                                             mx: "auto",
-                                            mb: 1,
+                                            mb: 1.5,
+                                            width: { xs: 50, md: 60 },
+                                            height: { xs: 50, md: 60 },
                                             bgcolor: done
                                                 ? theme.palette.success.main
                                                 : active
                                                     ? theme.palette.primary.main
                                                     : theme.palette.grey[300],
                                             color: "#fff",
+                                            transition: "all 0.3s ease",
+                                            boxShadow: active ? 3 : 0,
                                         }}
                                     >
-                                        {done ? <CheckCircleIcon /> : step.icon}
+                                        {done ? (
+                                            <CheckCircleIcon sx={{ fontSize: { xs: 24, md: 28 } }} />
+                                        ) : (
+                                            React.cloneElement(step.icon, {
+                                                sx: { fontSize: { xs: 24, md: 28 } }
+                                            })
+                                        )}
                                     </Avatar>
                                     <Typography
-                                        fontSize={11}
-                                        fontWeight={active ? 700 : 400}
+                                        fontSize={{ xs: 10, md: 12 }}
+                                        fontWeight={active ? 700 : 500}
+                                        color={active ? "primary" : "text.secondary"}
+                                        sx={{
+                                            display: { xs: "none", sm: "block" },
+                                            transition: "all 0.3s ease",
+                                        }}
                                     >
                                         {step.title}
                                     </Typography>
@@ -364,37 +417,48 @@ export default function OrderTracker() {
                     </Box>
                 </Paper>
 
-                {/* ===== CONTENT ===== */}
-                <Paper elevation={0} sx={{ p: { xs: 3, md: 5 } }}>
+                {/* Content */}
+                <Paper elevation={1} sx={{ p: { xs: 3, md: 5 }, borderRadius: 3, mb: 3 }}>
                     {renderStepContent()}
                 </Paper>
 
-                {/* ===== NAV BUTTONS ===== */}
-                {currentStep < 6 && (
+                {/* Navigation Buttons */}
+                {currentStep < steps.length && (
                     <Box
-                        mt={4}
                         display="flex"
                         gap={2}
-                        flexDirection={{ xs: "column", md: "row" }}
+                        justifyContent="space-between"
+                        flexDirection={{ xs: "column-reverse", sm: "row" }}
                     >
                         <Button
                             variant="outlined"
                             onClick={handlePrev}
+                            disabled={currentStep === 1}
                             startIcon={<ChevronLeftIcon />}
                             sx={{
-                                borderColor: theme.palette.primary.main,
-                                color: theme.palette.primary.main,
+                                flex: 1,
+                                py: 1.5,
+                                fontSize: 15,
+                                textTransform: "none",
+                                fontWeight: 600,
                             }}
                         >
-                            Prev
+                            Previous
                         </Button>
 
                         <Button
                             variant="contained"
                             onClick={handleNext}
                             endIcon={<ChevronRightIcon />}
+                            sx={{
+                                flex: 1,
+                                py: 1.5,
+                                fontSize: 15,
+                                textTransform: "none",
+                                fontWeight: 600,
+                            }}
                         >
-                            Next
+                            {currentStep === steps.length - 1 ? "Review Order" : "Continue"}
                         </Button>
                     </Box>
                 )}
