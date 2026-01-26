@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -22,13 +22,14 @@ import { OTP_MODES } from "../../../../Config/auth/constants";
 import { signInWithGooglePopup } from "../../../../utils/googleAuth";
 import { useGoogleAuthLogin } from "../../../../Hooks/google_auth";
 import { useLoader } from "../../../../Contexts/LoaderContext";
+import { useUserContext } from "../../../../Contexts";
 
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const loginUser = useLogin();
   const googleLogin = useGoogleAuthLogin();
-  const { hideLoader, showLoader } = useLoader(); 
+  const { hideLoader, showLoader } = useLoader();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -44,6 +45,13 @@ const LoginPage = () => {
   const [touched, setTouched] = useState({});
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
+  const { user } = useUserContext();
+
+  useEffect(() => {
+    if (user?.user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate])
 
   const handleChange = (field) => (event) => {
     const value =
@@ -162,8 +170,7 @@ const LoginPage = () => {
 
       if (response) {
         showToast.success(
-          `✓ OTP sent to your ${otpMethod}! Please check your ${
-            otpMethod === "email" ? "inbox" : "messages"
+          `✓ OTP sent to your ${otpMethod}! Please check your ${otpMethod === "email" ? "inbox" : "messages"
           }.`
         );
         navigate("/verify-email", {

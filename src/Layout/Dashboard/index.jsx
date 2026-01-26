@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { lightModeColors } from "../../Config/color";
@@ -13,8 +14,6 @@ function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const { user } = useUserContext();
-
-  console.log("DashboardLayout user:", user);
 
   const role = user?.role;
 
