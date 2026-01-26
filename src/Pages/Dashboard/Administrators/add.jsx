@@ -59,7 +59,7 @@ const AddAdminPage = () => {
       return;
     }
 
-    console.log("payload", adminFormData)
+    console.log("payload", adminFormData);
     setLoading(true);
     showLoader();
     try {
@@ -71,7 +71,7 @@ const AddAdminPage = () => {
         setEmail("");
         setPhone("");
         setSubRole([]);
-        navigate("/dashboard/admin/experts");
+        navigate("/dashboard/view/admins");
       }
     } catch (error) {
       showToast.error(error || "Admin registration failed.");

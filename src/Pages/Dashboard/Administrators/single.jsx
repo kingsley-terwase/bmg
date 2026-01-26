@@ -13,6 +13,7 @@ import {
   Avatar,
   Skeleton,
   Grid,
+  Alert,
 } from "@mui/material";
 import {
   CloseOutlined,
@@ -33,7 +34,7 @@ import {
   useDeleteAdmin,
   useFetchAdmins,
 } from "../../../Hooks/Dashboard/admins";
-import { ConfirmDeleteModal } from "../../../Component";
+import { ConfirmDeleteModal, InputLabel } from "../../../Component";
 import { showToast } from "../../../utils/toast";
 
 const SingleAdminModal = ({ open, onClose, userId }) => {
@@ -131,7 +132,6 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
           </Box>
         ) : adminData ? (
           <>
-            {/* Header Section with Profile Picture */}
             <Box
               sx={{
                 bgcolor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -189,29 +189,17 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                   </Typography>
                   <Stack direction="row" spacing={1}>
                     <Chip
-                      label={adminData?.is_active ? "Active" : "Inactive"}
+                      label={adminData?.status ? "Active" : "Inactive"}
                       size="small"
-                      color={adminData?.is_active ? "success" : "default"}
+                      color={adminData?.status ? "success" : "default"}
                       sx={{
                         fontWeight: 600,
-                        bgcolor: adminData?.is_active
+                        bgcolor: adminData?.status
                           ? "success.main"
                           : "grey.500",
                         color: "white",
                       }}
                     />
-                    {adminData?.role && (
-                      <Chip
-                        label={adminData?.role}
-                        size="small"
-                        sx={{
-                          bgcolor: "rgba(255, 255, 255, 0.2)",
-                          color: "white",
-                          fontWeight: 600,
-                          backdropFilter: "blur(10px)",
-                        }}
-                      />
-                    )}
                     {adminData?.is_verified && (
                       <Chip
                         label="Verified"
@@ -230,6 +218,33 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                       />
                     )}
                   </Stack>
+                  <Box sx={{ mt: 1 }}>
+                    <InputLabel text="Assigned Role(s)" size="12px" color="#fff" />
+                    {adminData?.sub_role_name &&
+                    adminData?.sub_role_name.length > 0 ? (
+                      <>
+                        {adminData.sub_role_name.map((role, index) => (
+                          <Chip
+                            label={role}
+                            size="small"
+                            key={index}
+                            sx={{
+                              bgcolor: "rgba(255, 255, 255, 0.2)",
+                              color: "white",
+                              fontWeight: 600,
+                              backdropFilter: "blur(10px)",
+                              mt: 1,
+                              mr: 1,
+                            }}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <Alert severity="info">
+                        Administrator has no assigned role.
+                      </Alert>
+                    )}
+                  </Box>
                 </Box>
               </Stack>
             </Box>
@@ -450,7 +465,7 @@ const SingleAdminModal = ({ open, onClose, userId }) => {
                       </Typography>
                       <Typography variant="body2" fontWeight={500}>
                         {formatDate(
-                          adminData?.updated_at || adminData?.last_login
+                          adminData?.updated_at || adminData?.last_login,
                         )}
                       </Typography>
                     </Box>

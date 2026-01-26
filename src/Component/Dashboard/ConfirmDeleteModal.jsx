@@ -69,7 +69,7 @@ const ConfirmDeleteModal = ({
         <CustomButton
           title="Cancel"
           variant="outlined"
-          color="inherit"
+          color="primary"
           disabled={loading}
           onClick={onClose}
           sx={{ textTransform: "none", minWidth: 110 }}
@@ -77,7 +77,7 @@ const ConfirmDeleteModal = ({
 
         <CustomButton
           title={loading ? "Deleting..." : "Delete"}
-          color="error"
+          color="danger"
           variant="filled"
           startIcon={
             loading ? (

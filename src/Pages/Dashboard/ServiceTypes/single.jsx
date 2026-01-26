@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,9 @@ import {
   Divider,
   Avatar,
   Skeleton,
+  Grid,
+  Card,
+  CardContent,
 } from "@mui/material";
 import {
   CloseOutlined,
@@ -20,17 +23,32 @@ import {
   ImageOutlined,
   CalendarTodayOutlined,
   UpdateOutlined,
+  LocalOfferOutlined,
+  CategoryOutlined,
+  TagOutlined,
 } from "@mui/icons-material";
 import { formatDate } from "../../../utils/functions";
 import {
   useFetchServiceTypes,
   useGetServiceType,
+  useDeleteServiceType,
 } from "../../../Hooks/Dashboard/service_types";
 import { BASE_IMAGE_URL } from "../../../Config/paths";
+import { ConfirmDeleteModal } from "../../../Component";
+import { showToast } from "../../../utils/toast";
+import { useNavigate } from "react-router-dom";
 
-const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
-  const { typeData, loading, getServiceType } = useGetServiceType();
+const ServiceTypeModal = ({ open, onClose, typeId }) => {
+  const {
+    typeData,
+    loading: typeLoading,
+    getServiceType,
+  } = useGetServiceType();
   const { refetch } = useFetchServiceTypes();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const deleteServiceType = useDeleteServiceType();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open && typeId) {
@@ -38,14 +56,37 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
     }
   }, [open, typeId]);
 
+  const handleConfirm = () => {
+    setOpenDelete(true);
+  };
+
+  const handleEdit = () => {
+    navigate(`/dashboard/admin/edit/service-type`, {
+      state: { data: typeData },
+    });
+    onClose();
+  };
+
   const handleDelete = async () => {
-    if (!typeData?.id) return;
-    if (
-      window.confirm(`Delete service type "${typeData.service_type_name}"?`)
-    ) {
-      await onDelete(typeData.id);
-      await refetch();
-      onClose();
+    if (!typeData?.id) {
+      showToast.error("Invalid method ID");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await deleteServiceType(typeData.id);
+      if (res) {
+        setOpenDelete(false);
+        onClose();
+        await refetch();
+        showToast.success("Payment method deleted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast.error("Failed to delete Payment method.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +106,7 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 0 }}>
-        {loading ? (
+        {typeLoading ? (
           <Box sx={{ p: 4 }}>
             <Skeleton variant="rectangular" height={220} />
             <Skeleton height={40} sx={{ mt: 3 }} />
@@ -75,11 +116,12 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
           <>
             <Box
               sx={{
-                height: 240,
-                bgcolor: "grey.100",
+                height: 280,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                position: "relative",
               }}
             >
               {typeData.service_type_image ? (
@@ -88,38 +130,130 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
                   src={`${BASE_IMAGE_URL}/${typeData.service_type_image}`}
                   alt={typeData.service_type_name}
                   sx={{
-                    maxHeight: 160,
-                    maxWidth: "100%",
+                    maxHeight: 220,
+                    maxWidth: "90%",
                     objectFit: "contain",
                   }}
                 />
               ) : (
-                <Avatar sx={{ width: 120, height: 120 }}>
-                  <ImageOutlined sx={{ fontSize: 60 }} />
+                <Avatar
+                  sx={{
+                    width: 140,
+                    height: 140,
+                    bgcolor: "rgba(255,255,255,0.2)",
+                  }}
+                >
+                  <ImageOutlined sx={{ fontSize: 80, color: "white" }} />
                 </Avatar>
               )}
             </Box>
 
             <Box sx={{ p: 4 }}>
-              <Typography variant="h4" fontWeight={700}>
-                {typeData.service_type_name}
-              </Typography>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="flex-start"
+              >
+                <Box>
+                  <Typography variant="h4" fontWeight={700}>
+                    {typeData.service_type_name.toUpperCase()}
+                  </Typography>
 
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                <Chip
-                  label={typeData.status ? "Active" : "Inactive"}
-                  color={typeData.status ? "success" : "default"}
-                  size="small"
-                />
-                <Chip
-                  label={typeData.category_name}
-                  size="small"
-                  variant="outlined"
-                />
+                  <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                    <Chip
+                      label={typeData.status ? "Active" : "Inactive"}
+                      sx={{
+                        bgcolor: typeData.status ? "#4caf50" : "#f44336",
+                        color: "white",
+                        fontWeight: 600,
+                      }}
+                      size="small"
+                    />
+                    {typeData.service_name && (
+                      <Chip
+                        icon={<CategoryOutlined sx={{ fontSize: 16 }} />}
+                        label={typeData.service_name}
+                        size="small"
+                        variant="outlined"
+                        sx={{ fontWeight: 500 }}
+                      />
+                    )}
+                  </Stack>
+                </Box>
+
+                {/* Price Badge */}
+                <Box
+                  sx={{
+                    bgcolor: "#4caf50",
+                    color: "white",
+                    px: 3,
+                    py: 1.5,
+                    borderRadius: 2,
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block", opacity: 0.9 }}
+                  >
+                    Price
+                  </Typography>
+                  <Typography variant="h4" fontWeight={700}>
+                    ${parseFloat(typeData.price).toFixed(2)}
+                  </Typography>
+                </Box>
               </Stack>
 
               <Divider sx={{ my: 3 }} />
 
+              {/* Discount Information */}
+              {typeData.discount_type && typeData.discount_value && (
+                <>
+                  <Card
+                    sx={{
+                      bgcolor: "#fff3e0",
+                      border: "2px solid #ffb74d",
+                      mb: 3,
+                    }}
+                  >
+                    <CardContent sx={{ p: 2.5 }}>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Avatar sx={{ bgcolor: "#f57c00" }}>
+                          <LocalOfferOutlined />
+                        </Avatar>
+                        <Box flex={1}>
+                          <Typography
+                            variant="subtitle1"
+                            fontWeight={700}
+                            color="#f57c00"
+                          >
+                            Active Discount
+                          </Typography>
+                          <Typography
+                            variant="h5"
+                            fontWeight={700}
+                            color="#f57c00"
+                          >
+                            {typeData.discount_type === "percentage"
+                              ? `${typeData.discount_value}% OFF`
+                              : `$${typeData.discount_value} OFF`}
+                          </Typography>
+                          {typeData.discount_max_amount && (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              Maximum discount: ${typeData.discount_max_amount}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+
+              {/* Description */}
               <Typography
                 variant="overline"
                 color="text.secondary"
@@ -127,13 +261,110 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
               >
                 Description
               </Typography>
+              {typeData.description ? (
+                <Box
+                  sx={{
+                    mt: 1,
+                    p: 2,
+                    bgcolor: "#f8f9ff",
+                    borderRadius: 1,
+                    border: "1px solid #e0e0e0",
+                  }}
+                  dangerouslySetInnerHTML={{ __html: typeData.description }}
+                />
+              ) : (
+                <Typography sx={{ mt: 1, color: "text.secondary" }}>
+                  No description provided.
+                </Typography>
+              )}
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Service Details */}
               <Typography
-                sx={{ mt: 1, color: "text.secondary", lineHeight: 1.8 }}
+                variant="overline"
+                color="text.secondary"
+                fontWeight={600}
               >
-                {typeData.description || "No description provided."}
+                Service Information
               </Typography>
 
-              <Divider sx={{ my: 4 }} />
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={6}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      bgcolor: "#f5f5f5",
+                      borderRadius: 1,
+                      border: "1px solid #e0e0e0",
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      fontWeight={600}
+                    >
+                      Service ID
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      #{typeData.service_id}
+                    </Typography>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      bgcolor: "#f5f5f5",
+                      borderRadius: 1,
+                      border: "1px solid #e0e0e0",
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      fontWeight={600}
+                    >
+                      Type ID
+                    </Typography>
+                    <Typography variant="body1" fontWeight={600}>
+                      #{typeData.id}
+                    </Typography>
+                  </Box>
+                </Grid>
+
+                {typeData.service_name && (
+                  <Grid item xs={12}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: "#f0f7ff",
+                        borderRadius: 1,
+                        border: "1px solid #bbdefb",
+                      }}
+                    >
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <TagOutlined sx={{ color: "#1976d2", fontSize: 20 }} />
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight={600}
+                          >
+                            Parent Service
+                          </Typography>
+                          <Typography variant="body1" fontWeight={600}>
+                            {typeData.service_name}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+
+              <Divider sx={{ my: 3 }} />
 
               <Typography
                 variant="overline"
@@ -144,8 +375,16 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
               </Typography>
 
               <Stack spacing={2} sx={{ mt: 2 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Avatar sx={{ bgcolor: "primary.main" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    p: 2,
+                    bgcolor: "#f5f5f5",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Avatar sx={{ bgcolor: "primary.main", mr: 2 }}>
                     <CalendarTodayOutlined />
                   </Avatar>
                   <Box>
@@ -156,10 +395,18 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
                       {formatDate(typeData.created_at)}
                     </Typography>
                   </Box>
-                </Stack>
+                </Box>
 
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Avatar sx={{ bgcolor: "success.main" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    p: 2,
+                    bgcolor: "#f5f5f5",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Avatar sx={{ bgcolor: "success.main", mr: 2 }}>
                     <UpdateOutlined />
                   </Avatar>
                   <Box>
@@ -170,11 +417,12 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
                       {formatDate(typeData.updated_at)}
                     </Typography>
                   </Box>
-                </Stack>
+                </Box>
               </Stack>
 
               <Divider sx={{ my: 4 }} />
 
+              {/* Action Buttons */}
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button variant="outlined" onClick={onClose}>
                   Close
@@ -183,14 +431,18 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
                   variant="outlined"
                   color="error"
                   startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
+                  onClick={handleConfirm}
                 >
                   Delete
                 </Button>
                 <Button
                   variant="contained"
                   startIcon={<EditOutlined />}
-                  onClick={() => onEdit(typeData)}
+                  onClick={handleEdit}
+                  sx={{
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  }}
                 >
                   Edit
                 </Button>
@@ -205,6 +457,15 @@ const ServiceTypeModal = ({ open, onClose, typeId, onEdit, onDelete }) => {
           </Box>
         )}
       </DialogContent>
+
+      <ConfirmDeleteModal
+        open={openDelete}
+        title="Delete Service Type"
+        itemName={`${typeData?.service_type_name}`}
+        loading={loading}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={handleDelete}
+      />
     </Dialog>
   );
 };

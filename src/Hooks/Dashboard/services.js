@@ -12,7 +12,7 @@ function useCreateServices() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/service`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -48,7 +48,7 @@ const useFetchServices = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/services`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -71,4 +71,64 @@ const useFetchServices = () => {
   return { services, refetch: fetchData, loading };
 };
 
-export { useCreateServices, useFetchServices };
+function useGetService() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+  const [serviceData, setServiceData] = useState(null);
+
+  const getService = async (serviceId) => {
+    if (!serviceId) {
+      console.error("No service ID provided");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Fetching service with ID:", serviceId);
+
+    try {
+      const response = await axios.get(
+        `${BASE_SERVER_URL}/admin/service/${serviceId}`,
+        config,
+      );
+
+      const result = response.data;
+      console.log("single res:", result);
+
+      if (result?.code === 0) {
+        setServiceData(result?.result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setServiceData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { serviceData, loading, getService };
+}
+
+function useDeleteService() {
+  const { config } = useUserContext();
+
+  return async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_SERVER_URL}/admin/delete/service/${id}`,
+        {},
+        config,
+      );
+      showToast.success(response.data.message);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+      if (error?.response?.data?.error) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred!");
+      }
+    }
+  };
+}
+
+export { useCreateServices, useFetchServices, useGetService, useDeleteService };

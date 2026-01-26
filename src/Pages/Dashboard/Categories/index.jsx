@@ -14,7 +14,7 @@ import { headers } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import SingleCategoryModal from "./single";
 
 const CategoriesPage = () => {
@@ -87,7 +87,18 @@ const CategoriesPage = () => {
                 </TableCell>
 
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
+                <TableCell
+                  sx={{
+                    maxWidth: 400,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <Typography variant="body2" title={row.answer}>
+                    {truncateText(stripHtml(row.description), 80)}
+                  </Typography>
+                </TableCell>
                 <TableCell>{formatDate(row.created_at)}</TableCell>
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
 

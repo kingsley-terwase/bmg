@@ -12,7 +12,7 @@ function useAddCategoryFaqs() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/category/faqs`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -47,7 +47,7 @@ const useFetchCategoryFaqs = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/category-faqs`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -76,7 +76,7 @@ function useGetCategoryFaq() {
   const { config } = useUserContext();
   const [faqData, setFaqData] = useState(null);
 
-  const getMethod = async (faqId) => {
+  const getFaqData = async (faqId) => {
     if (!faqId) {
       console.error("No faq ID provided");
       return;
@@ -87,7 +87,7 @@ function useGetCategoryFaq() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/category/faq/${faqId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -104,7 +104,7 @@ function useGetCategoryFaq() {
     }
   };
 
-  return { faqData, loading, getMethod };
+  return { faqData, loading, getFaqData };
 }
 
 const useUpdateCategoryFaq = () => {
@@ -117,7 +117,7 @@ const useUpdateCategoryFaq = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/category/faq/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -129,7 +129,7 @@ const useUpdateCategoryFaq = () => {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
         error?.response?.data?.message ||
-          "Error occurred while updating this category FAQ."
+          "Error occurred while updating this category FAQ.",
       );
     }
   };
@@ -140,7 +140,7 @@ const useDeleteCategoryFaq = () => {
     try {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete/category/faq/${id}`,
-        {}
+        {},
       );
 
       const result = response.data;

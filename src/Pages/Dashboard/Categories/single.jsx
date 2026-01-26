@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,13 @@ import {
   Divider,
   Avatar,
   Skeleton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import {
   CloseOutlined,
@@ -20,20 +27,37 @@ import {
   CalendarTodayOutlined,
   UpdateOutlined,
   ImageOutlined,
+  ExpandMoreOutlined,
+  FiberManualRecordOutlined,
+  HelpOutlineOutlined,
+  KeyOutlined,
+  ImageAspectRatioOutlined,
 } from "@mui/icons-material";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, stripHtml } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
-import { useGetCategory } from "../../../Hooks/Dashboard/categories";
+import {
+  useFetchCategories,
+  useGetCategory,
+  useDeleteCategory,
+} from "../../../Hooks/Dashboard/categories";
 import { BASE_IMAGE_URL } from "../../../Config/paths";
+import { ConfirmDeleteModal } from "../../../Component";
+import { showToast } from "../../../utils/toast";
 
 const SingleCategoryModal = ({ open, onClose, catId }) => {
   const navigate = useNavigate();
-  const { categoryData, loading, getCategory } = useGetCategory();
-  console.log("sub cat ID:", catId);
+  const {
+    categoryData,
+    loading: categoryLoading,
+    getCategory,
+  } = useGetCategory();
+  const { refetch } = useFetchCategories();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const deletCategory = useDeleteCategory();
 
   useEffect(() => {
     if (open && catId) {
-      console.log("Fetching category with ID:", catId);
       getCategory(catId);
     }
   }, [open, catId]);
@@ -42,16 +66,33 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
     navigate(`/dashboard/admin/edit/categories`, {
       state: { data: categoryData },
     });
-
     onClose();
   };
 
-  const handleDelete = () => {
-    if (
-      window.confirm(`Are you sure you want to delete "${categoryData?.name}"?`)
-    ) {
-      console.log("Delete category:", catId);
-      onClose();
+  const handleConfirm = () => {
+    setOpenDelete(true);
+  };
+
+  const handleDelete = async () => {
+    if (!categoryData?.id) {
+      showToast.error("Invalid ID");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await deletCategory(categoryData.id);
+      if (res) {
+        setOpenDelete(false);
+        onClose();
+        await refetch();
+        showToast.success("Category deleted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast.error("Failed to delete Category.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,7 +127,7 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 0, overflow: "auto" }}>
-        {loading ? (
+        {categoryLoading ? (
           <Box>
             <Skeleton variant="rectangular" height={400} />
             <Box sx={{ p: 4 }}>
@@ -102,12 +143,24 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
               sx={{
                 position: "relative",
                 width: "100%",
-                height: 400,
+                height: 250,
                 overflow: "hidden",
                 bgcolor: "grey.100",
               }}
             >
-              {categoryData?.image ? (
+              {categoryData?.banner ? (
+                <Box
+                  component="img"
+                  src={`${BASE_IMAGE_URL}/${categoryData.banner}`}
+                  alt={categoryData.name}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              ) : categoryData?.image ? (
                 <Box
                   component="img"
                   src={`${BASE_IMAGE_URL}/${categoryData.image}`}
@@ -146,21 +199,6 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
                 }}
               />
 
-              {categoryData?.is_featured && (
-                <Chip
-                  label="Featured"
-                  color="warning"
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    left: 20,
-                    fontWeight: 700,
-                    boxShadow: 2,
-                  }}
-                />
-              )}
-
               <Box
                 sx={{
                   position: "absolute",
@@ -184,26 +222,122 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
                   <Chip
                     label={categoryData?.status ? "Active" : "Inactive"}
                     size="small"
-                    color={categoryData?.status ? "success" : "default"}
-                    sx={{ fontWeight: 600 }}
+                    sx={{
+                      bgcolor: categoryData?.status ? "#4caf50" : "#f44336",
+                      color: "white",
+                      fontWeight: 600,
+                    }}
                   />
-                  {categoryData?.total_services && (
-                    <Chip
-                      label={`${categoryData?.total_services} Services`}
-                      size="small"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.2)",
-                        color: "white",
-                        fontWeight: 600,
-                        backdropFilter: "blur(10px)",
-                      }}
-                    />
-                  )}
+                  <Chip
+                    label={`ID: ${categoryData?.id}`}
+                    size="small"
+                    sx={{
+                      bgcolor: "rgba(255, 255, 255, 0.2)",
+                      color: "white",
+                      fontWeight: 600,
+                      backdropFilter: "blur(10px)",
+                    }}
+                  />
                 </Stack>
               </Box>
             </Box>
 
             <Box sx={{ p: 4 }}>
+              {(categoryData?.image || categoryData?.banner) && (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1}
+                      mb={2}
+                    >
+                      <ImageAspectRatioOutlined sx={{ color: "#667eea" }} />
+                      <Typography
+                        variant="overline"
+                        color="text.secondary"
+                        fontWeight={600}
+                        sx={{ letterSpacing: 1.2 }}
+                      >
+                        Category Images
+                      </Typography>
+                    </Stack>
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Stack direction="row" spacing={2}>
+                      {categoryData?.image && (
+                        <Box
+                          sx={{
+                            flex: 1,
+                            border: "2px solid #e0e0e0",
+                            borderRadius: 2,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={`${BASE_IMAGE_URL}/${categoryData.image}`}
+                            alt="Category Image"
+                            sx={{
+                              width: "100%",
+                              height: 150,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              display: "block",
+                              p: 1,
+                              bgcolor: "#f5f5f5",
+                              textAlign: "center",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Category Image
+                          </Typography>
+                        </Box>
+                      )}
+
+                      {categoryData?.banner && (
+                        <Box
+                          sx={{
+                            flex: 1,
+                            border: "2px solid #e0e0e0",
+                            borderRadius: 2,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={`${BASE_IMAGE_URL}/${categoryData.banner}`}
+                            alt="Banner Image"
+                            sx={{
+                              width: "100%",
+                              height: 150,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              display: "block",
+                              p: 1,
+                              bgcolor: "#f5f5f5",
+                              textAlign: "center",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Banner Image
+                          </Typography>
+                        </Box>
+                      )}
+                    </Stack>
+                  </Box>
+                  <Divider sx={{ my: 3 }} />
+                </>
+              )}
+
               <Box sx={{ mb: 3 }}>
                 <Typography
                   variant="overline"
@@ -211,48 +345,168 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
                   fontWeight={600}
                   sx={{ letterSpacing: 1.2 }}
                 >
-                  Category Information
+                  Description
                 </Typography>
                 <Divider sx={{ mt: 1, mb: 2 }} />
 
-                {categoryData?.category_name && (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={600}
-                    >
-                      Parent Category
-                    </Typography>
-                    <Typography variant="body1" sx={{ mt: 0.5 }}>
-                      {categoryData?.category_name}
-                    </Typography>
-                  </Box>
-                )}
-
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    fontWeight={600}
-                  >
-                    Description
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{
-                      mt: 1,
-                      lineHeight: 1.8,
-                      textAlign: "justify",
-                    }}
-                  >
-                    {categoryData?.description || "No description available."}
-                  </Typography>
-                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{
+                    mt: 1,
+                    lineHeight: 1.8,
+                    textAlign: "justify",
+                    p: 2,
+                    bgcolor: "#f8f9ff",
+                    borderRadius: 1,
+                    border: "1px solid #e0e0e0",
+                  }}
+                >
+                  {stripHtml(categoryData?.description) ||
+                    "No description available."}
+                </Typography>
               </Box>
 
               <Divider sx={{ my: 3 }} />
+
+              {categoryData?.short_descriptions &&
+                Object.keys(categoryData.short_descriptions).length > 0 && (
+                  <>
+                    <Box sx={{ mb: 3 }}>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        mb={2}
+                      >
+                        <KeyOutlined sx={{ color: "#667eea" }} />
+                        <Typography
+                          variant="overline"
+                          color="text.secondary"
+                          fontWeight={600}
+                          sx={{ letterSpacing: 1.2 }}
+                        >
+                          Keywords
+                        </Typography>
+                      </Stack>
+                      <Divider sx={{ mb: 2 }} />
+
+                      <List sx={{ p: 0 }}>
+                        {Object.entries(categoryData.short_descriptions).map(
+                          ([index, value]) => (
+                            <ListItem
+                              key={index}
+                              sx={{
+                                p: 1.5,
+                                mb: 1,
+                                bgcolor: "#f0f7ff",
+                                borderRadius: 1,
+                                border: "1px solid #bbdefb",
+                              }}
+                            >
+                              <ListItemIcon sx={{ minWidth: 32 }}>
+                                <FiberManualRecordOutlined
+                                  sx={{ fontSize: 12, color: "#1976d2" }}
+                                />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={value}
+                                primaryTypographyProps={{
+                                  fontWeight: 500,
+                                }}
+                              />
+                            </ListItem>
+                          ),
+                        )}
+                      </List>
+                    </Box>
+                    <Divider sx={{ my: 3 }} />
+                  </>
+                )}
+
+              {categoryData?.faqs && categoryData.faqs.length > 0 && (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1}
+                      mb={2}
+                    >
+                      <HelpOutlineOutlined sx={{ color: "#764ba2" }} />
+                      <Typography
+                        variant="overline"
+                        color="text.secondary"
+                        fontWeight={600}
+                        sx={{ letterSpacing: 1.2 }}
+                      >
+                        Frequently Asked Questions ({categoryData.faqs.length})
+                      </Typography>
+                    </Stack>
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Stack spacing={1}>
+                      {categoryData.faqs.map((faq, index) => (
+                        <Accordion
+                          key={index}
+                          sx={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: "8px !important",
+                            "&:before": { display: "none" },
+                            boxShadow: "none",
+                            mb: 1,
+                          }}
+                        >
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreOutlined />}
+                            sx={{
+                              bgcolor: "#f8f9ff",
+                              borderRadius: 1,
+                              "&:hover": {
+                                bgcolor: "#f0f4ff",
+                              },
+                            }}
+                          >
+                            <Typography fontWeight={600}>
+                              {faq.question}
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails
+                            sx={{
+                              p: 3,
+                              bgcolor: "white",
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ lineHeight: 1.8 }}
+                            >
+                              {faq.answer}
+                            </Typography>
+                            <Divider sx={{ my: 2 }} />
+                            <Stack direction="row" spacing={2}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                Created: {formatDate(faq.created_at)}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                Updated: {formatDate(faq.updated_at)}
+                              </Typography>
+                            </Stack>
+                          </AccordionDetails>
+                        </Accordion>
+                      ))}
+                    </Stack>
+                  </Box>
+                  <Divider sx={{ my: 3 }} />
+                </>
+              )}
 
               <Box sx={{ mb: 3 }}>
                 <Typography
@@ -353,7 +607,7 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
                   variant="outlined"
                   color="error"
                   startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
+                  onClick={handleConfirm}
                   sx={{ textTransform: "none", px: 3 }}
                 >
                   Delete
@@ -362,7 +616,12 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
                   variant="contained"
                   startIcon={<EditOutlined />}
                   onClick={handleEdit}
-                  sx={{ textTransform: "none", px: 3 }}
+                  sx={{
+                    textTransform: "none",
+                    px: 3,
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  }}
                 >
                   Edit Category
                 </Button>
@@ -377,6 +636,15 @@ const SingleCategoryModal = ({ open, onClose, catId }) => {
           </Box>
         )}
       </DialogContent>
+
+      <ConfirmDeleteModal
+        open={openDelete}
+        title="Delete Category"
+        itemName={`${categoryData?.name}`}
+        loading={loading}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={handleDelete}
+      />
     </Dialog>
   );
 };

@@ -20,13 +20,13 @@ import {
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useLoader } from "../../../Contexts/LoaderContext";
 import { useCreateCategories } from "../../../Hooks/Dashboard/categories";
 import { showToast } from "../../../utils/toast";
-import { fileToBase64 } from "../../../utils/functions";
 
 const AddCategoriePage = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -70,13 +70,10 @@ const AddCategoriePage = () => {
     showLoader("Creating Category...");
 
     try {
-      const imageToBase64 = fileToBase64(categoryImg);
-      const bannerImageToBase64 = fileToBase64(categoryBanner);
-
       const payload = {
         name: categoryName,
-        image: imageToBase64,
-        banner: bannerImageToBase64,
+        image: categoryImg,
+        banner: categoryBanner,
         status: categoryStatus,
         description: categoryDesc,
         short_descriptions: keywordsToObject,
@@ -180,15 +177,11 @@ const AddCategoriePage = () => {
                   </Grid>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Category Description " />
-                    <TextField
-                      id="outlined-textarea"
-                      multiline
-                      rows={5}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Long description here"
+                    <RichTextEditor
                       value={categoryDesc}
-                      onChange={(e) => setCategoryDesc(e.target.value)}
+                      onChange={setCategoryDesc}
+                      placeholder="Enter description for category..."
+                      minHeight="150px"
                     />
                   </Grid>
                 </Grid>

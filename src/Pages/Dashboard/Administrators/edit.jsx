@@ -166,9 +166,10 @@ const EditAdminPage = () => {
                 disableUnderline
                 fullWidth
                 sx={styles.input}
-                type="number"
+                type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                disabled
               />
             </Grid>
           </Grid>

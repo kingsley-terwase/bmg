@@ -9,6 +9,7 @@ import {
   EditCategoryPage,
   ServicesPage,
   AddServicePage,
+  ServiceDetailPage,
   AddCategoriesPage,
   AddExpertPage,
   OrdersPage,
@@ -17,6 +18,7 @@ import {
   AdminRoles,
   AddAdminRole,
   SubCategoriesPage,
+  EditSubCategoryPage,
   AddSubCategoriesPage,
   ArtificialIntelligencePage,
   PaymentsPage,
@@ -79,6 +81,7 @@ const AdminRoutes = () => {
       <Route path="admin/add/experts" element={<AddExpertPage />} />
       <Route path="admin/services" element={<ServicesPage />} />
       <Route path="admin/add/services" element={<AddServicePage />} />
+      <Route path="admin/service/details" element={<ServiceDetailPage />} />
       <Route path="admin/categories" element={<CategoriesPage />} />
       <Route path="admin/add/categories" element={<AddCategoriesPage />} />
       <Route path="admin/edit/categories" element={<EditCategoryPage />} />
@@ -87,6 +90,10 @@ const AdminRoutes = () => {
       <Route
         path="admin/add/sub-categories"
         element={<AddSubCategoriesPage />}
+      />
+      <Route
+        path="admin/edit/sub-categories"
+        element={<EditSubCategoryPage />}
       />
       <Route path="admin/orders" element={<OrdersPage />} />
       <Route

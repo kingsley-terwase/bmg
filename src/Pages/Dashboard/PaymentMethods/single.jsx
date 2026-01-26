@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,12 +23,22 @@ import {
 } from "@mui/icons-material";
 import { formatDate } from "../../../utils/functions";
 import { useNavigate } from "react-router-dom";
-import { useGetPayMethod } from "../../../Hooks/Dashboard/payment_methods";
+import {
+  useGetPayMethod,
+  useFetchPayMethods,
+  useDeletePayMethod,
+} from "../../../Hooks/Dashboard/payment_methods";
 import { BASE_IMAGE_URL } from "../../../Config/paths";
+import { ConfirmDeleteModal } from "../../../Component";
+import { showToast } from "../../../utils/toast";
 
 const SingleMethodModal = ({ open, onClose, methodId }) => {
   const navigate = useNavigate();
-  const { methodData, loading, getMethod } = useGetPayMethod();
+  const { methodData, loading: dataLoading, getMethod } = useGetPayMethod();
+  const deletePayMethod = useDeletePayMethod();
+  const { refetch } = useFetchPayMethods();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open && methodId) {
@@ -44,10 +54,30 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
     onClose();
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Delete payment method "${methodData?.name}"?`)) {
-      // delete logic here
-      onClose();
+  const handleConfirm = () => {
+    setOpenDelete(true);
+  };
+
+  const handleDelete = async () => {
+    if (!methodData?.id) {
+      showToast.error("Invalid method ID");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await deletePayMethod(methodData.id);
+      if (res) {
+        setOpenDelete(false);
+        onClose();
+        await refetch();
+        showToast.success("Payment method deleted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast.error("Failed to delete Payment method.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,7 +109,7 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 0 }}>
-        {loading ? (
+        {dataLoading ? (
           <Box>
             <Skeleton variant="rectangular" height={350} />
             <Box sx={{ p: 4 }}>
@@ -220,7 +250,7 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
                   variant="outlined"
                   color="error"
                   startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
+                  onClick={handleConfirm}
                 >
                   Delete
                 </Button>
@@ -242,6 +272,15 @@ const SingleMethodModal = ({ open, onClose, methodId }) => {
           </Box>
         )}
       </DialogContent>
+
+      <ConfirmDeleteModal
+        open={openDelete}
+        title="Delete Payment Method"
+        itemName={`${methodData?.name}`}
+        loading={loading}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={handleDelete}
+      />
     </Dialog>
   );
 };

@@ -22,14 +22,16 @@ import {
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { useLoader } from "../../../Contexts/LoaderContext";
 import { showToast } from "../../../utils/toast";
 import { fileToBase64 } from "../../../utils/functions";
- import { useCreateServiceTypes } from "../../../Hooks/Dashboard/service_types";
+import { useCreateServiceTypes } from "../../../Hooks/Dashboard/service_types";
 import { useFetchServices } from "../../../Hooks/Dashboard/services";
+import { discountTypes } from "./data";
 
 const AddServiceTypePage = () => {
   const [typeName, setTypeName] = useState("");
@@ -37,6 +39,10 @@ const AddServiceTypePage = () => {
   const [typeStatus, setTypeStatus] = useState(false);
   const [typeDesc, setTypeDesc] = useState("");
   const [typeCategory, setTypeCategory] = useState("");
+  const [typePrice, setTypePrice] = useState("");
+  const [discountType, setDiscountType] = useState("");
+  const [discountValue, setDiscountValue] = useState("");
+  const [maxDiscountValue, setMaxDiscountValue] = useState("");
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -65,7 +71,8 @@ const AddServiceTypePage = () => {
         service_type_image: imageToBase64,
         status: typeStatus,
         description: typeDesc,
-        service_category: typeCategory,
+        service_id: typeCategory,
+        price: typePrice,
       };
       console.log("PayLoad:", payload);
 
@@ -119,6 +126,33 @@ const AddServiceTypePage = () => {
                 title="Service Type Category Image Upload"
                 description="Add your documents here, and you can upload max of 1 file only"
               />
+
+              <Grid size={{ xs: 12 }}>
+                <Box
+                  sx={{
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    p: 3,
+                    bgcolor: "white",
+                    mt: 2,
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                    Service Type Status
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={2}>
+                    <Typography variant="body2" fontWeight={500}>
+                      {typeStatus ? "Active" : "Inactive"}
+                    </Typography>
+                    <Switch
+                      checked={typeStatus}
+                      onChange={(e) => setTypeStatus(e.target.checked)}
+                      disabled={loading}
+                      color="warning"
+                    />
+                  </Stack>
+                </Box>
+              </Grid>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -168,44 +202,95 @@ const AddServiceTypePage = () => {
                       </Select>
                     </FormControl>
                   </Grid>
+
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Service Type Description " />
-                    <TextField
-                      id="outlined-textarea"
-                      multiline
-                      rows={5}
+                    <InputLabel text="Service Type Price" />
+                    <Input
                       disableUnderline
                       fullWidth
-                      placeholder="Long description here"
-                      value={typeDesc}
-                      onChange={(e) => setTypeDesc(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    <Box
+                      placeholder="Enter service type price"
+                      value={typePrice}
+                      type="number"
+                      onChange={(e) => setTypePrice(e.target.value)}
                       sx={{
                         border: "1px solid #e0e0e0",
-                        borderRadius: 2,
-                        p: 3,
-                        bgcolor: "white",
-                        mt: 2,
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
                       }}
-                    >
-                      <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                        Service Type Status
-                      </Typography>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="body2" fontWeight={500}>
-                          {typeStatus ? "Active" : "Inactive"}
-                        </Typography>
-                        <Switch
-                          checked={typeStatus}
-                          onChange={(e) => setTypeStatus(e.target.checked)}
-                          disabled={loading}
-                          color="warning"
-                        />
-                      </Stack>
-                    </Box>
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Discount Amount" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter discount amount"
+                      value={discountValue}
+                      type="number"
+                      onChange={(e) => setDiscountValue(e.target.value)}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <FormControl fullWidth>
+                      <InputLabel text="Discount Type" />
+                      <Select
+                        value={discountType}
+                        onChange={(e) => setDiscountType(e.target.value)}
+                        disableUnderline
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <InputLabel text="Select discount type" />
+                        </MenuItem>
+
+                        {discountTypes.map((type, index) => (
+                          <MenuItem key={index} value={type.value}>
+                            {type.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Maximum Discount" />
+                    <Input
+                      disableUnderline
+                      fullWidth
+                      placeholder="Enter maximum discount"
+                      value={maxDiscountValue}
+                      type="number"
+                      onChange={(e) => setMaxDiscountValue(e.target.value)}
+                      sx={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 1,
+                        px: 2,
+                        py: 1.5,
+                        fontSize: "14px",
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <InputLabel text="Service Type Description" />
+                    <RichTextEditor
+                      value={typeDesc}
+                      onChange={setTypeDesc}
+                      placeholder="Enter service type description..."
+                      minHeight="250px"
+                      maxHeight="500px"
+                    />
                   </Grid>
                 </Grid>
               </Box>

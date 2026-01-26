@@ -57,7 +57,7 @@ const OrdersPage = () => {
             <InfoCard
               icon={EMOJI_ICONS.shoppingCart}
               title="Orders"
-              value="20"
+              value={orders.length}
               actionLabel="Total Orders"
               color="#61B5FF"
               onAction={() => console.log("View Users")}
@@ -68,7 +68,7 @@ const OrdersPage = () => {
               icon={EMOJI_ICONS.success}
               actionLabel="Completed Orders"
               title="Orders"
-              value="18"
+              value={"0"}
               color="#61B5FF"
               onAction={() => console.log("View Users")}
             />
@@ -78,7 +78,7 @@ const OrdersPage = () => {
               icon={EMOJI_ICONS.pending}
               actionLabel="Pending Orders"
               title="Orders"
-              value="18"
+              value={"0"}
               color="#61B5FF"
               onAction={() => console.log("View Users")}
             />
@@ -88,7 +88,7 @@ const OrdersPage = () => {
               icon={EMOJI_ICONS.cancel}
               actionLabel="Cancelled Orders"
               title="Orders"
-              value="18"
+              value={"0"}
               color="#61B5FF"
               onAction={() => console.log("View Users")}
             />

@@ -9,20 +9,28 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
+import { CustomTable, PagesHeader } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  EditOutlined,
+  VisibilityOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate, truncateText } from "../../../utils/functions";
 import { useFetchCategoryFaqs } from "../../../Hooks/Dashboard/category_faq";
 import SingleCategoryFaqModal from "./single";
+import EditCategoryFaqModal from "./edit";
 
 const CategoryFaqPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
+  const { refetch, catFaqs, loading: catFaqsLoading } = useFetchCategoryFaqs();
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [selectedFaq, setSelectedFaq] = useState(null);
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -35,7 +43,16 @@ const CategoryFaqPage = () => {
     setSelectedId(null);
   };
 
-  const { refetch, catFaqs, loading: catFaqsLoading } = useFetchCategoryFaqs();
+  const handleOpenEdit = (id) => {
+    setSelectedFaq(id);
+    setEditModal(true);
+  };
+
+  const handleCloseEdit = async () => {
+    setEditModal(false);
+    await refetch();
+    setSelectedFaq(null);
+  };
 
   return (
     <div>
@@ -106,9 +123,22 @@ const CategoryFaqPage = () => {
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenEdit(row.id)}
+                    >
+                      <EditOutlined fontSize="small" />
+                    </IconButton>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
@@ -133,6 +163,12 @@ const CategoryFaqPage = () => {
         open={open}
         onClose={handleClose}
         faqId={selectedId}
+      />
+
+      <EditCategoryFaqModal
+        open={editModal}
+        onClose={handleCloseEdit}
+        faqId={selectedFaq}
       />
     </div>
   );

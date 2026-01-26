@@ -5,27 +5,29 @@ import {
   Input,
   Stack,
   Switch,
-  TextField,
   Typography,
   Chip,
+  Divider,
 } from "@mui/material";
 import {
   VisibilityOutlined,
   ArrowBackOutlined,
   AddOutlined,
+  ImageAspectRatioOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLoader } from "../../../Contexts/LoaderContext";
 import { showToast } from "../../../utils/toast";
-import { fileToBase64 } from "../../../utils/functions";
 import { useUpdateCategory } from "../../../Hooks/Dashboard/categories";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
 
 const EditCategoryPage = () => {
   const navigate = useNavigate();
@@ -35,7 +37,6 @@ const EditCategoryPage = () => {
 
   const updateCategory = useUpdateCategory();
   const { showLoader, hideLoader } = useLoader();
-
   const [categoryName, setCategoryName] = useState("");
   const [categoryImg, setCategoryImg] = useState(null);
   const [categoryBanner, setCategoryBanner] = useState(null);
@@ -87,20 +88,16 @@ const EditCategoryPage = () => {
         description: categoryDesc,
         status: categoryStatus,
         short_descriptions: keywordsToObject,
+        image: categoryImg,
+        banner: categoryBanner,
       };
 
-      if (categoryImg) {
-        payload.image = fileToBase64(categoryImg);
+      const res = await updateCategory(payload, data.id);
+
+      if (res) {
+        showToast.success("Category updated successfully!");
+        navigate("/dashboard/admin/categories");
       }
-
-      if (categoryBanner) {
-        payload.banner = fileToBase64(categoryBanner);
-      }
-
-      await updateCategory(data.id, payload);
-
-      showToast.success("Category updated successfully!");
-      navigate("/dashboard/admin/categories");
     } catch (error) {
       console.error("Error updating category:", error);
       showToast.error("Failed to update category");
@@ -138,6 +135,95 @@ const EditCategoryPage = () => {
       />
 
       <Box sx={styles.card}>
+        {(data?.image || data?.banner) && (
+          <>
+            <Box sx={{ mb: 3 }}>
+              <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                <ImageAspectRatioOutlined sx={{ color: "#667eea" }} />
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  fontWeight={600}
+                  sx={{ letterSpacing: 1.2 }}
+                >
+                  Category Images
+                </Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+
+              <Stack direction="row" spacing={2}>
+                {data?.image && (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      border: "2px solid #e0e0e0",
+                      borderRadius: 2,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={`${BASE_IMAGE_URL}/${data.image}`}
+                      alt="Category Image"
+                      sx={{
+                        width: "100%",
+                        height: 150,
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        p: 1,
+                        bgcolor: "#f5f5f5",
+                        textAlign: "center",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Category Image
+                    </Typography>
+                  </Box>
+                )}
+
+                {data?.banner && (
+                  <Box
+                    sx={{
+                      flex: 1,
+                      border: "2px solid #e0e0e0",
+                      borderRadius: 2,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={`${BASE_IMAGE_URL}/${data.banner}`}
+                      alt="Banner Image"
+                      sx={{
+                        width: "100%",
+                        height: 150,
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        p: 1,
+                        bgcolor: "#f5f5f5",
+                        textAlign: "center",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Banner Image
+                    </Typography>
+                  </Box>
+                )}
+              </Stack>
+            </Box>
+            <Divider sx={{ my: 3 }} />
+          </>
+        )}
         <Box component="form" mt={3}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -255,12 +341,11 @@ const EditCategoryPage = () => {
             <Grid size={{ xs: 12 }}>
               <Box sx={{ mt: 3 }}>
                 <InputLabel text="Category Description" />
-                <TextField
-                  multiline
-                  rows={5}
-                  fullWidth
+                <RichTextEditor
                   value={categoryDesc}
-                  onChange={(e) => setCategoryDesc(e.target.value)}
+                  onChange={setCategoryDesc}
+                  placeholder="Write your article..."
+                  minHeight="300px"
                 />
               </Box>
             </Grid>

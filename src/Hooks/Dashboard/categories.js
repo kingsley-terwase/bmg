@@ -57,7 +57,7 @@ const useFetchCategories = () => {
       console.log("single res:", result);
 
       if (result.code === 0) {
-        setCategories(result.result);
+        setCategories(result?.result?.data);
       }
       setLoading(false);
     } catch (error) {
@@ -138,9 +138,30 @@ const useUpdateCategory = () => {
   };
 };
 
+const useDeleteCategory = () => {
+  return async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_SERVER_URL}/admin/delete/category/${id}`,
+        {},
+      );
+
+      const result = response.data;
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error("error occurred while deleting category.");
+      throw error;
+    }
+  };
+};
+
 export {
   useCreateCategories,
   useFetchCategories,
   useGetCategory,
   useUpdateCategory,
+  useDeleteCategory
 };

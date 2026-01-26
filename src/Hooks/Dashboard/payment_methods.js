@@ -12,7 +12,7 @@ function useAddPayMethods() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/payment/method`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -47,7 +47,7 @@ const useFetchPayMethods = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/payment-methods`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -85,7 +85,7 @@ function useGetPayMethod() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/payment-method/${methodId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -115,7 +115,7 @@ const useUpdatePayMethod = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/payment-method/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -127,7 +127,7 @@ const useUpdatePayMethod = () => {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
         error?.response?.data?.message ||
-          "Error occurred while updating this payment method."
+          "Error occurred while updating this payment method.",
       );
     }
   };
@@ -137,8 +137,8 @@ const useDeletePayMethod = () => {
   return async (id) => {
     try {
       const response = await axios.delete(
-        `${BASE_SERVER_URL}/admin/blog/delete/${id}`,
-        {}
+        `${BASE_SERVER_URL}/admin/delete/payment-method/${id}`,
+        {},
       );
 
       const result = response.data;

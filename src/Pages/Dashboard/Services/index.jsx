@@ -26,7 +26,13 @@ import { formatDate } from "../../../utils/functions";
 const ServicesPage = () => {
   const [search, setSearch] = useState();
   const navigate = useNavigate();
-  const { services, loading: servicesLoading, refetch } = useFetchServices();
+  const { services, loading: servicesLoading } = useFetchServices();
+
+  const handleView = (serviceId) => {
+    navigate(`/dashboard/admin/service/details`, {
+      state: { serviceId },
+    });
+  };
 
   return (
     <div>
@@ -89,8 +95,6 @@ const ServicesPage = () => {
                 </TableCell>
 
                 <TableCell>{row.service_name}</TableCell>
-                <TableCell>{row.service_price}</TableCell>
-                <TableCell>{row.discount_type}</TableCell>
                 <TableCell>{row.category_name}</TableCell>
                 <TableCell>{formatDate(row.created_at)}</TableCell>
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
@@ -103,7 +107,7 @@ const ServicesPage = () => {
                 </TableCell>
 
                 <TableCell>
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => handleView(row.id)}>
                     <VisibilityOutlined fontSize="small" />
                   </IconButton>
                 </TableCell>

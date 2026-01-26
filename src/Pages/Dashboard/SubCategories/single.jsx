@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
   Divider,
   Avatar,
   Skeleton,
+  Grid,
 } from "@mui/material";
 import {
   CloseOutlined,
@@ -20,15 +21,31 @@ import {
   CalendarTodayOutlined,
   UpdateOutlined,
   ImageOutlined,
+  CategoryOutlined,
+  FingerprintOutlined,
 } from "@mui/icons-material";
-import { formatDate } from "../../../utils/functions";
-import { useGetSubCategory } from "../../../Hooks/Dashboard/sub_categories";
+import { formatDate, stripHtml } from "../../../utils/functions";
+import {
+  useGetSubCategory,
+  useFetchSubCategories,
+  useDeleteSubCategory,
+} from "../../../Hooks/Dashboard/sub_categories";
 import { useNavigate } from "react-router-dom";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
+import { ConfirmDeleteModal } from "../../../Component";
+import { showToast } from "../../../utils/toast";
 
 const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
   const navigate = useNavigate();
-  const { subCategoryData, loading, getCategory } = useGetSubCategory();
-  console.log("sub cat ID:", subCatId);
+  const {
+    subCategoryData,
+    loading: dataLoading,
+    getCategory,
+  } = useGetSubCategory();
+  const { refetch } = useFetchSubCategories();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const deleteSubCat = useDeleteSubCategory();
 
   useEffect(() => {
     if (open && subCatId) {
@@ -37,19 +54,36 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
   }, [open, subCatId]);
 
   const handleEdit = () => {
-    console.log("Edit category:", subCatId);
-    navigate(`/dashboard/admin/edit/sub-categories/${subCatId}`);
+    navigate(`/dashboard/admin/edit/sub-categories`, {
+      state: { data: subCategoryData },
+    });
     onClose();
   };
 
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${subCategoryData?.name}"?`
-      )
-    ) {
-      console.log("Delete category:", subCatId);
-      onClose();
+  const handleConfirm = () => {
+    setOpenDelete(true);
+  };
+
+  const handleDelete = async () => {
+    if (!subCategoryData?.id) {
+      showToast.error("Invalid method ID");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await deleteSubCat(subCategoryData.id);
+      if (res) {
+        setOpenDelete(false);
+        onClose();
+        await refetch();
+        showToast.success("Payment method deleted successfully.");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast.error("Failed to delete Payment method.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +118,7 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
       </IconButton>
 
       <DialogContent sx={{ p: 0, overflow: "auto" }}>
-        {loading ? (
+        {dataLoading ? (
           <Box>
             <Skeleton variant="rectangular" height={400} />
             <Box sx={{ p: 4 }}>
@@ -96,6 +130,7 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
           </Box>
         ) : subCategoryData ? (
           <>
+            {/* Header with Image */}
             <Box
               sx={{
                 position: "relative",
@@ -108,7 +143,7 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
               {subCategoryData?.image ? (
                 <Box
                   component="img"
-                  src={subCategoryData.image}
+                  src={`${BASE_IMAGE_URL}/${subCategoryData.image}`}
                   alt={subCategoryData.name}
                   sx={{
                     width: "100%",
@@ -125,10 +160,13 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    bgcolor: "grey.200",
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   }}
                 >
-                  <ImageOutlined sx={{ fontSize: 80, color: "grey.400" }} />
+                  <ImageOutlined
+                    sx={{ fontSize: 80, color: "white", opacity: 0.5 }}
+                  />
                 </Box>
               )}
 
@@ -143,21 +181,6 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                     "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
                 }}
               />
-
-              {subCategoryData?.is_featured && (
-                <Chip
-                  label="Featured"
-                  color="warning"
-                  size="small"
-                  sx={{
-                    position: "absolute",
-                    top: 20,
-                    left: 20,
-                    fontWeight: 700,
-                    boxShadow: 2,
-                  }}
-                />
-              )}
 
               <Box
                 sx={{
@@ -182,26 +205,168 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                   <Chip
                     label={subCategoryData?.status ? "Active" : "Inactive"}
                     size="small"
-                    color={subCategoryData?.status ? "success" : "default"}
-                    sx={{ fontWeight: 600 }}
+                    sx={{
+                      bgcolor: subCategoryData?.status ? "#4caf50" : "#f44336",
+                      color: "white",
+                      fontWeight: 600,
+                    }}
                   />
-                  {subCategoryData?.total_services && (
-                    <Chip
-                      label={`${subCategoryData?.total_services} Services`}
-                      size="small"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.2)",
-                        color: "white",
-                        fontWeight: 600,
-                        backdropFilter: "blur(10px)",
-                      }}
-                    />
-                  )}
+                  <Chip
+                    label={`ID: ${subCategoryData?.id}`}
+                    size="small"
+                    sx={{
+                      bgcolor: "rgba(255, 255, 255, 0.2)",
+                      color: "white",
+                      fontWeight: 600,
+                      backdropFilter: "blur(10px)",
+                    }}
+                  />
                 </Stack>
               </Box>
             </Box>
 
             <Box sx={{ p: 4 }}>
+              {subCategoryData?.category_name && (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1}
+                      mb={2}
+                    >
+                      <CategoryOutlined sx={{ color: "#667eea" }} />
+                      <Typography
+                        variant="overline"
+                        color="text.secondary"
+                        fontWeight={600}
+                        sx={{ letterSpacing: 1.2 }}
+                      >
+                        Parent Category
+                      </Typography>
+                    </Stack>
+                    <Divider sx={{ mb: 2 }} />
+
+                    <Box
+                      sx={{
+                        p: 2.5,
+                        bgcolor: "#f0f7ff",
+                        borderRadius: 2,
+                        border: "2px solid #bbdefb",
+                      }}
+                    >
+                      <Stack direction="row" alignItems="center" spacing={2}>
+                        <Avatar sx={{ bgcolor: "#1976d2" }}>
+                          <CategoryOutlined />
+                        </Avatar>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            fontWeight={600}
+                          >
+                            Category
+                          </Typography>
+                          <Typography variant="h6" fontWeight={700}>
+                            {subCategoryData.category_name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Category ID: {subCategoryData.category_id}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  </Box>
+                  <Divider sx={{ my: 3 }} />
+                </>
+              )}
+
+              {/* SubCategory Details */}
+              <Box sx={{ mb: 3 }}>
+                <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                  <FingerprintOutlined sx={{ color: "#764ba2" }} />
+                  <Typography
+                    variant="overline"
+                    color="text.secondary"
+                    fontWeight={600}
+                    sx={{ letterSpacing: 1.2 }}
+                  >
+                    SubCategory Details
+                  </Typography>
+                </Stack>
+                <Divider sx={{ mb: 2 }} />
+
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: "#f5f5f5",
+                        borderRadius: 1,
+                        border: "1px solid #e0e0e0",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                      >
+                        SubCategory ID
+                      </Typography>
+                      <Typography variant="body1" fontWeight={600}>
+                        #{subCategoryData.id}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: "#f5f5f5",
+                        borderRadius: 1,
+                        border: "1px solid #e0e0e0",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                      >
+                        Status
+                      </Typography>
+                      <Typography variant="body1" fontWeight={600}>
+                        {subCategoryData.status ? "Active" : "Inactive"}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: "#f5f5f5",
+                        borderRadius: 1,
+                        border: "1px solid #e0e0e0",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        fontWeight={600}
+                      >
+                        Name
+                      </Typography>
+                      <Typography variant="body1" fontWeight={600}>
+                        {subCategoryData.name}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
               <Box sx={{ mb: 3 }}>
                 <Typography
                   variant="overline"
@@ -209,46 +374,26 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                   fontWeight={600}
                   sx={{ letterSpacing: 1.2 }}
                 >
-                  Category Information
+                  Description
                 </Typography>
                 <Divider sx={{ mt: 1, mb: 2 }} />
 
-                {subCategoryData?.category_name && (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      fontWeight={600}
-                    >
-                      Parent Category
-                    </Typography>
-                    <Typography variant="body1" sx={{ mt: 0.5 }}>
-                      {subCategoryData?.category_name}
-                    </Typography>
-                  </Box>
-                )}
-
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    fontWeight={600}
-                  >
-                    Description
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{
-                      mt: 1,
-                      lineHeight: 1.8,
-                      textAlign: "justify",
-                    }}
-                  >
-                    {subCategoryData?.description ||
-                      "No description available."}
-                  </Typography>
-                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{
+                    mt: 1,
+                    lineHeight: 1.8,
+                    textAlign: "justify",
+                    p: 2.5,
+                    bgcolor: "#f8f9ff",
+                    borderRadius: 2,
+                    border: "1px solid #e0e0e0",
+                  }}
+                >
+                  {stripHtml(subCategoryData?.description) ||
+                    "No description available."}
+                </Typography>
               </Box>
 
               <Divider sx={{ my: 3 }} />
@@ -339,6 +484,7 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
 
               <Divider sx={{ my: 3 }} />
 
+              {/* Action Buttons */}
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button
                   variant="outlined"
@@ -352,7 +498,7 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                   variant="outlined"
                   color="error"
                   startIcon={<DeleteOutlined />}
-                  onClick={handleDelete}
+                  onClick={handleConfirm}
                   sx={{ textTransform: "none", px: 3 }}
                 >
                   Delete
@@ -361,9 +507,14 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
                   variant="contained"
                   startIcon={<EditOutlined />}
                   onClick={handleEdit}
-                  sx={{ textTransform: "none", px: 3 }}
+                  sx={{
+                    textTransform: "none",
+                    px: 3,
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  }}
                 >
-                  Edit Category
+                  Edit SubCategory
                 </Button>
               </Stack>
             </Box>
@@ -376,6 +527,15 @@ const SingleSubCategoryModal = ({ open, onClose, subCatId }) => {
           </Box>
         )}
       </DialogContent>
+
+      <ConfirmDeleteModal
+        open={openDelete}
+        title="Delete Sub Category"
+        itemName={`${subCategoryData?.name}`}
+        loading={loading}
+        onClose={() => setOpenDelete(false)}
+        onConfirm={handleDelete}
+      />
     </Dialog>
   );
 };

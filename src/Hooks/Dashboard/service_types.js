@@ -12,7 +12,7 @@ function useCreateServiceTypes() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/service-type`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -47,7 +47,7 @@ const useFetchServiceTypes = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/service-types`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -71,9 +71,9 @@ const useFetchServiceTypes = () => {
 };
 
 function useGetServiceType() {
-  const [loading, setLoading] = useState(false); // Changed to false initially
+  const [loading, setLoading] = useState(false);
   const { config } = useUserContext();
-  const [typeData, setTypeData] = useState(null); // Changed to null
+  const [typeData, setTypeData] = useState(null);
 
   const getServiceType = async (catId) => {
     if (!catId) {
@@ -87,7 +87,7 @@ function useGetServiceType() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/service-type/${catId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -107,4 +107,65 @@ function useGetServiceType() {
   return { typeData, loading, getServiceType };
 }
 
-export { useCreateServiceTypes, useFetchServiceTypes, useGetServiceType };
+function useDeleteServiceType() {
+  const { config } = useUserContext();
+
+  return async (id) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_SERVER_URL}/admin/delete/service-type/${id}`,
+        {},
+        config,
+      );
+      showToast.success(response.data.message);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+      if (error?.response?.data?.error) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred!");
+      }
+    }
+  };
+}
+
+function useUpdateServiceType() {
+  const [loading, setLoading] = useState(false);
+
+  const updateStatus = async (id, data) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/service-type/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("result res:", result);
+
+      if (result?.code === 0) {
+        showToast.success(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      if (error?.response?.data?.code !== 0) {
+        showToast.error(error.response.data.message);
+      } else {
+        showToast.error("An error occurred while updating service type!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+  return { updateStatus, loading };
+}
+
+export {
+  useCreateServiceTypes,
+  useFetchServiceTypes,
+  useGetServiceType,
+  useDeleteServiceType,
+  useUpdateServiceType,
+};

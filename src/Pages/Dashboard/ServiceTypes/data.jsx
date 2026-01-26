@@ -8,3 +8,8 @@ export const headers = [
   { key: "status", label: "Status" },
   { key: "actions", label: "", width: "40px" },
 ];
+
+export const discountTypes = [
+  { value: "percentage", label: "Percentage" },
+  { value: "fixed", label: "Fixed Amount" },
+];

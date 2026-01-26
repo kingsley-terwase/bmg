@@ -12,7 +12,7 @@ function useAddAdmin() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create-admin`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -48,7 +48,7 @@ const useFetchAdmins = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/get-admins`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -56,7 +56,7 @@ const useFetchAdmins = () => {
       console.log(" Response:", result);
 
       if (result.code === 0) {
-        setAdmins(result.result);
+        setAdmins(result.result?.result);
       }
       setLoading(false);
     } catch (error) {
@@ -89,7 +89,7 @@ function useGetAdmin() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/get-admin/${adminId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -119,7 +119,7 @@ const useUpdateAdmin = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update-admin/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -131,7 +131,7 @@ const useUpdateAdmin = () => {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
         error?.response?.data?.message ||
-          "Error occurred while updating administrator."
+          "Error occurred while updating administrator.",
       );
     }
   };
@@ -142,7 +142,7 @@ const useDeleteAdmin = () => {
     try {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete-admin/${id}`,
-        {}
+        {},
       );
 
       const result = response.data;

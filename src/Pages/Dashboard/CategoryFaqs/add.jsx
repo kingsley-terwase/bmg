@@ -4,9 +4,6 @@ import {
   Box,
   Input,
   Stack,
-  TextField,
-  Switch,
-  Typography,
   FormControl,
   Select,
   MenuItem,
@@ -17,7 +14,12 @@ import {
   VisibilityOutlined,
   ArrowBackOutlined,
 } from "@mui/icons-material";
-import { InputLabel, CustomButton, PagesHeader } from "../../../Component";
+import {
+  InputLabel,
+  CustomButton,
+  PagesHeader,
+  RichTextEditor,
+} from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../../utils/toast";
@@ -79,7 +81,7 @@ const AddCategoryFaqs = () => {
           {
             label: "View category Faqs",
             icon: <VisibilityOutlined />,
-            onClick: () => navigate("/dashboard/category-faqs"),
+            onClick: () => navigate("/dashboard/admin/category-faqs"),
           },
           {
             label: "View Service Types",
@@ -130,15 +132,11 @@ const AddCategoryFaqs = () => {
                   </Grid>
                   <Grid size={{ xs: 12, md: 12 }}>
                     <InputLabel text="Answer" />
-                    <TextField
-                      id="content"
-                      multiline
-                      rows={7}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter the answer to the question..."
+                    <RichTextEditor
                       value={answer}
-                      onChange={(e) => setAnswer(e.target.value)}
+                      onChange={setAnswer}
+                      placeholder="Enter Category FAQ answer..."
+                      minHeight="150px"
                     />
                   </Grid>
                 </Grid>

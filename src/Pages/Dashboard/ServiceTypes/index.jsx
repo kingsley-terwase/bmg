@@ -9,14 +9,21 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomTable, StatusChip, PagesHeader } from "../../../Component";
+import { CustomTable, StatusChip, PagesHeader, CustomButton } from "../../../Component";
 import { headers } from "./data";
-import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  VisibilityOutlined,
+  DoneOutlined,
+  DisabledByDefaultOutlined,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../utils/functions";
-import { useFetchServiceTypes } from "../../../Hooks/Dashboard/service_types";
-import { truncateText } from "../../../utils/functions";
+import { useFetchServiceTypes, useUpdateServiceType } from "../../../Hooks/Dashboard/service_types";
+import { truncateText, stripHtml } from "../../../utils/functions";
 import ServiceTypeModal from "./single";
+import { showToast } from "../../../utils/toast";
+
 
 const ServiceTypesPage = () => {
   const [search, setSearch] = useState();
@@ -29,6 +36,8 @@ const ServiceTypesPage = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [loadingId, setLoadingId] = useState(null);
+  const { updateStatus, loading: disableLoading } = useUpdateServiceType();
 
   const handleOpen = (id) => {
     setSelectedId(id);
@@ -40,6 +49,21 @@ const ServiceTypesPage = () => {
     await refetch();
     setSelectedId(null);
   };
+
+   const handleDisableType = (id, status) => async (e) => {
+      e.preventDefault();
+  
+      try {
+        setLoadingId(id);
+        await updateStatus(id, { status });
+        await refetch();
+      } catch (error) {
+        showToast.error(error || "Failed to update role");
+      } finally {
+        setLoadingId(null);
+      }
+    };
+  
 
   return (
     <div>
@@ -97,7 +121,7 @@ const ServiceTypesPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.description}>
-                    {truncateText(row.description, 50)}
+                    {truncateText(stripHtml(row.description), 50)}
                   </Typography>
                 </TableCell>{" "}
                 <TableCell>{formatDate(row.created_at)}</TableCell>
@@ -109,9 +133,50 @@ const ServiceTypesPage = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton size="small" onClick={() => handleOpen(row.id)}>
-                    <VisibilityOutlined fontSize="small" />
-                  </IconButton>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="end"
+                    gap={0.5}
+                  >
+                    <IconButton size="small" onClick={() => handleOpen(row.id)}>
+                      <VisibilityOutlined fontSize="small" />
+                    </IconButton>
+
+                    {row.status === true ? (
+                      <CustomButton
+                        title={
+                          disableLoading && loadingId === row.id ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            "Disable"
+                          )
+                        }
+                        color="danger"
+                        variant="filled"
+                        startIcon={<DisabledByDefaultOutlined />}
+                        sx={{ textTransform: "none", px: 2 }}
+                        onClick={handleDisableType(row.id, false)}
+                        disabled={disableLoading && loadingId === row.id}
+                      />
+                    ) : (
+                      <CustomButton
+                        title={
+                          disableLoading && loadingId === row.id ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            "Enable"
+                          )
+                        }
+                        startIcon={<DoneOutlined />}
+                        color="success"
+                        variant="filled"
+                        sx={{ textTransform: "none", px: 2 }}
+                        onClick={handleDisableType(row.id, true)}
+                        disabled={disableLoading && loadingId === row.id}
+                      />
+                    )}
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))

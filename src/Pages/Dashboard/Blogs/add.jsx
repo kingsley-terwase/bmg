@@ -22,6 +22,7 @@ import {
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useCreateBlogs } from "../../../Hooks/Dashboard/blogs";
@@ -166,7 +167,7 @@ const AddBlogs = () => {
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Category" />
+                    <InputLabel text="Blog Category" />
                     <FormControl fullWidth>
                       <Select
                         value={category}
@@ -175,7 +176,7 @@ const AddBlogs = () => {
                         displayEmpty
                       >
                         <MenuItem value="" disabled>
-                          <InputLabel text="Select Category" />
+                          <InputLabel text="Select blog category" />
                         </MenuItem>
 
                         {blogCategories.map((cat, i) => (
@@ -233,15 +234,12 @@ const AddBlogs = () => {
               </Grid>
               <Grid size={{ xs: 12, md: 12 }}>
                 <InputLabel text="Blog Content " />
-                <TextField
-                  id="content"
-                  multiline
-                  rows={7}
-                  disableUnderline
-                  fullWidth
-                  placeholder="Enter content here..."
+                <RichTextEditor
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={setContent}
+                  placeholder="Write your blog post..."
+                  minHeight="400px"
+                  maxHeight="600px"
                 />
               </Grid>
             </Grid>

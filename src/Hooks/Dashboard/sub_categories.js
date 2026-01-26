@@ -12,7 +12,7 @@ function useCreateSubCategories() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/subcategory`,
         data,
-        config
+        config,
       );
       const result = response.data;
       console.log(result);
@@ -46,7 +46,7 @@ const useFetchSubCategories = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/subcategories`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -84,7 +84,7 @@ function useGetSubCategory() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/subcategory/${subCatId}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -111,7 +111,7 @@ function useDeleteSubCategory() {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete/subcategory/${id}`,
         {},
-        config
+        config,
       );
       showToast.success(response.data.message);
       return response.data;
@@ -126,9 +126,38 @@ function useDeleteSubCategory() {
   };
 }
 
+const useUpdateSuCategory = () => {
+  return async (id, data) => {
+    if (!id || typeof id === "object") {
+      console.error("Invalid category ID:", id);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${BASE_SERVER_URL}/admin/update/subcategory/${id}`,
+        data,
+      );
+
+      const result = response.data;
+      console.log("Update Response:", result);
+
+      showToast.success(result.message);
+      return result;
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      showToast.error(
+        error?.response?.data?.message ||
+          "Error occurred while updating category.",
+      );
+    }
+  };
+};
+
 export {
   useCreateSubCategories,
   useFetchSubCategories,
   useGetSubCategory,
   useDeleteSubCategory,
+  useUpdateSuCategory,
 };

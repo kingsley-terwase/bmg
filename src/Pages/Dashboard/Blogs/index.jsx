@@ -21,7 +21,7 @@ import { VisibilityOutlined, AddOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { EMOJI_ICONS } from "../../../Config/emojiIcons";
 import { useFetchBlogs } from "../../../Hooks/Dashboard/blogs";
-import { formatDate, truncateText } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 
 const BlogsPage = () => {
   const [search, setSearch] = useState();
@@ -121,9 +121,9 @@ const BlogsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.answer}>
-                    {truncateText(row.content, 80)}
+                    {truncateText(stripHtml(row.content), 80)}
                   </Typography>
-                </TableCell>{" "}
+                </TableCell>
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
                 <TableCell>
                   <StatusChip

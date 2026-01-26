@@ -35,7 +35,6 @@ const EditCategoryPage = () => {
 
   const updateCategory = useUpdateCategory();
   const { showLoader, hideLoader } = useLoader();
-
   const [categoryName, setCategoryName] = useState("");
   const [categoryImg, setCategoryImg] = useState(null);
   const [categoryBanner, setCategoryBanner] = useState(null);
@@ -45,7 +44,6 @@ const EditCategoryPage = () => {
   const [keywordInput, setKeywordInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /** 🔁 Pre-fill data */
   useEffect(() => {
     if (!category) return;
 
@@ -98,11 +96,13 @@ const EditCategoryPage = () => {
         payload.banner = await fileToBase64(categoryBanner);
       }
 
-      await updateCategory(id, payload);
-
-      showToast.success("Category updated successfully!");
-      navigate("/dashboard/admin/categories");
+      const res = await updateCategory(id, payload);
+      if (res) {
+        showToast.success("Category updated successfully!");
+        navigate("/dashboard/admin/categories");
+      }
     } catch (error) {
+      console.error("Update Category Error:", error);
       showToast.error("Failed to update category");
     } finally {
       setLoading(false);
@@ -149,7 +149,9 @@ const EditCategoryPage = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ border: "1px solid #e0e0e0", borderRadius: 2, p: 3, mt: 5 }}>
+          <Box
+            sx={{ border: "1px solid #e0e0e0", borderRadius: 2, p: 3, mt: 5 }}
+          >
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <InputLabel text="Category Name" />

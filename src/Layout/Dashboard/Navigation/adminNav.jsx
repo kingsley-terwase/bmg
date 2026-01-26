@@ -141,7 +141,7 @@ export const ADMIN_NAV = [
     children: [],
   },
   {
-    label: "Blog",
+    label: "Manage Blogs",
     path: "/dashboard/admin/blogs",
     icon: EMOJI_ICONS.rss,
     children: [],

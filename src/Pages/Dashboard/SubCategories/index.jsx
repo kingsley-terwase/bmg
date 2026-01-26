@@ -19,7 +19,7 @@ import { headers, categoryInfo } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchSubCategories } from "../../../Hooks/Dashboard/sub_categories";
-import { formatDate } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import SingleSubCategoryModal from "./single";
 
 const SubCategoriesPage = () => {
@@ -88,19 +88,27 @@ const SubCategoriesPage = () => {
                 <TableCell>
                   <Checkbox />
                 </TableCell>
-
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
+                <TableCell
+                  sx={{
+                    maxWidth: 400,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <Typography variant="body2" title={row.answer}>
+                    {truncateText(stripHtml(row.description), 80)}
+                  </Typography>
+                </TableCell>
                 <TableCell>{formatDate(row.created_at)}</TableCell>
                 <TableCell>{formatDate(row.updated_at)}</TableCell>
-
                 <TableCell>
                   <StatusChip
                     status={row.status === true ? "active" : "inactive"}
                     label={row.status === true ? "Active" : "Disabled"}
                   />
                 </TableCell>
-
                 <TableCell>
                   <IconButton size="small" onClick={() => handleOpen(row.id)}>
                     <VisibilityOutlined fontSize="small" />

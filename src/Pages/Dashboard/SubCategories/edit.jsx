@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Box,
@@ -11,10 +11,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import {
-  AddOutlined,
-  DeleteOutlined,
   VisibilityOutlined,
   ArrowBackOutlined,
+  AddOutlined,
+  DeleteOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
@@ -24,100 +24,127 @@ import {
   RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
-import { useNavigate } from "react-router-dom";
-import { useCreateSubCategories } from "../../../Hooks/Dashboard/sub_categories";
-import { showToast } from "../../../utils/toast";
-import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLoader } from "../../../Contexts/LoaderContext";
+import { showToast } from "../../../utils/toast";
+import { fileToBase64 } from "../../../utils/functions";
+import { useUpdateSuCategory } from "../../../Hooks/Dashboard/sub_categories";
+import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
+import { BASE_IMAGE_URL } from "../../../Config/paths";
 
-const AddSubCategoriesPage = () => {
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryImg, setCategoryImg] = useState("");
-  const [categoryStatus, setCategoryStatus] = useState(true);
-  const [categoryDesc, setCategoryDesc] = useState("");
-  const [parentCategory, setParentCategory] = useState("");
-  const { hideLoader, showLoader } = useLoader();
-
-  const [loading, setLoading] = useState(false);
-  const createSubCat = useCreateSubCategories();
+const EditSubCategoryPage = () => {
   const navigate = useNavigate();
-  const { categories } = useFetchCategories();
+  const location = useLocation();
+  const { state } = location;
+  const { data } = state || {};
 
-  const handleCreateSubCategory = async (e) => {
+  const updateSubCategory = useUpdateSuCategory();
+  const { showLoader, hideLoader } = useLoader();
+  const { categories } = useFetchCategories();
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryImg, setCategoryImg] = useState(null);
+  const [parentCategory, setParentCategory] = useState("");
+  const [categoryStatus, setCategoryStatus] = useState(false);
+  const [categoryDesc, setCategoryDesc] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  console.log("Edit Sub Category Data:", categories);
+
+  useEffect(() => {
+    if (!data) return;
+
+    setCategoryName(data.name);
+    setCategoryDesc(data.description);
+    setCategoryStatus(data.status);
+  }, [data]);
+
+  const handleUpdateCategory = async (e) => {
     e.preventDefault();
 
-    if (!categoryName.trim() || !categoryDesc.trim() || !categoryImg) {
-      showToast.warning("Please fill in all required fields.");
+    if (!categoryName.trim() || !categoryDesc.trim()) {
+      showToast.warning("Category name and description are required.");
       return;
     }
-    console.log("Creating Sub Category...", categoryImg);
 
     setLoading(true);
-    showLoader("Creating Sub Category...");
+    showLoader("Updating Category...");
 
     try {
       const payload = {
-        category_id: parentCategory,
         name: categoryName,
-        image: categoryImg,
-        status: categoryStatus,
         description: categoryDesc,
+        status: categoryStatus,
+        category_id: parentCategory,
       };
-      console.log("PayLoad:", payload);
 
-      const response = await createSubCat(payload);
-      if (response) {
-        showToast.success("SubCategory added successfully!");
-        setCategoryName("");
-        setCategoryImg(null);
-        setCategoryDesc("");
+      if (categoryImg) {
+        payload.image = fileToBase64(categoryImg);
+      }
+
+      const res = await updateSubCategory(data.id, payload);
+      if (res) {
+        showToast.success("Category updated successfully!");
         navigate("/dashboard/admin/sub-categories");
       }
     } catch (error) {
-      showToast.error(error || "Failed to create category");
+      console.error("Error updating category:", error);
+      showToast.error("Failed to update category");
     } finally {
       setLoading(false);
       hideLoader();
     }
   };
 
+  if (!data) return null;
+
   return (
     <>
       <PagesHeader
-        label="Add Sub Category"
-        desc="Add Sub Categories for Categories, to manage sub categories go to view sub categories."
+        label="Edit Sub Category"
+        desc="Update sub-category details, SEO metadata, and visibility"
         searchEnabled={false}
-        placeholder={"Search sub categories..."}
         actions={[
-          {
-            label: "View Sub Categories",
-            icon: <VisibilityOutlined />,
+            {
+            label: "View SubCategory",
+            icon: <AddOutlined />,
             onClick: () => navigate("/dashboard/admin/sub-categories"),
           },
           {
-            label: "Add Category",
-            icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/categories"),
+            label: "View Categories",
+            icon: <VisibilityOutlined />,
+            onClick: () => navigate("/dashboard/admin/categories"),
           },
+        
           {
-            label: "Add Service",
+            label: "Add SubCategory",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/services"),
+            onClick: () => navigate("/dashboard/admin/add/sub-categories"),
           },
         ]}
       />
-
       <Box sx={styles.card}>
         <Box component="form" mt={3}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 5 }}>
+              <Box
+                component="img"
+                src={`${BASE_IMAGE_URL}/${data.image}`}
+                alt={data.name}
+                sx={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  borderRadius: 2,
+                }}
+              />
               <UploadMedia
                 mode={"single"}
                 maxFiles={1}
                 maxSize={5}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                 onFilesChange={setCategoryImg}
-                title="Media Upload"
+                title="Update Subcategory Image"
                 description="Add your documents here, and you can upload max of 1 files"
               />
             </Grid>
@@ -171,11 +198,11 @@ const AddSubCategoriesPage = () => {
                     </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <InputLabel text="Sub Category Description " />
+                    <InputLabel text="Category Description " />
                     <RichTextEditor
                       value={categoryDesc}
-                      onChange={setCategoryDesc}
-                      placeholder="Enter description for category..."
+                      onChange={(e) => setCategoryDesc(e.target.value)}
+                      placeholder="Enter description for sub category..."
                       minHeight="150px"
                     />
                   </Grid>
@@ -237,12 +264,11 @@ const AddSubCategoriesPage = () => {
                   />
 
                   <CustomButton
-                    title={loading ? "Submitting..." : "Submit"}
+                    title={loading ? "Submitting..." : "Update Sub Category"}
                     color="primary"
                     variant="filled"
                     disabled={loading}
-                    onClick={handleCreateSubCategory}
-                    sx={{ textTransform: "none", px: 4 }}
+                    onClick={handleUpdateCategory}
                   />
                 </Stack>
               </Stack>
@@ -254,4 +280,4 @@ const AddSubCategoriesPage = () => {
   );
 };
 
-export default AddSubCategoriesPage;
+export default EditSubCategoryPage;

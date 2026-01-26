@@ -5,7 +5,6 @@ import {
   Box,
   Input,
   Stack,
-  TextField,
   Switch,
   Typography,
 } from "@mui/material";
@@ -15,12 +14,12 @@ import {
   SaveOutlined,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
-
 import {
   InputLabel,
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { showToast } from "../../../utils/toast";
@@ -165,14 +164,11 @@ const EditPaymentMethod = () => {
                   sx={inputStyle}
                 />
 
-                <InputLabel text="Description" />
-                <TextField
-                  multiline
-                  rows={6}
-                  fullWidth
+                <InputLabel text="Service Type Description" />
+                <RichTextEditor
                   value={form.description}
                   onChange={handleChange("description")}
-                  placeholder="Describe payment method..."
+                  placeholder="Enter service type description..."
                 />
 
                 <Box sx={statusBox}>
