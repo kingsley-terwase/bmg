@@ -157,9 +157,10 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                                 variant="body2"
                                 color="text.secondary"
                                 sx={{ mb: 2, px: 1, fontSize: "0.85rem" }}
-                            >
-                                {service_type?.description}
-                            </Typography>
+                                dangerouslySetInnerHTML={{
+                                    __html: service_type?.description
+                                }}
+                            />
                         )}
 
                         <Box sx={{ px: 1, mb: 2 }}>

@@ -1,21 +1,26 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { CheckmarkCircle24Regular } from "@fluentui/react-icons";
 
-const checkItem = (text) => (
+/* const checkItem = (text) => (
     <Box sx={{ display: "flex", alignItems: "flex-start", mb: 1 }}>
         <CheckmarkCircle24Regular
             style={{ color: "#fff", marginRight: 8, marginTop: 2 }}
         />
         <Typography sx={{ color: "#fff", fontSize: 14 }}>{text}</Typography>
     </Box>
-);
+); */
 
-export default function ServiceOutline() {
+export default function ServiceOutline({ service }) {
     return (
         <Box sx={{ p: 6, maxWidth: "1200px", mx: "auto" }}>
             <Grid container spacing={4}>
-                <Grid size={{ xs:12, md:6 }} >
-                    <Typography fontSize={22} fontWeight={700} mb={2}>
+                <Grid size={{ xs: 12, md: 6 }} >
+                    <Typography
+                        dangerouslySetInnerHTML={{
+                            __html: service?.service_details_1
+                        }}
+                    />
+                    {/* <Typography fontSize={22} fontWeight={700} mb={2}>
                         Service Details
                     </Typography>
 
@@ -45,7 +50,7 @@ export default function ServiceOutline() {
 
                     <Typography fontSize={14} lineHeight={1.7}>
                         Content Creation (Text, Animations)
-                    </Typography>
+                    </Typography> */}
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 6, }}>
@@ -57,7 +62,12 @@ export default function ServiceOutline() {
                             color: "#fff",
                         }}
                     >
-                        <Typography fontSize={20} fontWeight={700} mb={1}>
+                        <Typography
+                            dangerouslySetInnerHTML={{
+                                __html: service?.service_details_2
+                            }}
+                        />
+                        {/* <Typography fontSize={20} fontWeight={700} mb={1}>
                             Why you need a logo
                         </Typography>
 
@@ -81,7 +91,7 @@ export default function ServiceOutline() {
                         )}
                         {checkItem(
                             "Professionalism: A well-designed minimalist logo reflects a high level of professionalism."
-                        )}
+                        )} */}
                     </Box>
                 </Grid>
 
@@ -94,7 +104,12 @@ export default function ServiceOutline() {
                             color: "#fff",
                         }}
                     >
-                        <Typography fontSize={18} fontWeight={700} mb={2}>
+                        <Typography
+                            dangerouslySetInnerHTML={{
+                                __html: service?.service_details_3
+                            }}
+                        />
+                        {/* <Typography fontSize={18} fontWeight={700} mb={2}>
                             Here’s why a luxury minimalist logo is the perfect choice for your brand:
                         </Typography>
 
@@ -111,7 +126,7 @@ export default function ServiceOutline() {
                                 />
                                 <Typography sx={{ color: "#fff", fontSize: 14 }}>{text}</Typography>
                             </Box>
-                        ))}
+                        ))} */}
                     </Box>
                 </Grid>
             </Grid>

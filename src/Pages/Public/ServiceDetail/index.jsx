@@ -69,11 +69,10 @@ const ServiceDetailPage = () => {
                     onChange={setSelectedServiceType}
                 />
             )}
-
-            <HeroMarketingSection />
+            {console.log("service:", service)}
             <ServiceDetailSlider service={service} loading={loading} error={error} hashedId={hashedId} />
+            <ServiceOutline service={service} />
             <Gallery />
-            <ServiceOutline />
             <TestimonialsSection />
             <ServicesGrid data={ServicesData} />
 
