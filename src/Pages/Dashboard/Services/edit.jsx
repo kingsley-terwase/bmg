@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import {
   Grid,
@@ -16,7 +15,6 @@ import {
 } from "@mui/material";
 import {
   AddOutlined,
-
   VisibilityOutlined,
   ArrowBackOutlined,
   CloseOutlined,
@@ -26,10 +24,14 @@ import {
   InputLabel,
   CustomButton,
   PagesHeader,
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useUpdateService, useGetService } from "../../../Hooks/Dashboard/services";
+import {
+  useUpdateService,
+  useGetService,
+} from "../../../Hooks/Dashboard/services";
 import { useFetchCategories } from "../../../Hooks/Dashboard/categories";
 import { useFetchSubCategories } from "../../../Hooks/Dashboard/sub_categories";
 import { showToast } from "../../../utils/toast";
@@ -42,7 +44,6 @@ const EditServicePage = () => {
   const { hideLoader, showLoader } = useLoader();
 
   const [serviceName, setServiceName] = useState("");
-  const [serviceId, setServiceId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [subCatId, setSubCatId] = useState("");
   const [serviceStatus, setServiceStatus] = useState(true);
@@ -67,7 +68,7 @@ const EditServicePage = () => {
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  const { updateService } = useUpdateService();
+  const updateService = useUpdateService();
   const { serviceData, getService } = useGetService();
   const { categories } = useFetchCategories();
   const { subCat } = useFetchSubCategories();
@@ -100,7 +101,6 @@ const EditServicePage = () => {
     setDetailsOne(data.service_details_1 || "");
     setDetailsTwo(data.service_details_2 || "");
     setDetailsThree(data.service_details_3 || "");
-    setServiceId(data.id || "");
     setDataLoaded(true);
     hideLoader();
   };
@@ -234,12 +234,14 @@ const EditServicePage = () => {
         service_status: serviceStatus,
         service_requirements:
           requirements.length > 0 ? requirements : undefined,
-        service_details_1: detailsOne || null,
-        service_details_2: detailsTwo || null,
-        service_details_3: detailsThree || null,
+        service_details_1: detailsOne,
+        service_details_2: detailsTwo,
+        service_details_3: detailsThree,
       };
 
-      const response = await updateService(serviceId, payload);
+      console.log("Update PayLoad:", payload);
+
+      const response = await updateService(id, payload);
       if (response) {
         showToast.success("Service updated successfully!");
         navigate("/dashboard/admin/services");
@@ -487,53 +489,32 @@ const EditServicePage = () => {
                 <Grid size={{ xs: 12 }}>
                   <Grid size={{ xs: 12 }}>
                     <InputLabel text="Service Detail One" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail One"
+                    <RichTextEditor
                       value={detailsOne}
                       onChange={(e) => setDetailsOne(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }} mt={2}>
                     <InputLabel text="Service Detail Two" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Two"
+                    <RichTextEditor
                       value={detailsTwo}
                       onChange={(e) => setDetailsTwo(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }} mt={2}>
                     <InputLabel text="Service Detail Three" />
-                    <Input
-                      disableUnderline
-                      fullWidth
-                      placeholder="Enter Service Detail Three"
+                    <RichTextEditor
                       value={detailsThree}
                       onChange={(e) => setDetailsThree(e.target.value)}
-                      sx={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: 1,
-                        px: 2,
-                        py: 1.5,
-                        fontSize: "14px",
-                      }}
+                      placeholder="Enter service type description..."
+                      minHeight="100px"
+                      maxHeight="200px"
                     />
                   </Grid>
                 </Grid>
