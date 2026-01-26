@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 
 import {
+    ShoppingBag24Regular,
     Navigation24Regular,
     Dismiss24Regular,
     ChevronDown20Regular,
@@ -50,7 +51,7 @@ const Header = () => {
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState({});
 
     const { categories, loading: categoriesLoading } = useCategories();
-    const { user } = useUserContext();
+    const { user, cart } = useUserContext();
 
     const handleToggle = () => {
         setMobileOpen((prev) => !prev);
@@ -325,9 +326,54 @@ const Header = () => {
                                         backgroundColor: theme.palette.primary.main + '10'
                                     }
                                 }}
+                            />
+
+                            {/* Cart Icon with Badge */}
+                            <IconButton
+                                onClick={() => navigate('/cart')}
+                                sx={{
+                                    position: 'relative',
+                                    width: 35,
+                                    height: 35,
+                                    color: theme.palette.text.primary,
+                                    backgroundColor: theme.palette.mode === 'dark'
+                                        ? 'rgba(255, 255, 255, 0.05)'
+                                        : 'rgba(0, 0, 0, 0.04)',
+                                    border: `1px solid ${theme.palette.divider}`,
+                                    '&:hover': {
+                                        backgroundColor: theme.palette.primary.main + '15',
+                                        color: theme.palette.primary.main,
+                                        borderColor: theme.palette.primary.main
+                                    }
+                                }}
                             >
-                                Contact Us
-                            </Button>
+                                <ShoppingBag24Regular />
+                                {cart?.totalQuantity > 0 && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: -4,
+                                            right: -4,
+                                            backgroundColor: theme.palette.primary.main,
+                                            color: theme.palette.primary.contrastText,
+                                            borderRadius: '50%',
+                                            minWidth: 20,
+                                            height: 20,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '0.5rem',
+                                            fontWeight: 700,
+                                            fontFamily: FONT_FAMILY.unique,
+                                            border: `2px solid ${theme.palette.background.paper}`,
+                                            px: 0.5,
+                                            boxShadow: `0 2px 8px ${theme.palette.primary.main}55`,
+                                        }}
+                                    >
+                                        2{cart.totalQuantity > 99 ? '99+' : cart.totalQuantity}
+                                    </Box>
+                                )}
+                            </IconButton>
 
                             <ThemeToggleButton />
 
@@ -346,6 +392,7 @@ const Header = () => {
                                     fontFamily: FONT_FAMILY.unique,
                                     boxShadow: `0 4px 14px ${theme.palette.primary.main}55`,
                                     transition: 'all 0.3s ease',
+                                    maxWidth: '200px',
                                     '&:hover': {
                                         transform: 'translateY(-2px)',
                                         boxShadow: `0 6px 20px ${theme.palette.primary.main}77`,
@@ -353,9 +400,20 @@ const Header = () => {
                                     }
                                 }}
                             >
-                                {user?.user
-                                    ? `Welcome, ${user.user.first_name.charAt(0)}. ${user.user.last_name}`
-                                    : "Get Started"}
+                                <Box
+                                    component="span"
+                                    sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        display: 'block',
+                                        width: '100%',
+                                    }}
+                                >
+                                    {user?.user
+                                        ? `Welcome, ${user.user.first_name}`
+                                        : "Get Started"}
+                                </Box>
                             </Button>
                         </Box>
 

@@ -6,6 +6,7 @@ export const UserContext = createContext();
 
 export default function UserContextProvider({ children }) {
   const { user } = useSelector((state) => state.user);
+  const cart = useSelector((state) => state.cart);
 
   const config = {
     headers: {
@@ -17,7 +18,7 @@ export default function UserContextProvider({ children }) {
   //console.log(user?.token)
 
   return (
-    <UserContext.Provider value={{ user, config, token: user?.token }}>
+    <UserContext.Provider value={{ user, cart, config, token: user?.token }}>
       {children}
     </UserContext.Provider>
   );

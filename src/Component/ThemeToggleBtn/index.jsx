@@ -15,8 +15,8 @@ const ThemeToggleButton = ({ sx = {} }) => {
                 sx={{
                     bgcolor: theme.palette.background.paper,
                     border: `1px solid ${theme.palette.divider}`,
-                    width: 48,
-                    height: 48,
+                    width: 35,
+                    height: 35,
                     transition: 'all 0.3s ease',
                     '&:hover': {
                         bgcolor: theme.palette.primary.main,
