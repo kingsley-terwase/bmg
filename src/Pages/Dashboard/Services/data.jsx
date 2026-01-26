@@ -1,5 +1,3 @@
-
-
 export const serviceData = [
   { name: "Merching", value: 30, color: "#3B82F6" },
   { name: "Branding", value: 25, color: "#10B981" },
