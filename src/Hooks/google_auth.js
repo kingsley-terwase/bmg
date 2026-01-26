@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setUser } from "../store/slices/userSlice";
+import { setUser } from "../Store/slices/userSlice";
 import { useLoader } from "../Contexts/LoaderContext";
 import { showToast } from "../utils/toast";
 
@@ -24,8 +24,8 @@ const useGoogleAuthRegister = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/google/user-registration`,
         {
-          google_access_token: googleAccessToken
-        }
+          google_access_token: googleAccessToken,
+        },
       );
 
       const result = response.data;
@@ -84,8 +84,8 @@ const useGoogleAuthLogin = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/google/login-user`,
         {
-          google_access_token: googleAccessToken
-        }
+          google_access_token: googleAccessToken,
+        },
       );
 
       const result = response.data;

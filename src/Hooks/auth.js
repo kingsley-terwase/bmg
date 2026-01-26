@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { BASE_SERVER_URL } from "../Config/paths";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/slices/userSlice";
+import { setUser } from "../Store/slices/userSlice";
 import { showToast } from "../utils/toast";
 import { useUserContext } from "../Contexts";
 
@@ -13,7 +13,7 @@ function useRegister() {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/create-user`,
-        data
+        data,
       );
       const result = response.data;
       if (result?.code === 0) {
@@ -72,7 +72,7 @@ function useResendEmailVerificationOtp() {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/user/resend/email/otp`,
-        data
+        data,
       );
       const result = response.data;
       if (result?.error === 0) {
@@ -100,7 +100,7 @@ function useLogin() {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/login-user`,
-        data
+        data,
       );
       const result = response.data;
 
@@ -134,7 +134,7 @@ const useVerifyLogin = () => {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/verify-login`,
-        { otp, email, otp_type }
+        { otp, email, otp_type },
       );
 
       const result = response?.data;
@@ -197,7 +197,7 @@ const useVerifyForgotPwdOtp = () => {
       return true;
     } catch (err) {
       showToast.error(
-        err?.response?.data?.message || "OTP verification failed"
+        err?.response?.data?.message || "OTP verification failed",
       );
       return false;
     }
@@ -248,7 +248,7 @@ function useLogout() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/logout-user`,
         {},
-        config
+        config,
       );
 
       const result = response?.data;
@@ -275,7 +275,7 @@ function useForgotPassWord() {
     try {
       const response = await axios.post(
         `${BASE_SERVER_URL}/auth/forgot-password`,
-        data
+        data,
       );
 
       const result = response.data;
