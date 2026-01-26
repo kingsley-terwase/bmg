@@ -28,15 +28,18 @@ import {
 import { ServicesData } from '../Services/data';
 import { decodeServiceId } from '../../../utils/functions';
 import { useGetService } from '../../../Hooks/services';
+import { useGetAllPortfolio } from '../../../Hooks/general';
 
 const ServiceDetailPage = () => {
     const { id: hashedId, serviceName } = useParams();
     const serviceId = decodeServiceId(hashedId);
     const { service, loading, error } = useGetService(serviceId);
+    const { data: portfolio, loading: portfolioLoading } = useGetAllPortfolio({ service: serviceId })
     const serviceTypes = service?.service_types || [];
+    const faqs = service?.service_faqs
 
     const [selectedServiceType, setSelectedServiceType] = useState('');
-
+    console.log("service:", service)
     const serviceTypeOptions = serviceTypes.map(serviceType => ({
         value: serviceType.id.toString(),
         label: serviceType.service_type_name,
@@ -69,16 +72,13 @@ const ServiceDetailPage = () => {
                     onChange={setSelectedServiceType}
                 />
             )}
-
-            <HeroMarketingSection />
             <ServiceDetailSlider service={service} loading={loading} error={error} hashedId={hashedId} />
-            <Gallery />
-            <ServiceOutline />
+            <ServiceOutline service={service} />
+            <Gallery data={portfolio} loading={portfolioLoading} />
             <TestimonialsSection />
             <ServicesGrid data={ServicesData} />
-
             <ConsultantForm />
-            <FAQSection />
+            <FAQSection data={faqs} loading={loading} label={`${service?.service_name} service.`} />
 
         </Box>
     );

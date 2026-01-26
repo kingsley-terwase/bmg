@@ -134,9 +134,14 @@ export default function ServicesGrid() {
                                                 {service.service_name}
                                             </Typography>
 
-                                            <Typography sx={{ fontWeight: 600 }} variant="caption" color="text.secondary">
-                                                {serviceType?.description?.slice(0, 60)}...
-                                            </Typography>
+                                            <Typography
+                                                sx={{ fontWeight: 600 }}
+                                                variant="caption"
+                                                color="text.secondary"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: (serviceType?.description?.slice(0, 60) || '') + '...'
+                                                }}
+                                            />
 
                                             <Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}>
                                                 <Typography

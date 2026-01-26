@@ -62,7 +62,6 @@ const AddPortfolios = () => {
       showToast.warning("Please fill in all required fields.");
       return;
     }
-    console.log("payload:", formData);
 
     setLoading(true);
     showLoader("Adding Portfolio");
@@ -114,7 +113,7 @@ const AddPortfolios = () => {
               <UploadMedia
                 mode="single"
                 maxFiles={1}
-                maxSize={2}
+                maxSize={6}
                 acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
                 onFilesChange={handleFilesChange}
                 title="Media Upload"
@@ -241,7 +240,7 @@ const AddPortfolios = () => {
                     color="danger"
                     variant="outlined"
                     startIcon={<DeleteOutlined />}
-                    onClick={() => {}}
+                    onClick={() => { }}
                     sx={{ textTransform: "none", px: 4 }}
                   />
                   <CustomButton

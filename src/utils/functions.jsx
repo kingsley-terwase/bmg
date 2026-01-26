@@ -33,6 +33,29 @@ const formatDate = (dateString) => {
   return `${datePart} | ${timePart.toLowerCase()}`;
 };
 
+// Decode the hashed service ID
+const decodeServiceId = (hash) => {
+  try {
+    if (!hash) return null;
+
+    // URL decode first (handles URL-encoded base64)
+    let decodedHash = decodeURIComponent(hash);
+
+    // Replace URL-safe base64 characters if used
+    decodedHash = decodedHash.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Decode base64
+    const decoded = atob(decodedHash);
+
+    // Extract service ID from format: service_{id}_{timestamp}
+    const match = decoded.match(/service_(\d+)_/);
+    return match ? match[1] : null;
+  } catch (err) {
+    console.error("Failed to decode service ID:", err);
+    console.error("Hash received:", hash);
+  }
+}
+
 const fileToBase64 = (file) => {
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -66,29 +89,6 @@ const urlToBase64 = async (url) => {
     });
   } catch (error) {
     console.error("urlToBase64 failed:", error.message);
-  }
-};
-
-// Decode the hashed service ID
-const decodeServiceId = (hash) => {
-  try {
-    if (!hash) return null;
-
-    // URL decode first (handles URL-encoded base64)
-    let decodedHash = decodeURIComponent(hash);
-
-    // Replace URL-safe base64 characters if used
-    decodedHash = decodedHash.replace(/-/g, "+").replace(/_/g, "/");
-
-    // Decode base64
-    const decoded = atob(decodedHash);
-
-    // Extract service ID from format: service_{id}_{timestamp}
-    const match = decoded.match(/service_(\d+)_/);
-    return match ? match[1] : null;
-  } catch (err) {
-    console.error("Failed to decode service ID:", err);
-    console.error("Hash received:", hash);
     return null;
   }
 };

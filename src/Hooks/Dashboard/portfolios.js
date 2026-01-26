@@ -12,7 +12,7 @@ function useAddPortfolio() {
       const response = await axios.post(
         `${BASE_SERVER_URL}/admin/create/portfolio`,
         data,
-        config
+        config,
       );
 
       const result = response.data;
@@ -47,11 +47,10 @@ const useFetchPortfolios = () => {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/portfolios`,
-        config
+        config,
       );
 
       const result = response.data;
-      console.log(" Response:", result);
 
       if (result.code === 0) {
         setPortfolios(result.result);
@@ -86,7 +85,7 @@ function useGetPortfolio() {
     try {
       const response = await axios.get(
         `${BASE_SERVER_URL}/admin/portfolio/${id}`,
-        config
+        config,
       );
 
       const result = response.data;
@@ -116,7 +115,7 @@ const useUpdatePortfolio = () => {
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/portfolio/${id}`,
-        data
+        data,
       );
 
       const result = response.data;
@@ -128,7 +127,7 @@ const useUpdatePortfolio = () => {
       console.error("Error:", error.response?.data || error.message);
       showToast.error(
         error?.response?.data?.message ||
-          "Error occurred while updating portfolio."
+          "Error occurred while updating portfolio.",
       );
     }
   };
@@ -139,7 +138,7 @@ const useDeletePortfolio = () => {
     try {
       const response = await axios.delete(
         `${BASE_SERVER_URL}/admin/delete/portfolio/${id}`,
-        {}
+        {},
       );
 
       const result = response.data;

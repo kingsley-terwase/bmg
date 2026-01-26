@@ -133,13 +133,16 @@ function useDeleteService() {
 
 function useUpdateService() {
   const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
 
-  const updateStatus = async (id, data) => {
+  const updateService = async (id, data) => {
+    console.log("data:", data);
     setLoading(true);
     try {
       const response = await axios.put(
         `${BASE_SERVER_URL}/admin/update/service/${id}`,
         data,
+        config,
       );
 
       const result = response.data;
@@ -160,7 +163,8 @@ function useUpdateService() {
       setLoading(false);
     }
   };
-  return { updateStatus, loading };
+
+  return { updateService, loading };
 }
 
 export {

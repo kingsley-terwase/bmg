@@ -1,30 +1,31 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
   Input,
   Stack,
-  Switch, 
+  Switch,
   Typography,
   Chip,
   IconButton,
   FormControl,
   MenuItem,
-  Select, 
+  Select,
   Collapse,
 } from "@mui/material";
 import {
   AddOutlined,
-  
+
   VisibilityOutlined,
-  ArrowBackOutlined, 
+  ArrowBackOutlined,
   CloseOutlined,
   SaveOutlined,
 } from "@mui/icons-material";
 import {
   InputLabel,
   CustomButton,
-  PagesHeader, 
+  PagesHeader,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -39,8 +40,9 @@ const EditServicePage = () => {
   const { id } = useParams();
   const location = useLocation();
   const { hideLoader, showLoader } = useLoader();
-  
+
   const [serviceName, setServiceName] = useState("");
+  const [serviceId, setServiceId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [subCatId, setSubCatId] = useState("");
   const [serviceStatus, setServiceStatus] = useState(true);
@@ -64,8 +66,8 @@ const EditServicePage = () => {
 
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  
-  const updateService = useUpdateService();
+
+  const { updateService } = useUpdateService();
   const { serviceData, getService } = useGetService();
   const { categories } = useFetchCategories();
   const { subCat } = useFetchSubCategories();
@@ -98,6 +100,7 @@ const EditServicePage = () => {
     setDetailsOne(data.service_details_1 || "");
     setDetailsTwo(data.service_details_2 || "");
     setDetailsThree(data.service_details_3 || "");
+    setServiceId(data.id || "");
     setDataLoaded(true);
     hideLoader();
   };
@@ -231,14 +234,12 @@ const EditServicePage = () => {
         service_status: serviceStatus,
         service_requirements:
           requirements.length > 0 ? requirements : undefined,
-        service_details_1: detailsOne,
-        service_details_2: detailsTwo,
-        service_details_3: detailsThree,
+        service_details_1: detailsOne || null,
+        service_details_2: detailsTwo || null,
+        service_details_3: detailsThree || null,
       };
 
-      console.log("Update PayLoad:", payload);
-
-      const response = await updateService(id, payload);
+      const response = await updateService(serviceId, payload);
       if (response) {
         showToast.success("Service updated successfully!");
         navigate("/dashboard/admin/services");
