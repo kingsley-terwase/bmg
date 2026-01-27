@@ -24,3 +24,4 @@ export { default as ResourcesPage } from "./Resources";
 export { default as HowItWorksPage } from "./HowItWorks";
 export { default as PortfolioPage } from "./Portfolio";
 export { default as PricingPage } from "./Pricing";
+export { default as PersonaliseOrderPage } from "./PersonaliseOrderPage";

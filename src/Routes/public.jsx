@@ -10,7 +10,6 @@ import {
   LoginPage,
   RegisterPage,
   VerifyEmailPage,
-  OtpVerificationPage,
   ForgotPasswordPage,
   ResetPasswordPage,
   PasswordResetSuccessPage,
@@ -26,6 +25,7 @@ import {
   PricingPage,
   HowItWorksPage,
   PortfolioPage,
+  PersonaliseOrderPage,
 } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
@@ -76,6 +76,7 @@ const PublicRoutes = () => {
           <Route path="/video-generator" element={<AIVideoGeneratorPage />} />
           <Route path="/video-editor" element={<AIVideoEditor />} />
           <Route path="/business-strategy" element={<AIBizStrategy />} />
+          <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
           {/* <Route path="/sample" element={<Sample />} /> */}
         </Route>
       </Routes>
