@@ -140,7 +140,7 @@ const useCheckout = () => {
         payload,
         config,
       );
-      console.log("response.data:", response.data);
+
       // Check if the response indicates success
       if (response.data.success) {
         setSuccess(true);

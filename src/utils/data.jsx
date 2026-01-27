@@ -20,3 +20,30 @@ export const COUNTRY_CODES = [
     { code: "+39", country: "Italy", flag: "🇮🇹" },
     { code: "+7", country: "Russia", flag: "🇷🇺" },
 ];
+
+export const designOptions = [
+    {
+        id: 'celebration',
+        name: 'Celebration',
+        emoji: '🎉',
+        gradient: 'linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%)'
+    },
+    {
+        id: 'professional',
+        name: 'Professional',
+        emoji: '💼',
+        gradient: (theme) => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
+    },
+    {
+        id: 'birthday',
+        name: 'Birthday',
+        emoji: '🎂',
+        gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)'
+    },
+    {
+        id: 'thankyou',
+        name: 'Thank You',
+        emoji: '💝',
+        gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)'
+    },
+];
