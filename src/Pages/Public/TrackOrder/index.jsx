@@ -9,12 +9,13 @@ import ScrollToTop from '../../../Component/ScrollToTop'
 import BrandLoader from '../../../Component/BrandLoader'
 
 const ProcessOrderPage = () => {
-    const { id: hashedId, serviceName } = useParams();
+    const { id: hashedId, serviceName, serviceTypeId } = useParams();
     const serviceId = decodeServiceId(hashedId);
+    const service_type_id = decodeServiceId(serviceTypeId);
 
     // Use the existing hook with decoded ID
     const { service, loading } = useGetService(serviceId);
-    console.log("service:", service)
+
     return (
         <>
             <ScrollToTop />
@@ -33,7 +34,7 @@ const ProcessOrderPage = () => {
                     ]}
                     onSearch={(value) => console.log("Search Input:", value)}
                 />
-                {loading ? <BrandLoader /> : <OrderTracker service={service} />}
+                {loading ? <BrandLoader /> : <OrderTracker service={service} service_type_id={service_type_id} />}
             </Box>
         </>
     )

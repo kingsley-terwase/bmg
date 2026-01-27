@@ -152,6 +152,10 @@ const stripHtml = (html = "") => {
   return div.textContent || div.innerText || "";
 };
 
+const formatGHS = (amount) => {
+  return `GHS ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
 export {
   validateEmail,
   validatePassword,
@@ -165,4 +169,5 @@ export {
   decodeServiceId,
   resolveAwsImage,
   encodeServiceId,
+  formatGHS,
 };

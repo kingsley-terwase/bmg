@@ -135,9 +135,10 @@ export default function ServiceCategoryExplorer({ categories, page, setPage, tot
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis'
                                             }}
-                                        >
-                                            {category.description}
-                                        </Typography>
+                                            dangerouslySetInnerHTML={{
+                                                __html: category?.description
+                                            }}
+                                        />
 
                                         <Button
                                             variant="contained"

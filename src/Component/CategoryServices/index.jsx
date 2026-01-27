@@ -160,9 +160,9 @@ export default function CategoryServices() {
                             {service?.service_name}
                         </Typography>
 
-                        <Typography variant="caption" color="text.secondary">
-                            {service_type?.description?.slice(0, 60)}...
-                        </Typography>
+                        <Typography variant="caption" color="text.secondary" dangerouslySetInnerHTML={{
+                            __html: service_type?.description?.slice(0, 60) + "..."
+                        }} />
 
                         <Stack
                             direction="row"
@@ -267,9 +267,9 @@ export default function CategoryServices() {
                             {category.name} Services
                         </Typography>
 
-                        <Typography color="text.secondary">
-                            {category?.description}
-                        </Typography>
+                        <Typography color="text.secondary" dangerouslySetInnerHTML={{
+                            __html: category?.description
+                        }} />
 
                         {category.short_description && (
                             <Grid container spacing={2} sx={{ mt: 3 }}>

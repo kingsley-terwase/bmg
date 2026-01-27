@@ -11,7 +11,7 @@ export { default as ForgotPasswordPage } from "./Auth/ForgotPassword";
 export { default as ResetPasswordPage } from "./Auth/ResetPassword";
 export { default as PasswordResetSuccessPage } from "./Auth/SuccessPage";
 export { default as CheckoutPage } from "./Checkout";
-export { default as BlogPage } from "./Blog";
+export { default as BlogPage } from "./Blogs";
 export { default as BlogDetailPage } from "./BlogDetails";
 export { default as AIWebGeneratorPage } from "./AIWebgenerator";
 export { default as AISuitesPage } from "./AiSuites";

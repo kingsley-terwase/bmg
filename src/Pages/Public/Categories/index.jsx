@@ -13,6 +13,7 @@ import {
 import { Home24Regular } from '@fluentui/react-icons';
 import { useGetAllFAQ, useGetCategories } from '../../../Hooks/general';
 import BrandLoader from '../../../Component/BrandLoader';
+import ScrollToTop from '../../../Component/ScrollToTop';
 
 const CategoriesPage = () => {
   const [page, setPage] = useState(1);
@@ -22,11 +23,11 @@ const CategoriesPage = () => {
   const totalPages = Math.ceil(total / itemsPerPage);
 
   const { data: faqs, loading: faqLoading } = useGetAllFAQ()
-  console.log("faqs:", faqs)
 
   return (
     loading ? <BrandLoader /> :
       <Box sx={{ pt: 8 }}>
+        <ScrollToTop />
         <CategoryTabs />
         <BreadcrumbBar
           breadcrumbs={[

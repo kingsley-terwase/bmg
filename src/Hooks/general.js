@@ -3,6 +3,8 @@
 import axios from "axios";
 import { BASE_SERVER_URL } from "../Config/paths";
 import { useState, useEffect, useCallback } from "react";
+import { useUserContext } from "../Contexts";
+import { toast } from "react-toastify";
 
 const useGetAllPortfolio = (filters = {}) => {
   const [loading, setLoading] = useState(false);
@@ -208,9 +210,85 @@ const useGetAllFAQ = (page = 1, limit = 8) => {
   return { data, total, refetch: fetchData, loading };
 };
 
+const useGetBlogs = (page = 1, limit = 8) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BASE_SERVER_URL}/web/blogs`, {
+        params: { page, limit },
+      });
+
+      const result = response.data;
+
+      if (result.code === 0) {
+        // If backend returns nested structure with data and total
+        if (result.result.data) {
+          setData(result.result.data);
+          setTotal(result.result.total);
+        } else {
+          // Fallback for simple array response
+          setData(result.result);
+          setTotal(result.result.length);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit]);
+
+  return { data, total, refetch: fetchData, loading };
+};
+
+function useSubmitConsultation() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+
+  const submitConsultation = async (data) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/web/book/consultation`,
+        data,
+        config,
+      );
+
+      const result = response.data;
+      console.log("result res:", result);
+
+      if (result?.code === 0) {
+        toast.success(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      if (error?.response?.data?.code !== 0) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while updating service!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { submitConsultation, loading };
+}
+
 export {
   useGetAllPortfolio,
   useGetCategories,
   useGetCategoryServices,
   useGetAllFAQ,
+  useGetBlogs,
+  useSubmitConsultation,
 };

@@ -16,7 +16,7 @@ const PublicRoutes = () => {
                     <Route path="/category/:categoryId/:catName" element={<CategoryServices />} />
                     <Route path="/services" element={<ServicesPage />} />
                     <Route path="/service/:id/:serviceName" element={<ServiceDetailPage />} />
-                    <Route path="/process-order/:id/:serviceName" element={<ProcessOrderPage />} />
+                    <Route path="/process-order/:id/:serviceTypeId/:serviceName" element={<ProcessOrderPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/verify-email" element={<VerifyEmailPage />} />
@@ -24,7 +24,7 @@ const PublicRoutes = () => {
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/reset-success" element={<PasswordResetSuccessPage />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/blog" element={<BlogPage />} />
+                    <Route path="/blogs" element={<BlogPage />} />
                     <Route path="/blog/:id" element={<BlogDetailPage />} />
                     <Route path="/web-generator" element={<AIWebGeneratorPage />} />
                     <Route path="/ai-suites" element={<AISuitesPage />} />

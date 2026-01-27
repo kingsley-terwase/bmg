@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import React, { useState } from "react";
 import {
     Box,
@@ -7,23 +8,32 @@ import {
     Paper,
     Grid,
     Avatar,
-    useTheme,
     Checkbox,
     FormControlLabel,
     FormGroup,
     Chip,
 } from "@mui/material";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {
+    TextFields as TextFieldsIcon,
+    CheckBox as CheckBoxIcon,
+    RadioButtonChecked as RadioButtonCheckedIcon,
+    ArrowDropDownCircle as ArrowDropDownCircleIcon,
+    AttachFile as AttachFileIcon,
+    CheckCircle as CheckCircleIcon,
+    ChevronLeft as ChevronLeftIcon,
+    ChevronRight as ChevronRightIcon,
+    ShoppingCart as ShoppingCartIcon,
+} from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../Store/slices/cartSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { calculateServicePrice } from "../../Hooks/services";
 
-// No dummy data - all data comes from service prop
+// Price calculation utility
+const formatGHS = (amount) => {
+    return `GHS ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 
 // Icon mapping for input types
 const getInputIcon = (inputType) => {
@@ -37,8 +47,9 @@ const getInputIcon = (inputType) => {
     return iconMap[inputType] || <TextFieldsIcon />;
 };
 
-export default function OrderTracker({ service }) {
-    const theme = useTheme();
+export default function OrderTracker({ service, service_type_id }) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
@@ -54,6 +65,10 @@ export default function OrderTracker({ service }) {
         );
     }
 
+    // Find the selected service type index
+    const serviceTypeIndex = service.service_types?.findIndex(st => st.id === service_type_id) ?? 0;
+    const priceData = calculateServicePrice(service, serviceTypeIndex >= 0 ? serviceTypeIndex : 0);
+
     // Generate steps from requirements + review step
     const steps = [
         ...service.requirements.map((req, idx) => ({
@@ -64,7 +79,7 @@ export default function OrderTracker({ service }) {
             required: req.required,
             min: req.min,
             max: req.max,
-            options: req.requirement.options || [], // Get options from requirement or empty array
+            options: req.requirement.options || [],
         })),
         {
             id: service.requirements.length + 1,
@@ -123,6 +138,42 @@ export default function OrderTracker({ service }) {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleAddToCart = () => {
+        // Create cart item with service and form data
+        const cartItem = {
+            id: `${service.id}-${priceData.serviceType.id}-${Date.now()}`,
+            service_id: service.id,
+            service_type_id: priceData.serviceType.id,
+            name: service.service_name,
+            service_type_name: priceData.serviceType.service_type_name,
+            description: priceData.serviceType.description,
+            image: priceData.serviceType.service_type_image,
+            originalPrice: priceData.originalPrice,
+            finalPrice: priceData.finalPrice,
+            discountAmount: priceData.discountAmount,
+            hasDiscount: priceData.hasDiscount,
+            quantity: 1,
+            requirements: formData,
+            service_data: service,
+        };
+
+        // Dispatch to Redux
+        dispatch(addToCart(cartItem));
+
+        // Show success toast
+        toast.success(`${service.service_name} added to cart!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+
+        // Navigate to checkout page
+        navigate('/checkout');
+    };
+
     const renderStepContent = () => {
         const step = steps[currentStep - 1];
 
@@ -134,7 +185,7 @@ export default function OrderTracker({ service }) {
                             Review Your Information
                         </Typography>
                         <Typography color="text.secondary">
-                            Please confirm all details before proceeding to checkout
+                            Please confirm all details before adding to cart
                         </Typography>
                     </Box>
 
@@ -145,7 +196,8 @@ export default function OrderTracker({ service }) {
                                     elevation={0}
                                     sx={{
                                         p: 3,
-                                        border: `1px solid ${theme.palette.divider}`,
+                                        border: "1px solid",
+                                        borderColor: "divider",
                                         borderRadius: 2,
                                         height: "100%",
                                     }}
@@ -153,14 +205,14 @@ export default function OrderTracker({ service }) {
                                     <Box display="flex" alignItems="center" mb={1.5}>
                                         <Avatar
                                             sx={{
-                                                bgcolor: theme.palette.primary.light,
+                                                bgcolor: "primary.light",
                                                 width: 32,
                                                 height: 32,
                                                 mr: 1.5,
                                             }}
                                         >
                                             {React.cloneElement(reviewStep.icon, {
-                                                sx: { fontSize: 18, color: theme.palette.primary.main }
+                                                sx: { fontSize: 18, color: "primary.main" }
                                             })}
                                         </Avatar>
                                         <Typography fontWeight={600} color="text.secondary" fontSize={13}>
@@ -187,11 +239,48 @@ export default function OrderTracker({ service }) {
                         ))}
                     </Grid>
 
+                    {/* Price Display */}
+                    {priceData.finalPrice > 0 && (
+                        <Box mt={4} textAlign="center">
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 3,
+                                    border: "2px solid",
+                                    borderColor: "primary.main",
+                                    borderRadius: 2,
+                                    display: "inline-block",
+                                }}
+                            >
+                                {priceData.hasDiscount && (
+                                    <Box mb={1}>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{ textDecoration: "line-through", color: "text.disabled" }}
+                                        >
+                                            {formatGHS(priceData.originalPrice)}
+                                        </Typography>
+                                        <Chip
+                                            label={priceData.discountLabel}
+                                            size="small"
+                                            color="error"
+                                            sx={{ mt: 0.5 }}
+                                        />
+                                    </Box>
+                                )}
+                                <Typography variant="h5" fontWeight="bold" color="primary">
+                                    Total: {formatGHS(priceData.finalPrice)}
+                                </Typography>
+                            </Paper>
+                        </Box>
+                    )}
+
                     <Box mt={4} textAlign="center">
                         <Button
                             variant="contained"
                             size="large"
                             startIcon={<ShoppingCartIcon />}
+                            onClick={handleAddToCart}
                             sx={{
                                 px: 5,
                                 py: 1.5,
@@ -200,7 +289,7 @@ export default function OrderTracker({ service }) {
                                 fontWeight: 600,
                             }}
                         >
-                            Proceed to Checkout
+                            Add to Cart
                         </Button>
                     </Box>
                 </Box>
@@ -259,7 +348,8 @@ export default function OrderTracker({ service }) {
                             elevation={0}
                             sx={{
                                 p: 3,
-                                border: `1px solid ${errors[step.title] ? theme.palette.error.main : theme.palette.divider}`,
+                                border: "1px solid",
+                                borderColor: errors[step.title] ? "error.main" : "divider",
                                 borderRadius: 2,
                             }}
                         >
@@ -295,7 +385,8 @@ export default function OrderTracker({ service }) {
                             elevation={0}
                             sx={{
                                 p: 3,
-                                border: `1px solid ${errors[step.title] ? theme.palette.error.main : theme.palette.divider}`,
+                                border: "1px solid",
+                                borderColor: errors[step.title] ? "error.main" : "divider",
                                 borderRadius: 2,
                             }}
                         >
@@ -307,7 +398,10 @@ export default function OrderTracker({ service }) {
                                                 control={
                                                     <Checkbox
                                                         checked={formData[step.title] === option}
-                                                        onChange={() => setFormData({ ...formData, [step.title]: option })}
+                                                        onChange={() => {
+                                                            setFormData({ ...formData, [step.title]: option });
+                                                            setErrors({ ...errors, [step.title]: "" });
+                                                        }}
                                                     />
                                                 }
                                                 label={option}
@@ -337,7 +431,7 @@ export default function OrderTracker({ service }) {
                         {service.service_name} Service
                     </Typography>
                     <Typography color="text.secondary" fontSize={18}>
-                        Complete the form to get started with your order
+                        {priceData.serviceType?.service_type_name || "Complete the form to get started with your order"}
                     </Typography>
                 </Box>
 
@@ -352,7 +446,7 @@ export default function OrderTracker({ service }) {
                                 left: { xs: "5%", md: "10%" },
                                 right: { xs: "5%", md: "10%" },
                                 height: 3,
-                                bgcolor: theme.palette.grey[200],
+                                bgcolor: "grey.200",
                                 borderRadius: 2,
                             }}
                         />
@@ -364,7 +458,7 @@ export default function OrderTracker({ service }) {
                                 left: { xs: "5%", md: "10%" },
                                 height: 3,
                                 width: `${((currentStep - 1) / (steps.length - 1)) * (steps.length === 1 ? 0 : 80)}%`,
-                                bgcolor: theme.palette.primary.main,
+                                bgcolor: "primary.main",
                                 transition: "width 0.4s ease",
                                 borderRadius: 2,
                             }}
@@ -383,10 +477,10 @@ export default function OrderTracker({ service }) {
                                             width: { xs: 50, md: 60 },
                                             height: { xs: 50, md: 60 },
                                             bgcolor: done
-                                                ? theme.palette.success.main
+                                                ? "success.main"
                                                 : active
-                                                    ? theme.palette.primary.main
-                                                    : theme.palette.grey[300],
+                                                    ? "primary.main"
+                                                    : "grey.300",
                                             color: "#fff",
                                             transition: "all 0.3s ease",
                                             boxShadow: active ? 3 : 0,

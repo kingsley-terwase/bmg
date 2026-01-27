@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { calculateServicePrice } from "../../Hooks/services";
 import { formatGHS } from "../../utils/currency";
-import { resolveAwsImage } from "../../utils/functions";
+import { encodeServiceId, resolveAwsImage } from "../../utils/functions";
 
 export default function ServiceDetailSlider({ service, loading, error, hashedId }) {
     const navigate = useNavigate();
@@ -82,6 +82,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
             {service?.service_types?.map((service_type, i) => {
                 const { hasDiscount, finalPrice, discountLabel } = calculateServicePrice(service, i)
                 const isCenter = i === index;
+                const stId = encodeServiceId(service_type?.id)
 
                 return (
                     <Card
@@ -202,7 +203,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => navigate(`/process-order/${hashedId}/${service?.service_name
+                                onClick={() => navigate(`/process-order/${hashedId}/${stId}/${service?.service_name
                                     }`)}
                                 sx={{
                                     bgcolor: "#FBBF24",
@@ -219,7 +220,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => navigate(`/process-order/${hashedId}/${service?.service_name
+                                onClick={() => navigate(`/process-order/${hashedId}/${stId}/${service?.service_name
                                     }`)}
                                 sx={{
                                     bgcolor: "#000",

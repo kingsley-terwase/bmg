@@ -82,7 +82,7 @@ const BlogDetailPage = () => {
         .slice(0, 3);
 
     const handleBackClick = () => {
-        navigate('/blog');
+        navigate("/blogs");
     };
 
     const handleRelatedArticleClick = (relatedEncodedId) => {

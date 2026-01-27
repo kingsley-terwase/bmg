@@ -35,7 +35,6 @@ import { HeroSection } from '../Herosection';
 import ThemeToggleButton from '../ThemeToggleBtn';
 import PatnersLogo from '../PatnersLogo';
 import { FONT_FAMILY } from '../../Config/font';
-import { useCategories } from '../../Hooks/web_categories';
 import { useUserContext } from '../../Contexts';
 import MegaDropdown from './MegaDropdown';
 import MobileDropdown from './MobileDropdown';
@@ -50,7 +49,6 @@ const Header = () => {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState({});
 
-    const { categories, loading: categoriesLoading } = useCategories();
     const { user, cart } = useUserContext();
 
     const handleToggle = () => {
@@ -181,10 +179,7 @@ const Header = () => {
     const menuItems = [
         {
             label: 'Gigs',
-            path: '/category',
-            hasDropdown: true,
-            dropdownData: [], // Will use categories from API
-            isGigs: true // Flag to identify Gigs dropdown
+            path: '/categories',
         },
         { label: 'Services', path: '/services', hasDropdown: true, dropdownData: servicesData },
         { label: 'Portfolio', path: '/portfolio' },
@@ -303,8 +298,8 @@ const Header = () => {
                                             onMouseEnter={() => handleDropdownMouseEnter(item.label)}
                                             onMouseLeave={handleDropdownMouseLeave}
                                             isGigs={item.isGigs}
-                                            categories={categories}
-                                            categoriesLoading={categoriesLoading}
+                                            categories={[]}
+                                            categoriesLoading={false}
                                         />
                                     )}
                                 </Box>
@@ -330,7 +325,7 @@ const Header = () => {
 
                             {/* Cart Icon with Badge */}
                             <IconButton
-                                onClick={() => navigate('/cart')}
+                                onClick={() => navigate('/checkout')}
                                 sx={{
                                     position: 'relative',
                                     width: 35,
@@ -370,7 +365,7 @@ const Header = () => {
                                             boxShadow: `0 2px 8px ${theme.palette.primary.main}55`,
                                         }}
                                     >
-                                        2{cart.totalQuantity > 99 ? '99+' : cart.totalQuantity}
+                                        {cart.totalQuantity > 99 ? '99+' : cart.totalQuantity}
                                     </Box>
                                 )}
                             </IconButton>
@@ -487,8 +482,8 @@ const Header = () => {
                                     onToggle={() => handleMobileDropdownToggle(item.label)}
                                     onNavigate={handleMobileNavigate}
                                     isGigs={item.isGigs}
-                                    categories={categories}
-                                    categoriesLoading={categoriesLoading}
+                                    categories={[]}
+                                    categoriesLoading={false}
                                 />
                             ) : (
                                 <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
