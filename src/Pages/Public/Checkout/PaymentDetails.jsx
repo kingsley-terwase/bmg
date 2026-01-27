@@ -7,17 +7,41 @@ import {
     CardContent,
     Divider,
     Paper,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import {
     LocalOffer as TagIcon,
 } from '@mui/icons-material';
 import { formatGHS } from '../../../utils/currency';
+import { useNavigate } from 'react-router-dom';
+import useCheckout from '../../../Hooks/cart';
 
 const PaymentDetailsSection = ({ cartItems }) => {
-    const [couponCode, setCouponCode] = useState('');
+    const navigate = useNavigate();
 
-    const handleApplyCoupon = () => {
-        console.log('Applying coupon:', couponCode);
+    const [couponCode, setCouponCode] = useState('');
+    const [giftCardCode, setGiftCardCode] = useState('');
+    const { loading, error, success, validationErrors, initiateCheckout, resetCheckout } = useCheckout();
+
+    const handleCheckout = async () => {
+        const result = await initiateCheckout(cartItems, couponCode, giftCardCode);
+
+        if (!result.success) {
+            // Error is already set in the hook
+            console.error('Checkout failed:', result.error);
+            if (result.validationErrors) {
+                console.error('Validation errors:', result.validationErrors);
+            }
+        }
+        // If successful, user will be redirected to payment page
+    };
+
+    const handleCancel = () => {
+        setCouponCode('');
+        setGiftCardCode('');
+        resetCheckout();
+        navigate('/')
     };
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0);
@@ -49,7 +73,77 @@ const PaymentDetailsSection = ({ cartItems }) => {
             </Box>
 
             <CardContent sx={{ p: 3 }}>
+                {/* Error Alert */}
+                {error && (
+                    <Alert
+                        severity="error"
+                        sx={{ mb: 2 }}
+                        onClose={resetCheckout}
+                    >
+                        {error}
+                    </Alert>
+                )}
+
+                {/* Validation Errors */}
+                {validationErrors.length > 0 && (
+                    <Alert
+                        severity="warning"
+                        sx={{ mb: 2 }}
+                        onClose={resetCheckout}
+                    >
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                            Please fix the following issues:
+                        </Typography>
+                        <Box component="ul" sx={{ m: 0, pl: 2 }}>
+                            {validationErrors.map((err, idx) => (
+                                <li key={idx}>
+                                    <Typography variant="body2">{err}</Typography>
+                                </li>
+                            ))}
+                        </Box>
+                    </Alert>
+                )}
+
+                {/* Success Alert */}
+                {success && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                        Redirecting to payment...
+                    </Alert>
+                )}
+
                 {/* Coupon Code */}
+                <Box sx={{ mb: 2 }}>
+                    <Typography
+                        variant="subtitle2"
+                        sx={{
+                            fontWeight: 600,
+                            mb: 1.5,
+                            color: 'text.primary',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                        }}
+                    >
+                        <TagIcon style={{ fontSize: '18px' }} />
+                        Coupon Code
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        size="small"
+                        placeholder="Enter coupon code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                        disabled={loading}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                                bgcolor: 'background.default',
+                            },
+                        }}
+                    />
+                </Box>
+
+                {/* Gift Card Code */}
                 <Box sx={{ mb: 3 }}>
                     <Typography
                         variant="subtitle2"
@@ -63,40 +157,22 @@ const PaymentDetailsSection = ({ cartItems }) => {
                         }}
                     >
                         <TagIcon style={{ fontSize: '18px' }} />
-                        Coupon/Gift Code
+                        Gift Card Code
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            placeholder="Enter coupon code"
-                            value={couponCode}
-                            onChange={(e) => setCouponCode(e.target.value)}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    borderRadius: 2,
-                                    bgcolor: 'background.default',
-                                },
-                            }}
-                        />
-                        <Button
-                            variant="contained"
-                            onClick={handleApplyCoupon}
-                            sx={{
-                                textTransform: 'none',
+                    <TextField
+                        fullWidth
+                        size="small"
+                        placeholder="Enter gift card code"
+                        value={giftCardCode}
+                        onChange={(e) => setGiftCardCode(e.target.value)}
+                        disabled={loading}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
                                 borderRadius: 2,
-                                px: 3,
-                                fontWeight: 600,
-                                bgcolor: 'warning.main',
-                                color: 'warning.contrastText',
-                                '&:hover': {
-                                    bgcolor: 'warning.dark',
-                                },
-                            }}
-                        >
-                            Apply
-                        </Button>
-                    </Box>
+                                bgcolor: 'background.default',
+                            },
+                        }}
+                    />
                 </Box>
 
                 <Divider sx={{ my: 2.5 }} />
@@ -124,68 +200,6 @@ const PaymentDetailsSection = ({ cartItems }) => {
                             }}
                         >
                             {cartItems.length}
-                        </Typography>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
-                            sx={{ color: 'text.secondary' }}
-                        >
-                            Coupon code{' '}
-                            <Typography
-                                component="span"
-                                variant="caption"
-                                sx={{ color: 'text.disabled' }}
-                            >
-                                (Not Applied)
-                            </Typography>
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontWeight: 600,
-                                color: 'text.primary',
-                            }}
-                        >
-                            0
-                        </Typography>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
-                            sx={{ color: 'text.secondary' }}
-                        >
-                            Gift Code{' '}
-                            <Typography
-                                component="span"
-                                variant="caption"
-                                sx={{ color: 'text.disabled' }}
-                            >
-                                (Not Applied)
-                            </Typography>
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontWeight: 600,
-                                color: 'text.primary',
-                            }}
-                        >
-                            0
                         </Typography>
                     </Box>
 
@@ -286,6 +300,8 @@ const PaymentDetailsSection = ({ cartItems }) => {
                         fullWidth
                         variant="contained"
                         size="large"
+                        onClick={handleCheckout}
+                        disabled={loading || cartItems.length === 0}
                         sx={{
                             textTransform: 'none',
                             fontWeight: 600,
@@ -298,14 +314,24 @@ const PaymentDetailsSection = ({ cartItems }) => {
                                 bgcolor: 'warning.dark',
                                 boxShadow: '0 6px 20px rgba(237, 108, 2, 0.5)',
                             },
+                            '&:disabled': {
+                                bgcolor: 'action.disabledBackground',
+                                color: 'action.disabled',
+                            },
                         }}
                     >
-                        Pay Now
+                        {loading ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            'Pay Now'
+                        )}
                     </Button>
                     <Button
                         fullWidth
                         variant="outlined"
                         size="large"
+                        onClick={handleCancel}
+                        disabled={loading}
                         sx={{
                             textTransform: 'none',
                             fontWeight: 600,
@@ -324,8 +350,7 @@ const PaymentDetailsSection = ({ cartItems }) => {
                 </Box>
             </CardContent>
         </Paper>
-    )
-}
+    );
+};
 
 export default PaymentDetailsSection;
-

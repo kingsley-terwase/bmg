@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../../Contexts";
 import { getTimeGreeting, getFormattedDate } from "../../../utils/functions";
 import CreditBox from "./CreditBox";
+import { useLogout } from "../../../Hooks/auth";
 
 function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +26,7 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
 
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const handleUserLogout = useLogout()
   const userInfo = user?.user;
 
   const handleSettingsClick = (event) => {
@@ -43,8 +45,8 @@ function NavBar({ sideNavWidth, layoutPadding, navHeight, onMenuClick }) {
     setNotificationsAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    console.log("Logout clicked");
+  const handleLogout = async () => {
+    await handleUserLogout();
     handleMenuClose();
     navigate("/login");
   };

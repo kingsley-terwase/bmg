@@ -22,7 +22,6 @@ const OrderItemsSection = ({ cartItems }) => {
         dispatch(removeFromCart(id));
     };
 
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {cartItems.map((item) => (
@@ -153,9 +152,10 @@ const OrderItemsSection = ({ cartItems }) => {
                                             lineHeight: 1.6,
                                             mb: 2,
                                         }}
-                                    >
-                                        {item.description}
-                                    </Typography>
+                                        dangerouslySetInnerHTML={{
+                                            __html: item.description
+                                        }}
+                                    />
                                 )}
 
                                 {/* Requirements Summary */}

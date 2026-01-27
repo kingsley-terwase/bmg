@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Store/slices/userSlice";
 import { showToast } from "../utils/toast";
 import { useUserContext } from "../Contexts";
+import { logoutUser } from "../Store/slices/userSlice";
 
 function useRegister() {
   return async (data) => {
@@ -242,6 +243,7 @@ const useResendOTP = () => {
 
 function useLogout() {
   const { config } = useUserContext();
+  const dispatch = useDispatch();
 
   return async () => {
     try {
@@ -252,13 +254,13 @@ function useLogout() {
       );
 
       const result = response?.data;
-      console.log("Logout Response:", result);
-
+      dispatch(logoutUser());
       if (result.code === 0) {
         return true;
       }
       return false;
     } catch (error) {
+      dispatch(logoutUser());
       const errorMessage =
         error?.response?.data?.message || "Logout failed, please try again.";
 
