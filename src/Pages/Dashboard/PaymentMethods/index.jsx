@@ -14,7 +14,7 @@ import { headers } from "./data";
 import { AddOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useFetchPayMethods } from "../../../Hooks/Dashboard/payment_methods";
-import { formatDate, truncateText } from "../../../utils/functions";
+import { formatDate, truncateText, stripHtml } from "../../../utils/functions";
 import SingleMethodModal from "./single";
 
 const PaymentsMethodsPage = () => {
@@ -49,7 +49,7 @@ const PaymentsMethodsPage = () => {
           {
             label: "Add Payment Method",
             icon: <AddOutlined />,
-            onClick: () => navigate("/dashboard/admin/add/payment-method"),
+            onClick: () => navigate("/dashboard/admin/payment-method/add"),
           },
         ]}
       />
@@ -83,7 +83,7 @@ const PaymentsMethodsPage = () => {
                   }}
                 >
                   <Typography variant="body2" title={row.description}>
-                    {truncateText(row.description, 80)}
+                    {truncateText(stripHtml(row.description), 80)}
                   </Typography>
                 </TableCell>
                 <TableCell>{formatDate(row.created_at)}</TableCell>

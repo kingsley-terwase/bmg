@@ -1,13 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  Box,
-  Input,
-  Stack,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Grid, Box, Input, Stack, Switch, Typography } from "@mui/material";
 import {
   VisibilityOutlined,
   ArrowBackOutlined,
@@ -19,7 +12,7 @@ import {
   CustomButton,
   PagesHeader,
   UploadMedia,
-  RichTextEditor
+  RichTextEditor,
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { showToast } from "../../../utils/toast";
@@ -66,7 +59,12 @@ const EditPaymentMethod = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  console.log("logog", form.logo);
+  const handleDescriptionChange = (data) => {
+    setForm((prev) => ({
+      ...prev,
+      description: data,
+    }));
+  };
 
   const handleSubmit = async () => {
     if (!form.name.trim() || !form.code.trim() || !form.description.trim()) {
@@ -84,17 +82,12 @@ const EditPaymentMethod = () => {
         typeof logoToSubmit === "string" &&
         !logoToSubmit.startsWith("data:")
       ) {
-        console.log("Converting URL to base64...");
         logoToSubmit = await urlToBase64(logoToSubmit);
       }
-      console.log("logog submitting", logoToSubmit);
-
       const payload = {
         ...form,
         logo: logoToSubmit,
       };
-
-      console.log("Payload to submit:", payload);
 
       const result = await updatePayMethod(payload, data.id);
 
@@ -167,8 +160,8 @@ const EditPaymentMethod = () => {
                 <InputLabel text="Service Type Description" />
                 <RichTextEditor
                   value={form.description}
-                  onChange={handleChange("description")}
-                  placeholder="Enter service type description..."
+                  onChange={handleDescriptionChange}
+                  placeholder="Enter description..."
                 />
 
                 <Box sx={statusBox}>

@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Box,
-  Input,
-  Stack,
-  TextField,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Grid, Box, Input, Stack, Switch, Typography } from "@mui/material";
 import {
   AddOutlined,
   DeleteOutlined,
@@ -19,6 +11,7 @@ import {
   CustomButton,
   PagesHeader,
   UploadMedia,
+  RichTextEditor
 } from "../../../Component";
 import { styles } from "../../../styles/dashboard";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +19,7 @@ import { useAddPayMethods } from "../../../Hooks/Dashboard/payment_methods";
 import { showToast } from "../../../utils/toast";
 import { useLoader } from "../../../Contexts/LoaderContext";
 
-const AddPaymentMethods = () => {
+const AddPaymentMethod = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [logo, setLogo] = useState("");
@@ -78,7 +71,6 @@ const AddPaymentMethods = () => {
         label="Add Pament Method"
         desc="Add payment method. Go to view payment methods to manage available methods"
         searchEnabled={false}
-        placeholder={"Search blogs..."}
         actions={[
           {
             label: "View Payment Methods",
@@ -151,15 +143,10 @@ const AddPaymentMethods = () => {
                   </Grid>
                   <Grid size={{ xs: 12, md: 12 }}>
                     <InputLabel text="Description" />
-                    <TextField
-                      id="content"
-                      multiline
-                      rows={7}
-                      disableUnderline
-                      fullWidth
-                      placeholder="Describe payment method..."
+                    <RichTextEditor
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={setDescription}
+                      placeholder="Describe payment method...."
                     />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
@@ -200,7 +187,7 @@ const AddPaymentMethods = () => {
                       maxSize={2}
                       onFilesChange={setLogo}
                       acceptedFormats={["jpg", "png", "jpeg", "svg", "zip"]}
-                      title="Category Image Upload"
+                      title="Upload Payment Method Logo"
                       description="Add your documents here, and you can upload max of 1 file only"
                     />
                   </Grid>
@@ -252,4 +239,4 @@ const AddPaymentMethods = () => {
   );
 };
 
-export default AddPaymentMethods;
+export default AddPaymentMethod;

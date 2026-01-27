@@ -439,7 +439,7 @@ const AddServicePage = () => {
                     <InputLabel text="Service Detail one" />
                     <RichTextEditor
                       value={detailsOne}
-                      onChange={(e) => setDetailsOne(e.target.value)}
+                      onChange={setDetailsOne}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"
@@ -449,7 +449,7 @@ const AddServicePage = () => {
                     <InputLabel text="Service Detail Two" />
                     <RichTextEditor
                       value={detailsTwo}
-                      onChange={(e) => setDetailsTwo(e.target.value)}
+                      onChange={setDetailsTwo}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"
@@ -459,7 +459,7 @@ const AddServicePage = () => {
                     <InputLabel text="Service Detail Three" />
                     <RichTextEditor
                       value={detailsThree}
-                      onChange={(e) => setDetailsThree(e.target.value)}
+                      onChange={setDetailsThree}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"

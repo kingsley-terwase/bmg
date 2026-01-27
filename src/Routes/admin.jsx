@@ -46,7 +46,7 @@ import {
   SubscriptionsPage,
   AdminPermissions,
   PaymentsMethodsPage,
-  AddPaymentMethods,
+  AddPaymentMethod,
   EditPaymentMethod,
   ServiceTypesPage,
   AddServiceTypePage,
@@ -129,7 +129,7 @@ const AdminRoutes = () => {
       <Route path="admin/add/currency" element={<AddCurrency />} />
       <Route path="manage/admin-permissions" element={<AdminPermissions />} />
       <Route path="manage/payment-methods" element={<PaymentsMethodsPage />} />
-      <Route path="admin/add/payment-method " element={<AddPaymentMethods />} />
+      <Route path="admin/payment-method/add" element={<AddPaymentMethod />} />
       <Route
         path="admin/payment-methods/edit"
         element={<EditPaymentMethod />}

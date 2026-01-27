@@ -33,7 +33,7 @@ const EditCategoryFaqModal = ({
 }) => {
   const updateFaq = useUpdateCategoryFaq();
   const { faqData, getFaqData } = useGetCategoryFaq();
-  const { refetch } = useFetchCategoryFaqs;
+  const { refetch } = useFetchCategoryFaqs();
   const [loading, setLoading] = useState(false);
   const { categories } = useFetchCategories();
 
@@ -59,7 +59,6 @@ const EditCategoryFaqModal = ({
     }
   }, [faqData]);
 
-  // Handler for regular inputs (Input, Select, Switch)
   const handleChange = (field) => (e) => {
     const value = field === "is_active" ? e.target.checked : e.target.value;
     setForm((prev) => ({
@@ -208,7 +207,9 @@ const EditCategoryFaqModal = ({
                 title={loading ? "Updating..." : "Update FAQ"}
                 color="primary"
                 variant="filled"
-                startIcon={loading ? <CircularProgress size={20} /> : <UpgradeOutlined />}
+                startIcon={
+                  loading ? <CircularProgress size={20} /> : <UpgradeOutlined />
+                }
                 disabled={loading}
                 onClick={handleSubmit}
                 sx={{ textTransform: "none", px: 4 }}

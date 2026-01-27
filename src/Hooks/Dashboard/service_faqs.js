@@ -75,7 +75,7 @@ function useGetServiceFaq() {
   const { config } = useUserContext();
   const [faqData, setFaqData] = useState(null);
 
-  const getMethod = async (faqId) => {
+  const getFaqData = async (faqId) => {
     if (!faqId) {
       console.error("No FAQ ID provided");
       return;
@@ -103,7 +103,7 @@ function useGetServiceFaq() {
     }
   };
 
-  return { faqData, loading, getMethod };
+  return { faqData, loading, getFaqData };
 }
 
 const useUpdateServiceFaq = () => {

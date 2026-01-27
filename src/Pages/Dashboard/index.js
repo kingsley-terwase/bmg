@@ -45,7 +45,7 @@ export { default as AddIndustries } from "./Industries/add";
 export { default as SupportPage } from "./Support";
 export { default as AdminPermissions } from "./RolesPermissions/admin-permissions";
 export { default as PaymentsMethodsPage } from "./PaymentMethods";
-export { default as AddPaymentMethods } from "./PaymentMethods/add";
+export { default as AddPaymentMethod } from "./PaymentMethods/add";
 export { default as ServiceTypesPage } from "./ServiceTypes";
 export { default as AddServiceTypePage } from "./ServiceTypes/add";
 export { default as AddSubscriptionPage } from "./Subscriptions/add";

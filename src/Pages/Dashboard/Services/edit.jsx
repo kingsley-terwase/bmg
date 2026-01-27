@@ -12,6 +12,7 @@ import {
   MenuItem,
   Select,
   Collapse,
+  Skeleton,
 } from "@mui/material";
 import {
   AddOutlined,
@@ -68,7 +69,7 @@ const EditServicePage = () => {
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  const updateService = useUpdateService();
+  const { updateService } = useUpdateService();
   const { serviceData, getService } = useGetService();
   const { categories } = useFetchCategories();
   const { subCat } = useFetchSubCategories();
@@ -279,8 +280,14 @@ const EditServicePage = () => {
 
   if (!dataLoaded) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Typography>Loading service data...</Typography>
+      <Box sx={{ p: 4 }}>
+        <Skeleton variant="rectangular" height={220} />
+        <Skeleton height={40} sx={{ mt: 3 }} />
+        <Skeleton height={80} sx={{ mt: 2 }} />
+        <Stack direction={"row"} spacing={2} sx={{ mt: 4 }}>
+          <Skeleton variant="rectangular" width={"50%"} height={150} />
+          <Skeleton variant="rectangular" width={"50%"} height={150} />
+        </Stack>
       </Box>
     );
   }
@@ -491,7 +498,7 @@ const EditServicePage = () => {
                     <InputLabel text="Service Detail One" />
                     <RichTextEditor
                       value={detailsOne}
-                      onChange={(e) => setDetailsOne(e.target.value)}
+                      onChange={setDetailsOne}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"
@@ -501,7 +508,7 @@ const EditServicePage = () => {
                     <InputLabel text="Service Detail Two" />
                     <RichTextEditor
                       value={detailsTwo}
-                      onChange={(e) => setDetailsTwo(e.target.value)}
+                      onChange={setDetailsTwo}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"
@@ -511,7 +518,7 @@ const EditServicePage = () => {
                     <InputLabel text="Service Detail Three" />
                     <RichTextEditor
                       value={detailsThree}
-                      onChange={(e) => setDetailsThree(e.target.value)}
+                      onChange={setDetailsThree}
                       placeholder="Enter service type description..."
                       minHeight="100px"
                       maxHeight="200px"
@@ -777,7 +784,7 @@ const EditServicePage = () => {
                 <Stack direction="row" gap={2}>
                   <CustomButton
                     title="Cancel"
-                    color="inherit"
+                    color="danger"
                     variant="outlined"
                     startIcon={<CloseOutlined />}
                     onClick={handleCancel}
