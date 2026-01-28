@@ -13,7 +13,7 @@ import { useState } from "react";
 import styles, { buttonStyles } from "./style";
 import FilePicker from "./FilePicker";
 import { useNavigate, useParams } from "react-router-dom";
-import { decodeServiceId, deslugify } from "../../../../utils/functions";
+import { convertFileToBase64, decodeServiceId, deslugify, resolveAwsImage } from "../../../../utils/functions";
 import { useGetService, calculateServicePrice } from "../../../../Hooks/services";
 import { useUserContext } from "../../../../Contexts";
 import useCheckout from "../../../../Hooks/cart";
@@ -80,6 +80,18 @@ export default function Order() {
       return;
     }
 
+    // Convert file to base64 if attachment exists
+    let attachmentData = null;
+    if (attachment) {
+      try {
+        attachmentData = await convertFileToBase64(attachment);
+      } catch (error) {
+        toast.error("Failed to process attachment");
+        console.error("File conversion error:", error);
+        return;
+      }
+    }
+
     const serviceType = service.service_types?.find(st => st.id === Number(serviceTypeId)) || {
       id: service.id,
       service_type_name: "Custom Order",
@@ -96,7 +108,7 @@ export default function Order() {
       name: service.service_name,
       service_type_name: serviceType.service_type_name,
       description: serviceType.description || "Custom Order",
-      image: serviceType.service_type_image,
+      image: resolveAwsImage(serviceType.service_type_image),
       originalPrice: priceData.originalPrice,
       finalPrice: priceData.finalPrice,
       discountAmount: priceData.discountAmount,
@@ -104,7 +116,7 @@ export default function Order() {
       quantity: 1,
       requirements: {
         description: description.trim(),
-        attachment: attachment ? attachment.name : null,
+        attachment: attachmentData, // Now includes base64, fileName, fileType, fileSize
       },
       service_data: service,
     };

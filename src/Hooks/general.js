@@ -327,6 +327,48 @@ function useBuyGiftCard() {
   return { buyGiftCard, loading };
 }
 
+function useVerifyPaystackTxn() {
+  const [loading, setLoading] = useState(false);
+  const { config } = useUserContext();
+
+  /**
+   * Purchases a gift card with the provided data
+   * @param {object} data - Gift card purchase data
+   * @returns {Promise<object|boolean>} Response data on success, false on error
+   */
+  const verifyPaystackTxn = async (txnReference) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${BASE_SERVER_URL}/user/verify/payment/${txnReference}`,
+        {},
+        config,
+      );
+
+      const result = response.data;
+      console.log("result:", result);
+      if (result?.code === 0) {
+        toast.success(result.message);
+        return response;
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error:", error.response?.data);
+      if (error?.response?.data?.code !== 0) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while purchasing gift card!");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { verifyPaystackTxn, loading };
+}
+
 export {
   useGetAllPortfolio,
   useGetCategories,
@@ -335,4 +377,5 @@ export {
   useGetBlogs,
   useSubmitConsultation,
   useBuyGiftCard,
+  useVerifyPaystackTxn,
 };

@@ -173,6 +173,37 @@ function deslugify(slug) {
     .replace(/\b\w/g, char => char.toUpperCase());
 }
 
+// Add this function at the top of your component or in a separate utils file
+const convertFileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      // Keep the full data URL (includes the prefix)
+      const dataUrl = reader.result;
+      const base64String = dataUrl.split(',')[1];
+
+      resolve({
+        base64: base64String,
+        dataUrl: dataUrl, // Add this for compatibility with other functions
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+      });
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
 
 export {
   validateEmail,
@@ -189,5 +220,6 @@ export {
   encodeServiceId,
   formatGHS,
   slugify,
-  deslugify
+  deslugify,
+  convertFileToBase64
 };

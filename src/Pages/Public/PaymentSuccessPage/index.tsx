@@ -1,11 +1,32 @@
+// PaymentSuccessPage.jsx
 import { Box, Button, Stack, useTheme } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./style";
 import Header from "./Header";
-
 import Details from "./Details";
 
 export default function PaymentSuccessPage() {
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get transaction data from navigation state
+  const { transaction, paystackData } = location.state || {};
+
+  // If no data, redirect back
+  if (!transaction || !paystackData) {
+    navigate("/");
+    return null;
+  }
+
+  const handleDownloadReceipt = () => {
+    // Implement receipt download logic
+    console.log("Downloading receipt for transaction:", transaction.id);
+  };
+
+  const handleGoBack = () => {
+    navigate("/");
+  };
 
   return (
     <Box sx={styles.wrap}>
@@ -21,10 +42,11 @@ export default function PaymentSuccessPage() {
         ]}
       >
         <Header />
-        <Details />
+        <Details paystackData={paystackData} />
         <Stack gap="8px">
           <Button
             variant="contained"
+            onClick={handleDownloadReceipt}
             sx={[
               styles.button,
               {
@@ -40,6 +62,7 @@ export default function PaymentSuccessPage() {
           </Button>
           <Button
             variant="contained"
+            onClick={handleGoBack}
             sx={[
               styles.button,
               {
