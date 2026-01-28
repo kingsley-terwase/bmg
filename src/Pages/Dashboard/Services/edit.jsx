@@ -47,6 +47,7 @@ const EditServicePage = () => {
   const [serviceName, setServiceName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [subCatId, setSubCatId] = useState("");
+  const [serviceId, setServiceId] = useState("");
   const [serviceStatus, setServiceStatus] = useState(true);
   const [attributes, setAttributes] = useState([]);
   const [currentAttribute, setCurrentFeature] = useState("");
@@ -103,6 +104,7 @@ const EditServicePage = () => {
     setDetailsTwo(data.service_details_2 || "");
     setDetailsThree(data.service_details_3 || "");
     setDataLoaded(true);
+    setServiceId(data?.id)
     hideLoader();
   };
 
@@ -235,14 +237,12 @@ const EditServicePage = () => {
         service_status: serviceStatus,
         service_requirements:
           requirements.length > 0 ? requirements : undefined,
-        service_details_1: detailsOne,
-        service_details_2: detailsTwo,
-        service_details_3: detailsThree,
+        service_details_1: detailsOne || null,
+        service_details_2: detailsTwo || null,
+        service_details_3: detailsThree || null,
       };
 
-      console.log("Update PayLoad:", payload);
-
-      const response = await updateService(id, payload);
+      const response = await updateService(serviceId, payload);
       if (response) {
         showToast.success("Service updated successfully!");
         navigate("/dashboard/admin/services");

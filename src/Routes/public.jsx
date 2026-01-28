@@ -79,7 +79,7 @@ const PublicRoutes = () => {
                     <Route path="/video-generator" element={<AIVideoGeneratorPage />} />
                     <Route path="/video-editor" element={<AIVideoEditor />} />
                     <Route path="/business-strategy" element={<AIBizStrategy />} />
-                    <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
+                    <Route path="/order/personalise/:id/:serviceTypeId/:serviceName" element={<PersonaliseOrderPage />} />
                     <Route path="/process-payment" element={<ProcessPaymentPage />} />
                     <Route path="/payment/success" element={<PaymentSuccessPage />} />
                     <Route path="/payment/fail" element={<PaymentFailPage />} />

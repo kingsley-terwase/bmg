@@ -29,7 +29,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { calculateServicePrice, useGetServices } from "../../Hooks/services";
 import { formatGHS } from "../../utils/currency";
-import { encodeServiceId, resolveAwsImage } from "../../utils/functions";
+import { encodeServiceId, resolveAwsImage, slugify } from "../../utils/functions";
 import BrandLoader from "../BrandLoader";
 
 const ITEMS_PER_PAGE = 8;
@@ -195,7 +195,7 @@ export default function ServicesGrid() {
                                         <CardActions sx={{ pb: 2, px: 2 }}>
                                             <Button
                                                 onClick={() =>
-                                                    navigate(`/service/${encodeServiceId(service.id)}/${service?.service_name}`)
+                                                    navigate(`/service/${encodeServiceId(service.id)}/${slugify(service?.service_name)}`)
                                                 }
                                                 fullWidth
                                                 variant="contained"

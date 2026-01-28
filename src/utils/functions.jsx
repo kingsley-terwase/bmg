@@ -156,6 +156,24 @@ const formatGHS = (amount) => {
   return `GHS ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_]+/g, "-")        // spaces & underscores → -
+    .replace(/[^\w-]+/g, "")        // remove non-word chars
+    .replace(/--+/g, "-");          // collapse multiple -
+}
+
+function deslugify(slug) {
+  return slug
+    .toString()
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+
 export {
   validateEmail,
   validatePassword,
@@ -170,4 +188,6 @@ export {
   resolveAwsImage,
   encodeServiceId,
   formatGHS,
+  slugify,
+  deslugify
 };

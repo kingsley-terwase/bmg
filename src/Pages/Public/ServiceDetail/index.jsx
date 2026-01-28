@@ -26,7 +26,7 @@ import {
 } from '@fluentui/react-icons';
 
 import { ServicesData } from '../Services/data';
-import { decodeServiceId } from '../../../utils/functions';
+import { decodeServiceId, deslugify } from '../../../utils/functions';
 import { useGetService } from '../../../Hooks/services';
 import { useGetAllPortfolio } from '../../../Hooks/general';
 
@@ -39,7 +39,7 @@ const ServiceDetailPage = () => {
     const faqs = service?.service_faqs
 
     const [selectedServiceType, setSelectedServiceType] = useState('');
-    console.log("service:", service)
+
     const serviceTypeOptions = serviceTypes.map(serviceType => ({
         value: serviceType.id.toString(),
         label: serviceType.service_type_name,
@@ -53,7 +53,7 @@ const ServiceDetailPage = () => {
                 breadcrumbs={[
                     { label: "Home", href: "/", icon: <Home24Regular /> },
                     { label: "Category", href: "#" },
-                    { label: serviceName, href: "#" },
+                    { label: deslugify(serviceName), href: "#" },
                 ]}
                 suggestions={[
                     "AI Logo Maker",

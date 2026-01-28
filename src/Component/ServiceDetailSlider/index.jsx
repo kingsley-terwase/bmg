@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { calculateServicePrice } from "../../Hooks/services";
 import { formatGHS } from "../../utils/currency";
-import { encodeServiceId, resolveAwsImage } from "../../utils/functions";
+import { encodeServiceId, resolveAwsImage, slugify } from "../../utils/functions";
 
 export default function ServiceDetailSlider({ service, loading, error, hashedId }) {
     const navigate = useNavigate();
@@ -98,7 +98,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                         sx={{
                             position: "absolute",
                             top: 20,
-                            left: "50%",
+                            left: "20%",
                             transform: "translateX(-50%)",
                             width: 460,
                             height: 'auto',
@@ -203,8 +203,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => navigate(`/process-order/${hashedId}/${stId}/${service?.service_name
-                                    }`)}
+                                onClick={() => navigate(`/process-order/${hashedId}/${stId}/${slugify(service?.service_name)}`)}
                                 sx={{
                                     bgcolor: "#FBBF24",
                                     color: "#000",
@@ -220,8 +219,7 @@ export default function ServiceDetailSlider({ service, loading, error, hashedId 
                             <Button
                                 fullWidth
                                 variant="contained"
-                                onClick={() => navigate(`/process-order/${hashedId}/${stId}/${service?.service_name
-                                    }`)}
+                                onClick={() => navigate(`/order/personalise/${hashedId}/${stId}/${slugify(service_type?.service_type_name)}`)}
                                 sx={{
                                     bgcolor: "#000",
                                     color: "#fff",
