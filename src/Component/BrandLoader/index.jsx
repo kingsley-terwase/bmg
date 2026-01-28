@@ -54,7 +54,7 @@ const BrandLoader = ({ message = "Loading..." }) => {
             {/* Loading text */}
             <div style={{
                 marginTop: '20px',
-                color: '#ffffff',
+                color: '#080c96ff',
                 fontSize: '14px',
                 fontWeight: '400',
                 fontFamily: 'system-ui, -apple-system, sans-serif',

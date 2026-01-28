@@ -1,33 +1,34 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import {
-  CategoriesPage,
-  AboutUsPage,
-  HomePage,
-  ServicesPage,
-  AISuitesPage,
-  ServiceDetailPage,
-  ProcessOrderPage,
-  LoginPage,
-  RegisterPage,
-  VerifyEmailPage,
-  ForgotPasswordPage,
-  ResetPasswordPage,
-  PasswordResetSuccessPage,
-  CheckoutPage,
-  BlogPage,
-  BlogDetailPage,
-  AIWebGeneratorPage,
-  PrivacyPolicyPage,
-  TermsConditionsPage,
-  ContactUsPage,
-  GiftVoucherPage,
-  ResourcesPage,
-  PricingPage,
-  HowItWorksPage,
-  PortfolioPage,
-  PersonaliseOrderPage,
-  PaymentSuccessPage,
-  PaymentFailPage,
+    CategoriesPage,
+    AboutUsPage,
+    HomePage,
+    ServicesPage,
+    AISuitesPage,
+    ServiceDetailPage,
+    ProcessOrderPage,
+    LoginPage,
+    RegisterPage,
+    VerifyEmailPage,
+    ForgotPasswordPage,
+    ResetPasswordPage,
+    PasswordResetSuccessPage,
+    CheckoutPage,
+    BlogPage,
+    BlogDetailPage,
+    AIWebGeneratorPage,
+    PrivacyPolicyPage,
+    TermsConditionsPage,
+    ContactUsPage,
+    GiftVoucherPage,
+    ResourcesPage,
+    PricingPage,
+    HowItWorksPage,
+    PortfolioPage,
+    PersonaliseOrderPage,
+    PaymentSuccessPage,
+    PaymentFailPage,
+    ProcessPaymentPage,
 } from "../Pages/Public";
 import PublicLayout from "../Layout/PublicLayout";
 import AIVideoGeneratorPage from "../Pages/Public/AIVideoGenerator";
@@ -36,56 +37,57 @@ import AIBizStrategy from "../Pages/Public/AIBizStrategy";
 import { CategoryServices } from "../Component";
 
 const PublicRoutes = () => {
-  return (
-    <PublicLayout>
-      <Routes>
-        <Route path="/">
-          <Route index element={<HomePage />} />
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route
-            path="/category/:categoryId/:catName"
-            element={<CategoryServices />}
-          />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route
-            path="/service/:id/:serviceName"
-            element={<ServiceDetailPage />}
-          />
-          <Route
-            path="/process-order/:id/:serviceTypeId/:serviceName"
-            element={<ProcessOrderPage />}
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/reset-success" element={<PasswordResetSuccessPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/blogs" element={<BlogPage />} />
-          <Route path="/blog/:id" element={<BlogDetailPage />} />
-          <Route path="/web-generator" element={<AIWebGeneratorPage />} />
-          <Route path="/ai-suites" element={<AISuitesPage />} />
-          <Route path="/about-us" element={<AboutUsPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms-conditions" element={<TermsConditionsPage />} />
-          <Route path="/contact-us" element={<ContactUsPage />} />
-          <Route path="/gift-voucher" element={<GiftVoucherPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/video-generator" element={<AIVideoGeneratorPage />} />
-          <Route path="/video-editor" element={<AIVideoEditor />} />
-          <Route path="/business-strategy" element={<AIBizStrategy />} />
-          <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
-          <Route path="/payment/success" element={<PaymentSuccessPage />} />
-          <Route path="/payment/fail" element={<PaymentFailPage />} />
-          {/* <Route path="/sample" element={<Sample />} /> */}
-        </Route>
-      </Routes>
-    </PublicLayout>
-  );
+    return (
+        <PublicLayout>
+            <Routes>
+                <Route path="/">
+                    <Route index element={<HomePage />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
+                    <Route
+                        path="/category/:categoryId/:catName"
+                        element={<CategoryServices />}
+                    />
+                    <Route path="/services" element={<ServicesPage />} />
+                    <Route
+                        path="/service/:id/:serviceName"
+                        element={<ServiceDetailPage />}
+                    />
+                    <Route
+                        path="/process-order/:id/:serviceTypeId/:serviceName"
+                        element={<ProcessOrderPage />}
+                    />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/verify-email" element={<VerifyEmailPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password" element={<ResetPasswordPage />} />
+                    <Route path="/reset-success" element={<PasswordResetSuccessPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/blogs" element={<BlogPage />} />
+                    <Route path="/blog/:id" element={<BlogDetailPage />} />
+                    <Route path="/web-generator" element={<AIWebGeneratorPage />} />
+                    <Route path="/ai-suites" element={<AISuitesPage />} />
+                    <Route path="/about-us" element={<AboutUsPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                    <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+                    <Route path="/contact-us" element={<ContactUsPage />} />
+                    <Route path="/gift-voucher" element={<GiftVoucherPage />} />
+                    <Route path="/resources" element={<ResourcesPage />} />
+                    <Route path="/pricing" element={<PricingPage />} />
+                    <Route path="/how-it-works" element={<HowItWorksPage />} />
+                    <Route path="/portfolio" element={<PortfolioPage />} />
+                    <Route path="/video-generator" element={<AIVideoGeneratorPage />} />
+                    <Route path="/video-editor" element={<AIVideoEditor />} />
+                    <Route path="/business-strategy" element={<AIBizStrategy />} />
+                    <Route path="/order/personalise" element={<PersonaliseOrderPage />} />
+                    <Route path="/process-payment" element={<ProcessPaymentPage />} />
+                    <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                    <Route path="/payment/fail" element={<PaymentFailPage />} />
+                    {/* <Route path="/sample" element={<Sample />} /> */}
+                </Route>
+            </Routes>
+        </PublicLayout>
+    );
 };
 
 export default PublicRoutes;

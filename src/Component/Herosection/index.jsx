@@ -14,14 +14,8 @@ import { Close } from "@mui/icons-material";
 import { Search20Filled } from "@fluentui/react-icons";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useTheme } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
-  const navigate = useNavigate();
-
-  const handleExplore = () => {
-    navigate("/login");
-  };
 
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState("");
@@ -264,7 +258,7 @@ export const HeroSection = () => {
               <Chip
                 key={service}
                 label={service}
-                onDelete={() => {}}
+                onDelete={() => { }}
                 deleteIcon={<Close sx={{ fontSize: "1rem" }} />}
                 sx={{
                   backgroundColor: theme.palette.background.paper,

@@ -138,8 +138,7 @@ const VerifyEmailPage = () => {
           otp: otp,
           otp_type: "registration",
         });
-        // After email verification, redirect to login or dashboard
-        showToast.success("Email verified successfully!");
+
         navigate(returnTo || '/login');
       }
     } catch (error) {
